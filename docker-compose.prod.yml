@@ -1,0 +1,61 @@
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: fiendlist-mongodb-prod
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_prod:/data/db
+      - ./creatures.json:/docker-entrypoint-initdb.d/creatures.json
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    environment:
+      - MONGO_INITDB_DATABASE=fiendlist
+    networks:
+      - fiendlist-network-prod
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: prod  # Use the production stage
+    container_name: fiendlist-backend-prod
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=8080
+      - MONGODB_URI=mongodb://mongodb:27017/fiendlist
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGIN=http://localhost:3000  # Allow requests from the frontend
+    networks:
+      - fiendlist-network-prod
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile  # Use the production Dockerfile
+    container_name: fiendlist-frontend-prod
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=/api
+      - NODE_ENV=production
+    networks:
+      - fiendlist-network-prod
+
+volumes:
+  mongodb_data_prod:
+
+networks:
+  fiendlist-network-prod:
+    driver: bridge 
