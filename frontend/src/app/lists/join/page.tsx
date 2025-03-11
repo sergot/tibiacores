@@ -1,18 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { usePlayer } from '@/contexts/PlayerContext';
-import { fetchCharacterData } from '@/services/character';
-import listApi from '@/services/listApi';
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { usePlayer } from "@/contexts/PlayerContext";
+import { fetchCharacterData } from "@/services/character";
+import listApi from "@/services/listApi";
 
-export default function JoinListPage() {
-  const router = useRouter();
+// Create a wrapper component that uses useSearchParams
+function JoinListContent() {
   const searchParams = useSearchParams();
-  const code = searchParams.get('code') || '';
+  const shareCode = searchParams.get("code") || "";
   
-  const { player, loading: playerLoading, fetchAnonymousPlayer, createPlayer, characters, fetchCharacters } = usePlayer();
+  const router = useRouter();
+  const { player, loading: playerLoading, error: playerError, fetchAnonymousPlayer, createPlayer, characters, fetchCharacters } = usePlayer();
   
   // Form state
   const [characterName, setCharacterName] = useState('');
@@ -27,11 +28,11 @@ export default function JoinListPage() {
   // Fetch list details if code is provided
   useEffect(() => {
     const fetchListDetails = async () => {
-      if (!code) return;
+      if (!shareCode) return;
       
       setIsLoadingList(true);
       try {
-        const list = await listApi.getListByShareCode(code);
+        const list = await listApi.getListByShareCode(shareCode);
         setListDetails(list);
       } catch (err) {
         console.error('Failed to fetch list details:', err);
@@ -42,7 +43,7 @@ export default function JoinListPage() {
     };
     
     fetchListDetails();
-  }, [code]);
+  }, [shareCode]);
   
   // Fetch characters when component mounts
   useEffect(() => {
@@ -162,8 +163,8 @@ export default function JoinListPage() {
         const tempSessionId = localStorage.getItem('tempSessionId') || Math.random().toString(36).substring(2, 15);
         
         // Join the list as an anonymous user
-        await listApi.joinList(code, {
-          token: code,
+        await listApi.joinList(shareCode, {
+          token: shareCode,
           character_name: character.name,
           world: character.world,
           session_id: tempSessionId
@@ -230,8 +231,8 @@ export default function JoinListPage() {
         }
         
         // Join with existing character
-        await listApi.joinList(code, {
-          token: code,
+        await listApi.joinList(shareCode, {
+          token: shareCode,
           player_id: player.id,
           character_id: selectedCharacter.id
         });
@@ -251,8 +252,8 @@ export default function JoinListPage() {
         }
         
         // Join with new character
-        await listApi.joinList(code, {
-          token: code,
+        await listApi.joinList(shareCode, {
+          token: shareCode,
           player_id: player.id,
           character_name: character.name,
           world: character.world
@@ -453,5 +454,14 @@ export default function JoinListPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function JoinListPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-4">Loading...</div>}>
+      <JoinListContent />
+    </Suspense>
   );
 } 

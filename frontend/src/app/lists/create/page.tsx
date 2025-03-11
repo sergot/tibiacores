@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { usePlayer } from '@/contexts/PlayerContext';
 import listApi from '@/services/listApi';
 
-
-export default function CreateListPage() {
+function CreateListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromHome = searchParams.get('fromHome') === 'true';
@@ -400,4 +399,12 @@ export default function CreateListPage() {
       </div>
     </div>
   );
-} 
+}
+
+export default function CreateListPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-4">Loading...</div>}>
+      <CreateListContent />
+    </Suspense>
+  );
+}

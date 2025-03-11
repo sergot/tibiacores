@@ -1,0 +1,16 @@
+{
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "regions": ["fra1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://fiendlist-backend.onrender.com/api"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://fiendlist-backend.onrender.com/api"
+    }
+  }
+} 
