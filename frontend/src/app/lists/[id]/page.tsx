@@ -755,10 +755,10 @@ export default function ListDetailPage({ params }: { params: any }) {
             <h3 className="text-lg font-medium text-red-800 dark:text-red-500 mb-2">Error Loading List</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
             <Link
-              href="/lists"
+              href="/"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
             >
-              Go Back to Lists
+              Back to Lists
             </Link>
           </div>
         </div>
@@ -781,10 +781,10 @@ export default function ListDetailPage({ params }: { params: any }) {
               The list you're looking for doesn't exist or you don't have access to it.
             </p>
             <Link
-              href="/lists"
+              href="/"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
             >
-              Go Back to Lists
+              Back to Lists
             </Link>
           </div>
         </div>

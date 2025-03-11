@@ -652,57 +652,7 @@ export default function Home() {
         )}
         
         {player ? (
-          <div className="text-center py-6 mb-6 bg-amber-50 dark:bg-amber-900/30 rounded-lg border border-amber-200 dark:border-amber-800">
-            {player.is_anonymous ? (
-              // Anonymous user welcome
-              <>
-                <h2 className="text-xl font-semibold text-amber-800 dark:text-amber-500 mb-2">
-                  Welcome, Adventurer!
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  You're currently using SoulPit Manager anonymously. Create an account to save your progress and access more features!
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <button
-                    onClick={() => router.push('/lists/join')}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
-                  >
-                    Create Account
-                  </button>
-                  <button
-                    onClick={() => router.push('/lists')}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md"
-                  >
-                    View My Lists
-                  </button>
-                </div>
-              </>
-            ) : (
-              // Registered user welcome
-              <>
-                <h2 className="text-xl font-semibold text-amber-800 dark:text-amber-500 mb-2">
-                  Welcome back, {player.username}!
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  You're already logged in. What would you like to do?
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <button
-                    onClick={() => router.push('/characters')}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md"
-                  >
-                    Manage Characters
-                  </button>
-                  <button
-                    onClick={() => router.push('/lists')}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md"
-                  >
-                    View All Lists
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+          <></>
         ) : null}
         
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">

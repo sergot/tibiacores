@@ -147,10 +147,10 @@ export default function ShareListPage({ params }: { params: { id: string } }) {
               The list you're looking for doesn't exist or you don't have access to it.
             </p>
             <Link
-              href="/lists"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+              href="/"
+              className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
             >
-              Go Back to Lists
+              Back to Lists
             </Link>
           </div>
         </div>
