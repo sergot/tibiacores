@@ -59,9 +59,13 @@ export default function Home() {
       const tempSessionId = localStorage.getItem('tempSessionId');
       // Only try to fetch anonymous player if we have a session ID (user has created a list)
       if (tempSessionId) {
-        fetchAnonymousPlayer(tempSessionId).catch(err => {
-          console.error('Failed to fetch anonymous player:', err);
-        });
+        fetchAnonymousPlayer(tempSessionId)
+          .catch(err => {
+            console.error('Failed to fetch anonymous player:', err);
+            // Clear the invalid session ID from localStorage to prevent infinite loops
+            console.log('Clearing invalid session ID from localStorage in page component');
+            localStorage.removeItem('tempSessionId');
+          });
       }
     }
   }, [player, fetchAnonymousPlayer]);

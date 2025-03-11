@@ -57,6 +57,9 @@ export default function CharacterDetailsPage({ params }: { params: RouteParams |
           }
         } catch (error) {
           console.error('Error fetching anonymous player:', error);
+          // Clear the invalid session ID from localStorage to prevent infinite loops
+          console.log('Clearing invalid session ID from localStorage in character detail page');
+          localStorage.removeItem('tempSessionId');
           router.push("/");
         }
       };

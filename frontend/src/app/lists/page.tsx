@@ -70,6 +70,9 @@ export default function ListsPage() {
             }
           } catch (err) {
             console.error('Failed to fetch anonymous player:', err);
+            // Clear the invalid session ID from localStorage to prevent infinite loops
+            console.log('Clearing invalid session ID from localStorage in lists page');
+            localStorage.removeItem('tempSessionId');
           }
         }
       }

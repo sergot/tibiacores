@@ -103,6 +103,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch (err: any) {
       console.error('Failed to fetch anonymous player:', err);
       setError(err.message || 'Failed to fetch anonymous player. Please try again.');
+      
+      // Clear the invalid session ID from localStorage to prevent infinite loops
+      console.log('Clearing invalid session ID from localStorage');
+      localStorage.removeItem('tempSessionId');
     } finally {
       setLoading(false);
     }

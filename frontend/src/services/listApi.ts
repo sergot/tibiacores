@@ -1,7 +1,7 @@
 import { handleResponse } from './api';
 
 // Base API URL - use direct API path
-const API_URL = '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // List API service
 const listApi = {
