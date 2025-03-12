@@ -42,7 +42,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev  # Use the development Dockerfile
+      dockerfile: Dockerfile
     user: "1000:1000"
     container_name: fiendlist-frontend
     restart: always
