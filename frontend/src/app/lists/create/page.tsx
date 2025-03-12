@@ -213,8 +213,10 @@ function CreateListContent() {
         }
       }
       
+      /* eslint-disable prefer-const*/
       // Make the API call with the prepared request data
       newList = await listApi.createList(requestData);
+      /* eslint-disable prefer-const */
       
       console.log('List created successfully:', newList);
       

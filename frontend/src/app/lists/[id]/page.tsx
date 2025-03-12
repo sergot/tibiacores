@@ -776,7 +776,7 @@ export default function ListDetailPage({ params }: { params: any }) {
             </div>
             <h3 className="text-lg font-medium text-amber-800 dark:text-amber-500 mb-2">List Not Found</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              The list you're looking for doesn't exist or you don't have access to it.
+              The list you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
             </p>
             <Link
               href="/"
@@ -1405,4 +1405,4 @@ export default function ListDetailPage({ params }: { params: any }) {
       )}
     </div>
   );
-} 
+}

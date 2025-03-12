@@ -110,7 +110,7 @@ export default function RegisterPage() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
             <input
@@ -215,4 +215,4 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-} 
+}

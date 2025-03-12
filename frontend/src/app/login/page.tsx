@@ -195,7 +195,7 @@ export default function LoginPage() {
         
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300">
               Register
             </Link>
@@ -204,4 +204,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}

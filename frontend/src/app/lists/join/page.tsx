@@ -326,7 +326,7 @@ function JoinListContent() {
         
         {isAlreadyMember() ? (
           <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/30 rounded-md border border-green-200 dark:border-green-800">
-            <p className="text-green-800 dark:text-green-400">You are already a member of this list.</p>
+            <p className="text-green-800 dark:text-green-400">You&apos;re already a member of this list.</p>
             <div className="mt-4">
               <button
                 onClick={() => router.push(`/lists/${listDetails.id}`)}
@@ -431,6 +431,21 @@ function JoinListContent() {
                   ? "Select an existing character or enter a new character name"
                   : "Enter your Tibia character name to join this list. No account required!"}
               </p>
+
+              {listDetails && listDetails.world && character.world !== listDetails.world && (
+                setError(`This list is for characters in ${listDetails.world} world. Your character is in ${character.world} world.`)
+              )}
+
+              <p className="text-green-800 dark:text-green-400">You&apos;re already a member of this list.</p>
+
+              {isCharacterAlreadyMember(character.id) && (
+                <span className="ml-2 text-xs text-red-500">(Already a member)</span>
+              )}
+
+              <p className="text-amber-700 dark:text-amber-300 mb-3 text-sm">
+                You&apos;re currently using a temporary account. Register to:
+              </p>
+
             </div>
             
             <button
@@ -464,4 +479,4 @@ export default function JoinListPage() {
       <JoinListContent />
     </Suspense>
   );
-} 
+}

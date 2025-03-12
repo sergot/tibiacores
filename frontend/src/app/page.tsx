@@ -609,7 +609,7 @@ export default function Home() {
                 </div>
               ) : userLists.length === 0 ? (
                 <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <p className="mb-4">You haven't created or joined any lists yet.</p>
+                  <p className="mb-4">You haven&apos;t created or joined any lists yet.</p>
                   <Link
                     href="/lists/create"
                     className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md"
@@ -660,7 +660,7 @@ export default function Home() {
                 Save Your Progress
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                You're currently using a temporary account. Register now to keep your progress and access more features!
+                You&apos;re currently using a temporary account. Register now to keep your progress and access more features!
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
@@ -696,7 +696,7 @@ export default function Home() {
             SoulPit Manager helps Tibia players track their Soul Pit progress, including:
           </p>
           <ul className="list-disc list-inside text-gray-600 dark:text-gray-400 mb-4 space-y-1">
-            <li>Track which soul cores you've collected</li>
+            <li>Track which soul cores you&apos;ve collected</li>
             <li>Share your progress with friends and guildmates</li>
             <li>Coordinate hunting efforts for missing creatures</li>
             <li>Get notifications when new creatures are added</li>
