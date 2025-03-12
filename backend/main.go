@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/fiendlist/backend/handlers"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -94,13 +96,13 @@ func main() {
 		if frontendURL == "" {
 			frontendURL = "https://fiendlist.vercel.app" // Default production frontend URL
 		}
-		
+
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{frontendURL},
 			AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		}))
-		
+
 		log.Printf("CORS configured for production, allowing origin: %s", frontendURL)
 	} else {
 		// In development, allow all origins
@@ -129,6 +131,7 @@ func setupRoutes(e *echo.Echo) {
 	playerHandler := handlers.NewPlayerHandler(db)
 	creatureHandler := handlers.NewCreatureHandler(db)
 	listHandler := handlers.NewListHandler(db)
+	authHandler := handlers.NewAuthHandler(db)
 
 	// API group
 	api := e.Group("/api")
@@ -137,6 +140,35 @@ func setupRoutes(e *echo.Echo) {
 	api.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, map[string]string{"status": "ok"})
 	})
+
+	// Auth routes
+	auth := api.Group("/auth")
+	auth.POST("/register", authHandler.Register)
+	auth.POST("/login", authHandler.Login)
+	auth.GET("/verify-email", authHandler.VerifyEmail)
+	auth.POST("/google", authHandler.GoogleLogin)
+	auth.POST("/discord", authHandler.DiscordLogin)
+
+	// Get JWT secret from environment
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "default_jwt_secret_change_in_production"
+	}
+
+	// JWT middleware configuration
+	jwtConfig := echojwt.Config{
+		SigningKey: []byte(jwtSecret),
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(jwt.MapClaims)
+		},
+	}
+
+	// Create a protected group with JWT middleware
+	authProtected := auth.Group("")
+	authProtected.Use(echojwt.WithConfig(jwtConfig))
+
+	// Add protected routes
+	authProtected.GET("/me", authHandler.GetCurrentUser)
 
 	// Player routes
 	api.POST("/players", playerHandler.CreatePlayer)

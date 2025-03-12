@@ -198,10 +198,8 @@ export default function ListDetailPage({ params }: { params: any }) {
       alert('Attempted to fetch anonymous player. Check console for details.');
     } catch (err) {
       console.error('Error fetching anonymous player:', err);
-      // Clear the invalid session ID from localStorage to prevent infinite loops
-      console.log('Clearing invalid session ID from localStorage in list detail page');
-      localStorage.removeItem('tempSessionId');
-      alert('Failed to fetch anonymous player. Session ID has been cleared.');
+      // Simply log the error and show a message
+      alert('Failed to fetch anonymous player. Session may be invalid.');
     }
   };
   

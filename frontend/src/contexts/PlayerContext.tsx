@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { playerApi } from '@/services/api';
+import { authApi } from '@/services/authApi';
 
 // Define types
 export interface Character {
@@ -10,6 +11,7 @@ export interface Character {
   world: string;
   level: number;
   vocation: string;
+  is_main?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +38,9 @@ export interface PlayerContextType {
   logout: () => void;
   fetchAnonymousPlayer: (sessionId: string) => Promise<void>;
   isAnonymous: boolean;
+  updateUsername: (username: string) => Promise<void>;
+  setMainCharacter: (characterId: string) => Promise<void>;
+  refreshPlayer: () => Promise<void>;
 }
 
 // Create context
@@ -49,16 +54,60 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [error, setError] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
 
-  // Load player from localStorage on initial render
+  // Load player on initial render - check for auth token first, then localStorage
   useEffect(() => {
-    console.log('PlayerContext initializing, checking localStorage for player data...');
+    console.log('PlayerContext initializing, checking for authentication...');
+    loadPlayer();
+  }, []);
+
+  // Function to load player data
+  const loadPlayer = async () => {
+    setLoading(true);
+    
+    // First check if we have an auth token (logged in user)
+    if (authApi.isAuthenticated()) {
+      try {
+        console.log('Auth token found, fetching user data...');
+        const userData = await authApi.getCurrentUser();
+        
+        if (userData) {
+          console.log('User authenticated:', userData);
+          setPlayer(userData);
+          // Registered users with auth tokens are never anonymous
+          setIsAnonymous(false);
+          
+          // Clear any temporary session ID since we're now authenticated
+          localStorage.removeItem('tempSessionId');
+          
+          // If there's a stored player in localStorage, remove it to avoid conflicts
+          localStorage.removeItem('player');
+          
+          await fetchCharacters();
+          setLoading(false);
+          return;
+        } else {
+          console.log('Auth token invalid, removing...');
+          authApi.logout();
+        }
+      } catch (err) {
+        console.error('Error fetching authenticated user:', err);
+        authApi.logout();
+      }
+    }
+    
+    // If no auth token or it's invalid, check localStorage for player data
     const storedPlayer = localStorage.getItem('player');
     if (storedPlayer) {
       try {
         const parsedPlayer = JSON.parse(storedPlayer);
         console.log('Found player data in localStorage:', parsedPlayer);
         setPlayer(parsedPlayer);
-        setIsAnonymous(false);
+        setIsAnonymous(!!parsedPlayer.is_anonymous);
+        
+        // Fetch characters if we have a player
+        if (parsedPlayer.id) {
+          await fetchCharactersById(parsedPlayer.id);
+        }
       } catch (err) {
         console.error('Failed to parse stored player:', err);
         localStorage.removeItem('player');
@@ -72,19 +121,35 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (tempSessionId) {
         console.log('Session ID found:', tempSessionId);
         // Automatically fetch anonymous player if session ID exists
-        fetchAnonymousPlayer(tempSessionId)
-          .then(() => {
-            console.log('Successfully fetched anonymous player with session ID');
-          })
-          .catch(err => {
-            console.error('Failed to fetch anonymous player:', err);
-          });
+        try {
+          await fetchAnonymousPlayer(tempSessionId);
+          console.log('Successfully fetched anonymous player with session ID');
+        } catch (err) {
+          console.error('Failed to fetch anonymous player:', err);
+        }
       } else {
         console.log('No session ID found, user needs to log in or create an account');
       }
     }
+    
     setLoading(false);
-  }, []);
+  };
+
+  // Method to manually refresh player data
+  const refreshPlayer = async () => {
+    console.log('Manually refreshing player data...');
+    await loadPlayer();
+  };
+
+  // Fetch characters by player ID (helper function)
+  const fetchCharactersById = async (playerId: string) => {
+    try {
+      const response = await playerApi.getCharacters(playerId);
+      setCharacters(response);
+    } catch (err) {
+      console.error('Failed to fetch characters:', err);
+    }
+  };
 
   // Fetch anonymous player by session ID
   const fetchAnonymousPlayer = async (sessionId: string) => {
@@ -99,14 +164,15 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setPlayer(response);
         setIsAnonymous(true);
         console.log('Fetched anonymous player:', response);
+        
+        // Fetch characters for this player
+        if (response.id) {
+          await fetchCharactersById(response.id);
+        }
       }
     } catch (err: any) {
       console.error('Failed to fetch anonymous player:', err);
       setError(err.message || 'Failed to fetch anonymous player. Please try again.');
-      
-      // Clear the invalid session ID from localStorage to prevent infinite loops
-      console.log('Clearing invalid session ID from localStorage');
-      localStorage.removeItem('tempSessionId');
     } finally {
       setLoading(false);
     }
@@ -127,6 +193,18 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const response = await playerApi.createPlayer(apiData);
       setPlayer(response);
       localStorage.setItem('player', JSON.stringify(response));
+      
+      // Store session ID for anonymous users
+      if (response.session_id) {
+        localStorage.setItem('tempSessionId', response.session_id);
+      }
+      
+      setIsAnonymous(!!response.is_anonymous);
+      
+      // Fetch characters for the new player
+      if (response.id) {
+        await fetchCharactersById(response.id);
+      }
     } catch (err: any) {
       console.error('Failed to create player:', err);
       setError(err.message || 'Failed to create player. Please try again.');
@@ -202,11 +280,77 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
+  // Update username
+  const updateUsername = async (username: string) => {
+    if (!player) {
+      throw new Error('You need to be logged in to update your username');
+    }
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await playerApi.updateUsername(player.id, username);
+      
+      // Update local player state
+      setPlayer(prev => {
+        if (!prev) return null;
+        const updated = { ...prev, username };
+        
+        // Update localStorage if we're using it
+        if (!authApi.isAuthenticated()) {
+          localStorage.setItem('player', JSON.stringify(updated));
+        }
+        
+        return updated;
+      });
+    } catch (err: any) {
+      console.error('Failed to update username:', err);
+      setError(err.message || 'Failed to update username. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set main character
+  const setMainCharacter = async (characterId: string) => {
+    if (!player) {
+      throw new Error('You need to be logged in to set a main character');
+    }
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await playerApi.setMainCharacter(player.id, characterId);
+      
+      // Update local characters state
+      setCharacters(prev => 
+        prev.map(char => ({
+          ...char,
+          is_main: char.id === characterId
+        }))
+      );
+    } catch (err: any) {
+      console.error('Failed to set main character:', err);
+      setError(err.message || 'Failed to set main character. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout
   const logout = () => {
+    // Clear auth token if it exists
+    authApi.logout();
+    
+    // Clear player data
     setPlayer(null);
     setCharacters([]);
     localStorage.removeItem('player');
+    localStorage.removeItem('tempSessionId');
   };
 
   return (
@@ -222,7 +366,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         deleteCharacter,
         logout,
         fetchAnonymousPlayer,
-        isAnonymous
+        isAnonymous,
+        updateUsername,
+        setMainCharacter,
+        refreshPlayer
       }}
     >
       {children}

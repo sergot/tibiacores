@@ -127,6 +127,23 @@ export const playerApi = {
       throw error;
     }
   },
+
+  // Set a character as the main character for a player
+  setMainCharacter: async (playerId: string, characterId: string): Promise<void> => {
+    try {
+      const response = await fetch(`${API_URL}/players/${playerId}/characters/${characterId}/main`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      return handleResponse<void>(response);
+    } catch (error) {
+      console.error('Error setting main character:', error);
+      throw error;
+    }
+  },
 };
 
 // List API

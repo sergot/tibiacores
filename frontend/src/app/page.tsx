@@ -55,19 +55,21 @@ export default function Home() {
   
   // Check for session ID on mount and try to fetch anonymous player
   useEffect(() => {
-    if (!player) {
-      const tempSessionId = localStorage.getItem('tempSessionId');
-      // Only try to fetch anonymous player if we have a session ID (user has created a list)
-      if (tempSessionId) {
-        fetchAnonymousPlayer(tempSessionId)
-          .catch(err => {
+    const fetchPlayerOnce = async () => {
+      if (!player) {
+        const tempSessionId = localStorage.getItem('tempSessionId');
+        // Only try to fetch anonymous player if we have a session ID (user has created a list)
+        if (tempSessionId) {
+          try {
+            await fetchAnonymousPlayer(tempSessionId);
+          } catch (err) {
             console.error('Failed to fetch anonymous player:', err);
-            // Clear the invalid session ID from localStorage to prevent infinite loops
-            console.log('Clearing invalid session ID from localStorage in page component');
-            localStorage.removeItem('tempSessionId');
-          });
+          }
+        }
       }
-    }
+    };
+    
+    fetchPlayerOnce();
   }, [player, fetchAnonymousPlayer]);
   
   // Fetch user lists on component mount
@@ -652,7 +654,38 @@ export default function Home() {
         )}
         
         {player ? (
-          <></>
+          isAnonymous ? (
+            <div className="mb-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+              <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-400 mb-2">
+                Save Your Progress
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                You're currently using a temporary account. Register now to keep your progress and access more features!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/register"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Register Account
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-blue-300 dark:border-blue-700 rounded-md shadow-sm text-sm font-medium text-blue-700 dark:text-blue-300 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  Log In
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )
         ) : null}
         
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">

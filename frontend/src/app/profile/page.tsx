@@ -4,13 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { playerApi } from "@/services/api";
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { player, characters, fetchCharacters, loading, error, fetchAnonymousPlayer } = usePlayer();
+  const { player, characters, fetchCharacters, loading, error, fetchAnonymousPlayer, isAnonymous } = usePlayer();
   const [username, setUsername] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [updateError, setUpdateError] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState("");
   const [showRegistrationTooltip, setShowRegistrationTooltip] = useState(false);
   const hasFetchedRef = useRef(false);
   const hasFetchedCharactersRef = useRef(false);
@@ -31,9 +33,7 @@ export default function ProfilePage() {
           }
         } catch (error) {
           console.error('Error fetching anonymous player:', error);
-          // Clear the invalid session ID from localStorage to prevent infinite loops
-          console.log('Clearing invalid session ID from localStorage in profile page');
-          localStorage.removeItem('tempSessionId');
+          // Simply log the error and redirect
           router.push("/");
         }
       };
@@ -69,6 +69,7 @@ export default function ProfilePage() {
       await playerApi.updateUsername(player.id, username);
       setIsEditing(false);
       setUpdateError("");
+      setUpdateSuccess("Username updated successfully!");
       // Refresh player data
       window.location.reload();
     } catch (error: any) {
@@ -107,32 +108,54 @@ export default function ProfilePage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Account Information</h2>
         
+        {updateSuccess && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{updateSuccess}</span>
+          </div>
+        )}
+        
+        {updateError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{updateError}</span>
+          </div>
+        )}
+        
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
           {isEditing ? (
-            <div className="flex items-center">
-              <input
-                type="text"
-                value={username}
-                onChange={handleUsernameChange}
-                className="border rounded-md px-3 py-2 mr-2 flex-grow dark:bg-gray-700 dark:border-gray-600"
-              />
-              <button
-                onClick={handleUpdateUsername}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  setUsername(player.username);
-                }}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md ml-2"
-              >
-                Cancel
-              </button>
-            </div>
+            <form onSubmit={handleUpdateUsername} className="mb-4">
+              <div className="flex flex-col md:flex-row gap-2">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={handleUsernameChange}
+                  className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Enter new username"
+                  minLength={3}
+                  maxLength={30}
+                  required
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md transition-colors"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setUsername(player.username);
+                      setUpdateError('');
+                    }}
+                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white rounded-md transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
           ) : (
             <div className="flex items-center">
               <span className="text-lg">{player.username}</span>
@@ -144,31 +167,32 @@ export default function ProfilePage() {
               </button>
             </div>
           )}
-          {updateError && <p className="text-red-500 mt-1">{updateError}</p>}
         </div>
         
-        {player.is_anonymous && (
-          <div 
-            className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 relative cursor-pointer"
-            onMouseEnter={() => setShowRegistrationTooltip(true)}
-            onMouseLeave={() => setShowRegistrationTooltip(false)}
-            onClick={handleRegisterClick}
-          >
-            <p className="font-medium">You're using an anonymous account</p>
-            <p>Register to save your progress and access from any device.</p>
-            
-            {showRegistrationTooltip && (
-              <div className="absolute z-10 w-64 p-3 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 -top-2 left-full ml-2">
-                <p className="text-sm">
-                  Create an account to:
-                </p>
-                <ul className="list-disc ml-5 mt-1 text-sm">
-                  <li>Save your progress</li>
-                  <li>Access from any device</li>
-                  <li>Never lose your characters</li>
-                </ul>
-              </div>
-            )}
+        <div className="mb-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Account Type</p>
+          <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
+            {isAnonymous ? 'Anonymous (Not Registered)' : 'Registered'}
+          </p>
+        </div>
+        
+        {isAnonymous && (
+          <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mt-4">
+            <h3 className="font-medium text-amber-800 dark:text-amber-400 mb-2">Register Your Account</h3>
+            <p className="text-amber-700 dark:text-amber-300 mb-3 text-sm">
+              Your progress is currently stored on this device only. Register to:
+            </p>
+            <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 text-sm mb-4">
+              <li>Access your characters from any device</li>
+              <li>Never lose your progress</li>
+              <li>Get updates about new features</li>
+            </ul>
+            <Link 
+              href="/register" 
+              className="inline-block px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md transition-colors"
+            >
+              Register Now
+            </Link>
           </div>
         )}
       </div>
