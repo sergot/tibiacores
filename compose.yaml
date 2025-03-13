@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:17.4
+    restart: always
+    environment:
+      POSTGRES_DB: fiendlist
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  db:

@@ -1,1 +1,1 @@
-# fiendlist - a soulcore tracking
+# fiendlist - a soulcore tracking webapp
