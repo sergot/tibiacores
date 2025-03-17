@@ -67,32 +67,10 @@ LEFT JOIN lists_users lu ON l.id = lu.list_id AND lu.user_id = $1
 WHERE l.author_id = $1 OR lu.user_id = $1
 ORDER BY l.created_at DESC;
 
--- GetUserListsWithMembers
--- SELECT DISTINCT
---     l.id, 
---     l.author_id, 
---     l.name, 
---     l.share_code, 
---     l.world, 
---     l.created_at, 
---     l.updated_at,
---     CASE WHEN l.author_id = $1 THEN TRUE ELSE FALSE END AS is_author,
---     COALESCE(
---         (SELECT jsonb_agg(jsonb_build_object(
---             'user_id', lu.user_id,
---             'character_id', lu.character_id,
---             'character_name', c.name
---         ))
---         FROM lists_users lu
---         JOIN characters c ON lu.character_id = c.id
---         WHERE lu.list_id = l.id),
---         '[]'::jsonb
---     ) AS members
--- FROM lists l
--- LEFT JOIN lists_users lu ON l.id = lu.list_id AND lu.user_id = $1
--- WHERE l.author_id = $1 OR lu.user_id = $1
--- ORDER BY l.created_at DESC;
-
 -- name: GetList :one
 SELECT * FROM lists
 WHERE id = $1;
+
+-- name: GetMembers :one
+SELECT * FROM lists_users
+WHERE list_id = $1;
