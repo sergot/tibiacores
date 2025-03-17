@@ -18,9 +18,9 @@ VALUES ($1, $2, $3)
 `
 
 type AddListCharacterParams struct {
-	ListID      uuid.UUID
-	UserID      uuid.UUID
-	CharacterID uuid.UUID
+	ListID      uuid.UUID `json:"list_id"`
+	UserID      uuid.UUID `json:"user_id"`
+	CharacterID uuid.UUID `json:"character_id"`
 }
 
 func (q *Queries) AddListCharacter(ctx context.Context, arg AddListCharacterParams) error {
@@ -72,9 +72,9 @@ RETURNING id, author_id, name, share_code, world, created_at, updated_at
 `
 
 type CreateListParams struct {
-	AuthorID uuid.UUID
-	Name     string
-	World    string
+	AuthorID uuid.UUID `json:"author_id"`
+	Name     string    `json:"name"`
+	World    string    `json:"world"`
 }
 
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) (List, error) {
@@ -99,10 +99,10 @@ RETURNING id, is_anonymous, session_token, email, password, email_verified, emai
 `
 
 type CreateUserParams struct {
-	Email                      pgtype.Text
-	Password                   pgtype.Text
-	EmailVerificationToken     pgtype.UUID
-	EmailVerificationExpiresAt pgtype.Timestamptz
+	Email                      pgtype.Text        `json:"email"`
+	Password                   pgtype.Text        `json:"password"`
+	EmailVerificationToken     pgtype.UUID        `json:"email_verification_token"`
+	EmailVerificationExpiresAt pgtype.Timestamptz `json:"email_verification_expires_at"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -128,19 +128,72 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const getCharacter = `-- name: GetCharacter :one
+SELECT id, user_id, name, world, created_at, updated_at FROM characters
+WHERE id = $1
+`
+
+func (q *Queries) GetCharacter(ctx context.Context, id uuid.UUID) (Character, error) {
+	row := q.db.QueryRow(ctx, getCharacter, id)
+	var i Character
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.World,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getCharactersByUserId = `-- name: GetCharactersByUserId :many
+SELECT id, user_id, name, world, created_at, updated_at FROM characters
+WHERE user_id = $1
+`
+
+func (q *Queries) GetCharactersByUserId(ctx context.Context, userID uuid.UUID) ([]Character, error) {
+	rows, err := q.db.Query(ctx, getCharactersByUserId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Character{}
+	for rows.Next() {
+		var i Character
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.World,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCreatures = `-- name: GetCreatures :many
+
 SELECT id, name
 FROM creatures
 ORDER BY name
 `
 
+// TODO: divide into smaller chunks
 func (q *Queries) GetCreatures(ctx context.Context) ([]Creature, error) {
 	rows, err := q.db.Query(ctx, getCreatures)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Creature
+	items := []Creature{}
 	for rows.Next() {
 		var i Creature
 		if err := rows.Scan(&i.ID, &i.Name); err != nil {
@@ -217,9 +270,9 @@ ORDER BY name
 `
 
 type GetUserCharactersRow struct {
-	ID    uuid.UUID
-	Name  string
-	World string
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	World string    `json:"world"`
 }
 
 func (q *Queries) GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]GetUserCharactersRow, error) {
@@ -228,7 +281,7 @@ func (q *Queries) GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]Ge
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetUserCharactersRow
+	items := []GetUserCharactersRow{}
 	for rows.Next() {
 		var i GetUserCharactersRow
 		if err := rows.Scan(&i.ID, &i.Name, &i.World); err != nil {
@@ -253,14 +306,14 @@ ORDER BY l.created_at DESC
 `
 
 type GetUserListsRow struct {
-	ID        uuid.UUID
-	AuthorID  uuid.UUID
-	Name      string
-	ShareCode pgtype.UUID
-	World     string
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
-	IsAuthor  bool
+	ID        uuid.UUID          `json:"id"`
+	AuthorID  uuid.UUID          `json:"author_id"`
+	Name      string             `json:"name"`
+	ShareCode pgtype.UUID        `json:"share_code"`
+	World     string             `json:"world"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+	IsAuthor  bool               `json:"is_author"`
 }
 
 func (q *Queries) GetUserLists(ctx context.Context, authorID uuid.UUID) ([]GetUserListsRow, error) {
@@ -269,7 +322,7 @@ func (q *Queries) GetUserLists(ctx context.Context, authorID uuid.UUID) ([]GetUs
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetUserListsRow
+	items := []GetUserListsRow{}
 	for rows.Next() {
 		var i GetUserListsRow
 		if err := rows.Scan(
@@ -304,11 +357,11 @@ RETURNING id, is_anonymous, session_token, email, password, email_verified, emai
 `
 
 type MigrateAnonymousUserParams struct {
-	Email                      pgtype.Text
-	Password                   pgtype.Text
-	EmailVerificationToken     pgtype.UUID
-	EmailVerificationExpiresAt pgtype.Timestamptz
-	ID                         uuid.UUID
+	Email                      pgtype.Text        `json:"email"`
+	Password                   pgtype.Text        `json:"password"`
+	EmailVerificationToken     pgtype.UUID        `json:"email_verification_token"`
+	EmailVerificationExpiresAt pgtype.Timestamptz `json:"email_verification_expires_at"`
+	ID                         uuid.UUID          `json:"id"`
 }
 
 func (q *Queries) MigrateAnonymousUser(ctx context.Context, arg MigrateAnonymousUserParams) (User, error) {
@@ -344,8 +397,8 @@ WHERE id = $1 AND email_verification_token = $2
 `
 
 type VerifyEmailParams struct {
-	ID                     uuid.UUID
-	EmailVerificationToken pgtype.UUID
+	ID                     uuid.UUID   `json:"id"`
+	EmailVerificationToken pgtype.UUID `json:"email_verification_token"`
 }
 
 func (q *Queries) VerifyEmail(ctx context.Context, arg VerifyEmailParams) error {

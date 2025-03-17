@@ -32,8 +32,8 @@ func (e *SoulcoreStatus) Scan(src interface{}) error {
 }
 
 type NullSoulcoreStatus struct {
-	SoulcoreStatus SoulcoreStatus
-	Valid          bool // Valid is true if SoulcoreStatus is not NULL
+	SoulcoreStatus SoulcoreStatus `json:"soulcore_status"`
+	Valid          bool           `json:"valid"` // Valid is true if SoulcoreStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
@@ -55,55 +55,55 @@ func (ns NullSoulcoreStatus) Value() (driver.Value, error) {
 }
 
 type Character struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	Name      string
-	World     string
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
+	ID        uuid.UUID          `json:"id"`
+	UserID    uuid.UUID          `json:"user_id"`
+	Name      string             `json:"name"`
+	World     string             `json:"world"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
 type CharactersSoulcore struct {
-	CharacterID uuid.UUID
-	CreatureID  uuid.UUID
+	CharacterID uuid.UUID `json:"character_id"`
+	CreatureID  uuid.UUID `json:"creature_id"`
 }
 
 type Creature struct {
-	ID   uuid.UUID
-	Name string
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
 type List struct {
-	ID        uuid.UUID
-	AuthorID  uuid.UUID
-	Name      string
-	ShareCode pgtype.UUID
-	World     string
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
+	ID        uuid.UUID          `json:"id"`
+	AuthorID  uuid.UUID          `json:"author_id"`
+	Name      string             `json:"name"`
+	ShareCode pgtype.UUID        `json:"share_code"`
+	World     string             `json:"world"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
 type ListsSoulcore struct {
-	ListID     uuid.UUID
-	CreatureID uuid.UUID
-	Status     SoulcoreStatus
+	ListID     uuid.UUID      `json:"list_id"`
+	CreatureID uuid.UUID      `json:"creature_id"`
+	Status     SoulcoreStatus `json:"status"`
 }
 
 type ListsUser struct {
-	ListID      uuid.UUID
-	UserID      uuid.UUID
-	CharacterID uuid.UUID
+	ListID      uuid.UUID `json:"list_id"`
+	UserID      uuid.UUID `json:"user_id"`
+	CharacterID uuid.UUID `json:"character_id"`
 }
 
 type User struct {
-	ID                         uuid.UUID
-	IsAnonymous                bool
-	SessionToken               pgtype.UUID
-	Email                      pgtype.Text
-	Password                   pgtype.Text
-	EmailVerified              bool
-	EmailVerificationToken     pgtype.UUID
-	EmailVerificationExpiresAt pgtype.Timestamptz
-	CreatedAt                  pgtype.Timestamptz
-	UpdatedAt                  pgtype.Timestamptz
+	ID                         uuid.UUID          `json:"id"`
+	IsAnonymous                bool               `json:"is_anonymous"`
+	SessionToken               pgtype.UUID        `json:"session_token"`
+	Email                      pgtype.Text        `json:"email"`
+	Password                   pgtype.Text        `json:"password"`
+	EmailVerified              bool               `json:"email_verified"`
+	EmailVerificationToken     pgtype.UUID        `json:"email_verification_token"`
+	EmailVerificationExpiresAt pgtype.Timestamptz `json:"email_verification_expires_at"`
+	CreatedAt                  pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt                  pgtype.Timestamptz `json:"updated_at"`
 }

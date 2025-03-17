@@ -1,3 +1,5 @@
+-- TODO: divide into smaller chunks
+
 -- name: GetCreatures :many
 SELECT id, name
 FROM creatures
@@ -74,3 +76,11 @@ WHERE id = $1;
 -- name: GetMembers :one
 SELECT * FROM lists_users
 WHERE list_id = $1;
+
+-- name: GetCharacter :one
+SELECT * FROM characters
+WHERE id = $1;
+
+-- name: GetCharactersByUserId :many
+SELECT * FROM characters
+WHERE user_id = $1;

@@ -1,13 +1,15 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "queries.sql"
-    schema: "schema.sql"
+    schema: "db/migrations"
+    queries: "db/queries"
     gen:
       go:
         package: "db"
         out: "db"
         sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_empty_slices: true
         overrides:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
