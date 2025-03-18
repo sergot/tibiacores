@@ -5,23 +5,29 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/sergot/fiendlist/backend/db"
 	"github.com/sergot/fiendlist/backend/handlers"
 )
 
-func setupRoutes(e *echo.Echo, queries *db.Queries) {
+func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	api := e.Group("/api")
 
 	api.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, map[string]string{"status": "ok"})
 	})
 
-	creaturesHandler := handlers.NewCreaturesHandler(queries)
+	creaturesHandler := handlers.NewCreaturesHandler(connPool)
 	api.GET("/creatures", creaturesHandler.GetCreatures)
+
+	listsHandler := handlers.NewListsHandler(connPool)
+	api.GET("/lists/:user_id", listsHandler.GetUserLists)
+	api.POST("/lists", listsHandler.CreateList)
+
+	usersHandler := handlers.NewUsersHandler(connPool)
+	api.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 }
 
 func main() {
@@ -32,22 +38,20 @@ func main() {
 		log.Fatal("Error loading .env file:", err)
 	}
 
-	dbUrl := os.Getenv("DB_URI")
+	dbUrl := os.Getenv("DB_URL")
 
-	conn, err := pgx.Connect(ctx, dbUrl)
+	connPool, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
 	}
-	defer conn.Close(ctx)
-
-	queries := db.New(conn)
+	defer connPool.Close()
 
 	e := echo.New()
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	setupRoutes(e, queries)
+	setupRoutes(e, connPool)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -77,7 +77,7 @@ type List struct {
 	ID        uuid.UUID          `json:"id"`
 	AuthorID  uuid.UUID          `json:"author_id"`
 	Name      string             `json:"name"`
-	ShareCode pgtype.UUID        `json:"share_code"`
+	ShareCode uuid.UUID          `json:"share_code"`
 	World     string             `json:"world"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
@@ -98,11 +98,11 @@ type ListsUser struct {
 type User struct {
 	ID                         uuid.UUID          `json:"id"`
 	IsAnonymous                bool               `json:"is_anonymous"`
-	SessionToken               pgtype.UUID        `json:"session_token"`
+	SessionToken               uuid.UUID          `json:"session_token"`
 	Email                      pgtype.Text        `json:"email"`
 	Password                   pgtype.Text        `json:"password"`
 	EmailVerified              bool               `json:"email_verified"`
-	EmailVerificationToken     pgtype.UUID        `json:"email_verification_token"`
+	EmailVerificationToken     uuid.UUID          `json:"email_verification_token"`
 	EmailVerificationExpiresAt pgtype.Timestamptz `json:"email_verification_expires_at"`
 	CreatedAt                  pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt                  pgtype.Timestamptz `json:"updated_at"`

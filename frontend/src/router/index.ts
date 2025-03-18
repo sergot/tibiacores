@@ -24,6 +24,17 @@ const router = createRouter({
       name: 'signup',
       component: () => import('../views/SignUpView.vue'),
     },
+    {
+      path: '/create-list',
+      name: 'create-list',
+      component: () => import('../views/CreateListView.vue'),
+      props: route => ({ character: route.query.character })
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+    },
   ],
 })
 

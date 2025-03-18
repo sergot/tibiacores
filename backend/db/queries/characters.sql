@@ -9,6 +9,11 @@ ORDER BY name;
 SELECT * FROM characters
 WHERE id = $1;
 
--- name: GetCharactersByUserId :many
+-- name: GetCharactersByUserID :many
 SELECT * FROM characters
 WHERE user_id = $1;
+
+-- name: CreateCharacter :one
+INSERT INTO characters (user_id, name, world)
+VALUES ($1, $2, $3)
+RETURNING *;
