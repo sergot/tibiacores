@@ -1,15 +1,3 @@
--- TODO: divide into smaller chunks
-
--- name: GetCreatures :many
-SELECT id, name
-FROM creatures
-ORDER BY name;
-
--- name: CreateCreature :one
-INSERT INTO creatures (name)
-VALUES ($1)
-RETURNING id, name;
-
 -- name: CreateAnonymousUser :one
 INSERT INTO users (session_token)
 VALUES ($1)
@@ -44,22 +32,6 @@ SELECT * FROM users
 WHERE email = $1;
 
 
--- name: GetUserCharacters :many
-SELECT id, name, world
-FROM characters
-WHERE user_id = $1
-ORDER BY name;
-
--- name: CreateList :one
-INSERT INTO lists (author_id, name, world)
-VALUES ($1, $2, $3)
-RETURNING *;
-
--- name: AddListCharacter :exec
-INSERT INTO lists_users (list_id, user_id, character_id)
-VALUES ($1, $2, $3);
-
-
 -- name: GetUserLists :many
 SELECT DISTINCT
     l.*,
@@ -68,19 +40,3 @@ FROM lists l
 LEFT JOIN lists_users lu ON l.id = lu.list_id AND lu.user_id = $1
 WHERE l.author_id = $1 OR lu.user_id = $1
 ORDER BY l.created_at DESC;
-
--- name: GetList :one
-SELECT * FROM lists
-WHERE id = $1;
-
--- name: GetMembers :one
-SELECT * FROM lists_users
-WHERE list_id = $1;
-
--- name: GetCharacter :one
-SELECT * FROM characters
-WHERE id = $1;
-
--- name: GetCharactersByUserId :many
-SELECT * FROM characters
-WHERE user_id = $1;
