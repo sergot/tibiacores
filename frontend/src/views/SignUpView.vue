@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, RouterLink } from 'vue-router'
-import { LockClosedIcon, PlusIcon } from '@heroicons/vue/24/solid'
+import { PlusIcon } from '@heroicons/vue/24/solid'
 
 const userStore = useUserStore()
 const router = useRouter()

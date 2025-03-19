@@ -11,6 +11,27 @@ interface DBCharacter extends TibiaCharacter {
   user_id: string;
 }
 
+interface BaseListRequest {
+  name: string;
+}
+
+interface AnonymousListRequest extends BaseListRequest {
+  session_token: string;
+  character_name: string;
+  world: string;
+}
+
+interface ExistingCharacterListRequest extends BaseListRequest {
+  character_id: string;
+  user_id: string;
+}
+
+interface NewCharacterListRequest extends BaseListRequest {
+  character_name: string;
+  world: string;
+  user_id: string;
+}
+
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
@@ -34,14 +55,18 @@ onMounted(() => {
   }
 })
 
+const isAnonymousListRequest = (data: BaseListRequest | AnonymousListRequest | ExistingCharacterListRequest | NewCharacterListRequest): data is AnonymousListRequest => {
+  return 'session_token' in data;
+}
+
 const createList = async () => {
   if (!character.value) return
-  
+
   loading.value = true
   error.value = ''
-  
+
   try {
-    let requestData: any = {
+    let requestData: BaseListRequest | AnonymousListRequest | ExistingCharacterListRequest | NewCharacterListRequest = {
       name: listName.value,
     }
 
@@ -72,18 +97,18 @@ const createList = async () => {
         user_id: userStore.userId
       }
     }
-    
+
     const response = await axios.post('/api/lists', requestData)
-    
+
     // Set user state with anonymous user data if this is a first-time user
-    if (!userStore.isAuthenticated) {
+    if (!userStore.isAuthenticated && isAnonymousListRequest(requestData)) {
       userStore.setUser({
         session_token: requestData.session_token,
         id: response.data.author_id,
         is_anonymous: true
       })
     }
-    
+
     router.push('/')
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to create list'
@@ -97,7 +122,7 @@ const createList = async () => {
   <div class="max-w-2xl mx-auto px-4 py-8">
     <div v-if="character" class="bg-white rounded-lg shadow p-6">
       <h1 class="text-2xl font-semibold mb-6">Create New List</h1>
-      
+
       <div class="mb-6 p-4 bg-gray-50 rounded-lg">
         <h2 class="text-lg font-medium mb-3">Character Details</h2>
         <div class="grid grid-cols-2 gap-4">
