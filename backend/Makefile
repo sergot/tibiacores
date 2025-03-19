@@ -14,3 +14,6 @@ goose/up:
 
 goose/down:
 	goose -dir $(migrations_dir) down
+
+goose/reset:
+	goose -dir $(migrations_dir) reset
