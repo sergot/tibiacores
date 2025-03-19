@@ -1,4 +1,4 @@
-migrations_dir = db/migrations
+migrations_dir = backend/db/migrations
 
 export GOOSE_DRIVER=postgres
 export GOOSE_DBSTRING=postgresql://user:pass@localhost:5432/fiendlist
