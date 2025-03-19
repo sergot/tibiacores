@@ -6,8 +6,8 @@ import { useUserStore } from '../stores/user'
 import axios from 'axios'
 
 interface DBCharacter extends TibiaCharacter {
-  id: string;
-  user_id: string;
+  id: string
+  user_id: string
 }
 
 const router = useRouter()
@@ -40,9 +40,9 @@ const filterCharacters = (input: string) => {
     filteredCharacters.value = existingCharacters.value
     return
   }
-  
-  filteredCharacters.value = existingCharacters.value.filter(char => 
-    char.name.toLowerCase().includes(input.toLowerCase())
+
+  filteredCharacters.value = existingCharacters.value.filter((char) =>
+    char.name.toLowerCase().includes(input.toLowerCase()),
   )
 }
 
@@ -74,16 +74,16 @@ const selectCharacter = (character: DBCharacter) => {
 const verifyCharacter = async () => {
   error.value = ''
   loading.value = true
-  
+
   try {
     // If we selected an existing character, use that
     if (selectedCharacter.value) {
       router.push({
         name: 'create-list',
-        query: { 
+        query: {
           character: JSON.stringify(selectedCharacter.value),
-          useExisting: 'true'
-        }
+          useExisting: 'true',
+        },
       })
       return
     }
@@ -92,7 +92,7 @@ const verifyCharacter = async () => {
     const character = await tibiaDataService.getCharacter(characterName.value)
     router.push({
       name: 'create-list',
-      query: { character: JSON.stringify(character) }
+      query: { character: JSON.stringify(character) },
     })
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to verify character'
@@ -107,19 +107,23 @@ const verifyCharacter = async () => {
     <h2 class="mb-4 text-2xl">Create a list</h2>
     <form @submit.prevent="verifyCharacter" class="flex flex-col gap-4">
       <div class="relative">
-        <input 
+        <input
           v-model="characterName"
           type="text"
-          :placeholder="userStore.isAuthenticated ? 'Enter new character or select existing' : 'Enter character name'"
+          :placeholder="
+            userStore.isAuthenticated
+              ? 'Enter new character or select existing'
+              : 'Enter character name'
+          "
           required
           :disabled="loading"
           @input="handleInput"
           @focus="handleFocus"
           @blur="handleBlur"
           class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-        >
-        <div 
-          v-if="showDropdown && userStore.isAuthenticated && filteredCharacters.length > 0" 
+        />
+        <div
+          v-if="showDropdown && userStore.isAuthenticated && filteredCharacters.length > 0"
           class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto"
         >
           <div
@@ -136,7 +140,7 @@ const verifyCharacter = async () => {
       </div>
       <div v-if="isLoadingCharacters" class="text-sm text-gray-500">Loading your characters...</div>
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
-      <button 
+      <button
         type="submit"
         :disabled="loading"
         class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400"

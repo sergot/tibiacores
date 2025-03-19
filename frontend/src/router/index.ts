@@ -28,7 +28,7 @@ const router = createRouter({
       path: '/create-list',
       name: 'create-list',
       component: () => import('../views/CreateListView.vue'),
-      props: route => ({ character: route.query.character })
+      props: (route) => ({ character: route.query.character }),
     },
     {
       path: '/profile',

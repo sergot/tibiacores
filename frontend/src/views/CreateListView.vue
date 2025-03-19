@@ -7,29 +7,29 @@ import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 
 interface DBCharacter extends TibiaCharacter {
-  id: string;
-  user_id: string;
+  id: string
+  user_id: string
 }
 
 interface BaseListRequest {
-  name: string;
+  name: string
 }
 
 interface AnonymousListRequest extends BaseListRequest {
-  session_token: string;
-  character_name: string;
-  world: string;
+  session_token: string
+  character_name: string
+  world: string
 }
 
 interface ExistingCharacterListRequest extends BaseListRequest {
-  character_id: string;
-  user_id: string;
+  character_id: string
+  user_id: string
 }
 
 interface NewCharacterListRequest extends BaseListRequest {
-  character_name: string;
-  world: string;
-  user_id: string;
+  character_name: string
+  world: string
+  user_id: string
 }
 
 const router = useRouter()
@@ -55,8 +55,14 @@ onMounted(() => {
   }
 })
 
-const isAnonymousListRequest = (data: BaseListRequest | AnonymousListRequest | ExistingCharacterListRequest | NewCharacterListRequest): data is AnonymousListRequest => {
-  return 'session_token' in data;
+const isAnonymousListRequest = (
+  data:
+    | BaseListRequest
+    | AnonymousListRequest
+    | ExistingCharacterListRequest
+    | NewCharacterListRequest,
+): data is AnonymousListRequest => {
+  return 'session_token' in data
 }
 
 const createList = async () => {
@@ -66,7 +72,11 @@ const createList = async () => {
   error.value = ''
 
   try {
-    let requestData: BaseListRequest | AnonymousListRequest | ExistingCharacterListRequest | NewCharacterListRequest = {
+    let requestData:
+      | BaseListRequest
+      | AnonymousListRequest
+      | ExistingCharacterListRequest
+      | NewCharacterListRequest = {
       name: listName.value,
     }
 
@@ -77,7 +87,7 @@ const createList = async () => {
         ...requestData,
         session_token: sessionToken,
         character_name: character.value.name,
-        world: character.value.world
+        world: character.value.world,
       }
     }
     // Case 2a: Existing character with ID
@@ -85,7 +95,7 @@ const createList = async () => {
       requestData = {
         ...requestData,
         character_id: character.value.id,
-        user_id: userStore.userId
+        user_id: userStore.userId,
       }
     }
     // Case 2b: New character for existing user
@@ -94,7 +104,7 @@ const createList = async () => {
         ...requestData,
         character_name: character.value.name,
         world: character.value.world,
-        user_id: userStore.userId
+        user_id: userStore.userId,
       }
     }
 
@@ -105,7 +115,7 @@ const createList = async () => {
       userStore.setUser({
         session_token: requestData.session_token,
         id: response.data.author_id,
-        is_anonymous: true
+        is_anonymous: true,
       })
     }
 
@@ -158,7 +168,7 @@ const createList = async () => {
             :disabled="loading"
             placeholder="Enter list name"
             class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
+          />
         </div>
 
         <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>

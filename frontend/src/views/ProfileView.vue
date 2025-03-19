@@ -52,7 +52,9 @@ onMounted(() => {
             <dd class="mt-1 text-sm text-gray-900">
               <div v-if="loading" class="text-gray-500">Loading characters...</div>
               <div v-else-if="error" class="text-red-500">{{ error }}</div>
-              <div v-else-if="characters.length === 0" class="text-gray-500 italic">No characters added yet</div>
+              <div v-else-if="characters.length === 0" class="text-gray-500 italic">
+                No characters added yet
+              </div>
               <ul v-else class="divide-y divide-gray-200">
                 <li v-for="character in characters" :key="character.id" class="py-3">
                   <div class="flex items-center justify-between">

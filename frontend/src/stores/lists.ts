@@ -23,14 +23,14 @@ export const useListsStore = defineStore('lists', {
   state: (): ListsState => ({
     lists: [],
     isLoading: false,
-    error: null
+    error: null,
   }),
 
   getters: {
     hasLists: (state) => state.lists.length > 0,
     getListById: (state) => {
-      return (id: string) => state.lists.find(list => list.id === id)
-    }
+      return (id: string) => state.lists.find((list) => list.id === id)
+    },
   },
 
   actions: {
@@ -43,7 +43,7 @@ export const useListsStore = defineStore('lists', {
 
       this.isLoading = true
       this.error = null
-      
+
       try {
         const response = await axios.get<List[]>(`/api/lists/${userStore.userId}`)
         this.lists = response.data
@@ -58,6 +58,6 @@ export const useListsStore = defineStore('lists', {
     clearLists() {
       this.lists = []
       this.error = null
-    }
-  }
+    },
+  },
 })

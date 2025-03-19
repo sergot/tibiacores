@@ -5,14 +5,14 @@
         <h1 class="text-4xl mb-2">About FiendList</h1>
         <p class="text-xl text-gray-600">Your companion for managing creatures and characters</p>
       </div>
-      
+
       <div class="grid gap-8 md:grid-cols-2">
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">What is FiendList?</h2>
           <p class="text-gray-600">
-            FiendList is a powerful tool designed to help you organize and manage your creatures, 
-            characters, and soul cores. Whether you're a player or a collector, FiendList makes 
-            it easy to keep track of your collection.
+            FiendList is a powerful tool designed to help you organize and manage your creatures,
+            characters, and soul cores. Whether you're a player or a collector, FiendList makes it
+            easy to keep track of your collection.
           </p>
         </div>
 
@@ -41,17 +41,16 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Getting Started</h2>
           <p class="text-gray-600">
-            Join our community by creating an account and start building your first list. 
-            You can easily add creatures, manage characters, and share your collections 
-            with others.
+            Join our community by creating an account and start building your first list. You can
+            easily add creatures, manage characters, and share your collections with others.
           </p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Contact</h2>
           <p class="text-gray-600">
-            Have questions or suggestions? We'd love to hear from you! Check out our
-            documentation or reach out to our support team.
+            Have questions or suggestions? We'd love to hear from you! Check out our documentation
+            or reach out to our support team.
           </p>
         </div>
       </div>
@@ -59,5 +58,4 @@
   </div>
 </template>
 
-<style>
-</style>
+<style></style>

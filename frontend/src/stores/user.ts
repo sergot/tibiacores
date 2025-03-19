@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', {
         this.userId = data.id
         this.isAnonymous = data.is_anonymous
         this.isAuthenticated = true
-        
+
         localStorage.setItem('session_token', data.session_token)
         localStorage.setItem('user_id', data.id)
         localStorage.setItem('is_anonymous', String(data.is_anonymous))
@@ -26,10 +26,10 @@ export const useUserStore = defineStore('user', {
       this.userId = ''
       this.isAnonymous = false
       this.isAuthenticated = false
-      
+
       localStorage.removeItem('session_token')
       localStorage.removeItem('user_id')
       localStorage.removeItem('is_anonymous')
     },
-  }
+  },
 })
