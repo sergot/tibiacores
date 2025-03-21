@@ -3,7 +3,7 @@
 
 ## TODO:
 
-- [ ] Warning on trying to log out when logged in as anonymous user (they will lose their session)
+- [x] Warning on trying to log out when logged in as anonymous user (they will lose their session)
 - [ ] Fix printing lists being only a member (not owner) of a list
 - [ ] Fix join a list form, it should contain a character name input just like the create list form - it should also veirfy that character in tibiadata api
 - [ ] Add a character detail page where we list all the unlocked soulcores
