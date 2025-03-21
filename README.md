@@ -9,3 +9,4 @@
 - [ ] Add a character detail page where we list all the unlocked soulcores
 - [ ] Implement a suggestion system for soulcores - on character detail view, the application will suggest soulcores to add to the character as unlocked based on activity on lists they are a member of
 - [ ] Join list view should check if the user exists in tibiadata api
+- [ ] Create a logo and some branding for the app
