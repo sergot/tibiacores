@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addListCharacter = `-- name: AddListCharacter :exec
@@ -24,6 +25,30 @@ type AddListCharacterParams struct {
 
 func (q *Queries) AddListCharacter(ctx context.Context, arg AddListCharacterParams) error {
 	_, err := q.db.Exec(ctx, addListCharacter, arg.ListID, arg.UserID, arg.CharacterID)
+	return err
+}
+
+const addSoulcoreToList = `-- name: AddSoulcoreToList :exec
+INSERT INTO lists_soulcores (list_id, creature_id, status, added_by_user_id)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (list_id, creature_id) DO UPDATE
+SET status = EXCLUDED.status, added_by_user_id = EXCLUDED.added_by_user_id
+`
+
+type AddSoulcoreToListParams struct {
+	ListID        uuid.UUID      `json:"list_id"`
+	CreatureID    uuid.UUID      `json:"creature_id"`
+	Status        SoulcoreStatus `json:"status"`
+	AddedByUserID uuid.UUID      `json:"added_by_user_id"`
+}
+
+func (q *Queries) AddSoulcoreToList(ctx context.Context, arg AddSoulcoreToListParams) error {
+	_, err := q.db.Exec(ctx, addSoulcoreToList,
+		arg.ListID,
+		arg.CreatureID,
+		arg.Status,
+		arg.AddedByUserID,
+	)
 	return err
 }
 
@@ -74,6 +99,124 @@ func (q *Queries) GetList(ctx context.Context, id uuid.UUID) (List, error) {
 	return i, err
 }
 
+const getListByShareCode = `-- name: GetListByShareCode :one
+SELECT id, author_id, name, share_code, world, created_at, updated_at FROM lists
+WHERE share_code = $1
+`
+
+func (q *Queries) GetListByShareCode(ctx context.Context, shareCode uuid.UUID) (List, error) {
+	row := q.db.QueryRow(ctx, getListByShareCode, shareCode)
+	var i List
+	err := row.Scan(
+		&i.ID,
+		&i.AuthorID,
+		&i.Name,
+		&i.ShareCode,
+		&i.World,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getListMembers = `-- name: GetListMembers :many
+SELECT 
+  u.id as user_id,
+  c.name as character_name,
+  COUNT(DISTINCT CASE WHEN ls.status = 'obtained' OR ls.status = 'unlocked' THEN ls.creature_id END) as obtained_count,
+  COUNT(DISTINCT CASE WHEN ls.status = 'unlocked' THEN ls.creature_id END) as unlocked_count
+FROM lists_users lu
+JOIN users u ON lu.user_id = u.id
+JOIN characters c ON lu.character_id = c.id
+LEFT JOIN lists_soulcores ls ON ls.list_id = $1 AND ls.added_by_user_id = u.id
+WHERE lu.list_id = $1
+GROUP BY u.id, c.name
+`
+
+type GetListMembersRow struct {
+	UserID        uuid.UUID `json:"user_id"`
+	CharacterName string    `json:"character_name"`
+	ObtainedCount int64     `json:"obtained_count"`
+	UnlockedCount int64     `json:"unlocked_count"`
+}
+
+func (q *Queries) GetListMembers(ctx context.Context, listID uuid.UUID) ([]GetListMembersRow, error) {
+	rows, err := q.db.Query(ctx, getListMembers, listID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetListMembersRow{}
+	for rows.Next() {
+		var i GetListMembersRow
+		if err := rows.Scan(
+			&i.UserID,
+			&i.CharacterName,
+			&i.ObtainedCount,
+			&i.UnlockedCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getListSoulcores = `-- name: GetListSoulcores :many
+SELECT 
+  ls.list_id,
+  ls.creature_id,
+  ls.status,
+  cr.name as creature_name,
+  c.name as added_by,
+  ls.added_by_user_id
+FROM lists_soulcores ls
+JOIN creatures cr ON ls.creature_id = cr.id
+LEFT JOIN lists_users lu ON ls.list_id = lu.list_id AND ls.added_by_user_id = lu.user_id
+LEFT JOIN characters c ON lu.character_id = c.id
+WHERE ls.list_id = $1
+ORDER BY cr.name
+`
+
+type GetListSoulcoresRow struct {
+	ListID        uuid.UUID      `json:"list_id"`
+	CreatureID    uuid.UUID      `json:"creature_id"`
+	Status        SoulcoreStatus `json:"status"`
+	CreatureName  string         `json:"creature_name"`
+	AddedBy       pgtype.Text    `json:"added_by"`
+	AddedByUserID uuid.UUID      `json:"added_by_user_id"`
+}
+
+func (q *Queries) GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]GetListSoulcoresRow, error) {
+	rows, err := q.db.Query(ctx, getListSoulcores, listID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetListSoulcoresRow{}
+	for rows.Next() {
+		var i GetListSoulcoresRow
+		if err := rows.Scan(
+			&i.ListID,
+			&i.CreatureID,
+			&i.Status,
+			&i.CreatureName,
+			&i.AddedBy,
+			&i.AddedByUserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListsByAuthorId = `-- name: GetListsByAuthorId :many
 SELECT id, author_id, name, share_code, world, created_at, updated_at FROM lists
 WHERE author_id = $1
@@ -107,14 +250,64 @@ func (q *Queries) GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([
 	return items, nil
 }
 
-const getMembers = `-- name: GetMembers :one
+const getMembers = `-- name: GetMembers :many
 SELECT list_id, user_id, character_id FROM lists_users
 WHERE list_id = $1
 `
 
-func (q *Queries) GetMembers(ctx context.Context, listID uuid.UUID) (ListsUser, error) {
-	row := q.db.QueryRow(ctx, getMembers, listID)
-	var i ListsUser
-	err := row.Scan(&i.ListID, &i.UserID, &i.CharacterID)
-	return i, err
+func (q *Queries) GetMembers(ctx context.Context, listID uuid.UUID) ([]ListsUser, error) {
+	rows, err := q.db.Query(ctx, getMembers, listID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListsUser{}
+	for rows.Next() {
+		var i ListsUser
+		if err := rows.Scan(&i.ListID, &i.UserID, &i.CharacterID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const isUserListMember = `-- name: IsUserListMember :one
+SELECT EXISTS (
+  SELECT 1
+  FROM lists_users
+  WHERE list_id = $1 AND user_id = $2
+) as is_member
+`
+
+type IsUserListMemberParams struct {
+	ListID uuid.UUID `json:"list_id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) IsUserListMember(ctx context.Context, arg IsUserListMemberParams) (bool, error) {
+	row := q.db.QueryRow(ctx, isUserListMember, arg.ListID, arg.UserID)
+	var is_member bool
+	err := row.Scan(&is_member)
+	return is_member, err
+}
+
+const updateSoulcoreStatus = `-- name: UpdateSoulcoreStatus :exec
+UPDATE lists_soulcores
+SET status = $3
+WHERE list_id = $1 AND creature_id = $2
+`
+
+type UpdateSoulcoreStatusParams struct {
+	ListID     uuid.UUID      `json:"list_id"`
+	CreatureID uuid.UUID      `json:"creature_id"`
+	Status     SoulcoreStatus `json:"status"`
+}
+
+func (q *Queries) UpdateSoulcoreStatus(ctx context.Context, arg UpdateSoulcoreStatusParams) error {
+	_, err := q.db.Exec(ctx, updateSoulcoreStatus, arg.ListID, arg.CreatureID, arg.Status)
+	return err
 }

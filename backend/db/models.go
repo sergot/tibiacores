@@ -84,9 +84,10 @@ type List struct {
 }
 
 type ListsSoulcore struct {
-	ListID     uuid.UUID      `json:"list_id"`
-	CreatureID uuid.UUID      `json:"creature_id"`
-	Status     SoulcoreStatus `json:"status"`
+	ListID        uuid.UUID      `json:"list_id"`
+	CreatureID    uuid.UUID      `json:"creature_id"`
+	AddedByUserID uuid.UUID      `json:"added_by_user_id"`
+	Status        SoulcoreStatus `json:"status"`
 }
 
 type ListsUser struct {
@@ -98,7 +99,6 @@ type ListsUser struct {
 type User struct {
 	ID                         uuid.UUID          `json:"id"`
 	IsAnonymous                bool               `json:"is_anonymous"`
-	SessionToken               uuid.UUID          `json:"session_token"`
 	Email                      pgtype.Text        `json:"email"`
 	Password                   pgtype.Text        `json:"password"`
 	EmailVerified              bool               `json:"email_verified"`

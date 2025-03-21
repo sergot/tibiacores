@@ -2,8 +2,10 @@
 import { onMounted } from 'vue'
 import CreateListForm from '../components/CreateListForm.vue'
 import JoinListForm from '../components/JoinListForm.vue'
+import RegisterSuggestion from '../components/RegisterSuggestion.vue'
 import { useUserStore } from '../stores/user'
 import { useListsStore } from '../stores/lists'
+import { RouterLink } from 'vue-router'
 
 const userStore = useUserStore()
 const listsStore = useListsStore()
@@ -88,9 +90,10 @@ onMounted(() => {
         </div>
 
         <div v-else class="grid gap-6">
-          <div
+          <RouterLink
             v-for="list in listsStore.lists"
             :key="list.id"
+            :to="{ name: 'list-detail', params: { id: list.id } }"
             class="p-6 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-lg group"
           >
             <div class="flex justify-between items-start">
@@ -134,8 +137,7 @@ onMounted(() => {
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
                     </svg>
-                    {{ list.is_author ? 'Owner Character' : 'Member Character' }}:
-                    {{ list.character_name }}
+                    Character: {{ list.character_name }}
                   </p>
                 </div>
               </div>
@@ -154,8 +156,12 @@ onMounted(() => {
                 </span>
               </div>
             </div>
-          </div>
+          </RouterLink>
         </div>
+      </div>
+
+      <div v-if="userStore.isAnonymous" class="mb-8">
+        <RegisterSuggestion />
       </div>
 
       <div class="mt-8 p-6 rounded-lg bg-white text-center">

@@ -1,11 +1,16 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
+	"github.com/sergot/fiendlist/backend/auth"
 	"github.com/sergot/fiendlist/backend/db"
 )
 
@@ -13,24 +18,207 @@ type UsersHandler struct {
 	connPool *pgxpool.Pool
 }
 
+type SignupRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	UserID   string `json:"user_id,omitempty"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func NewUsersHandler(connPool *pgxpool.Pool) *UsersHandler {
 	return &UsersHandler{connPool}
 }
 
+// Login authenticates a user with email and password
+func (h *UsersHandler) Login(c echo.Context) error {
+	var req LoginRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+	}
+
+	if req.Email == "" || req.Password == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	var email pgtype.Text
+	email.String = req.Email
+	email.Valid = true
+
+	user, err := queries.GetUserByEmail(ctx, email)
+	if err != nil {
+		log.Printf("Failed to get user by email: %v", err)
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid email or password")
+	}
+
+	// Check password
+	if !user.Password.Valid || !auth.CheckPasswordHash(req.Password, user.Password.String) {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid email or password")
+	}
+
+	// Generate token
+	token, err := auth.GenerateToken(user.ID.String(), true)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"id":            user.ID,
+		"session_token": token,
+		"has_email":     true,
+	})
+}
+
+// Signup adds email/password to an account (new or existing)
+func (h *UsersHandler) Signup(c echo.Context) error {
+	var req SignupRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+	}
+
+	if req.Email == "" || req.Password == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Hash password
+	hashedPassword, err := auth.HashPassword(req.Password)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to process password")
+	}
+
+	var email pgtype.Text
+	email.String = req.Email
+	email.Valid = true
+
+	var password pgtype.Text
+	password.String = hashedPassword
+	password.Valid = true
+
+	verificationToken := uuid.New()
+	expiresAt := pgtype.Timestamptz{
+		Time:  time.Now().Add(24 * time.Hour),
+		Valid: true,
+	}
+
+	var user db.User
+
+	if req.UserID != "" {
+		// Update existing account with email/password
+		userID, parseErr := uuid.Parse(req.UserID)
+		if parseErr != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID format")
+		}
+
+		user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+			Email:                      email,
+			Password:                   password,
+			EmailVerificationToken:     verificationToken,
+			EmailVerificationExpiresAt: expiresAt,
+			ID:                         userID,
+		})
+	} else {
+		// Create new account with email/password
+		user, err = queries.CreateUser(ctx, db.CreateUserParams{
+			Email:                      email,
+			Password:                   password,
+			EmailVerificationToken:     verificationToken,
+			EmailVerificationExpiresAt: expiresAt,
+		})
+	}
+
+	if err != nil {
+		log.Printf("Failed to create/update user: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+	}
+
+	// Generate new token
+	token, err := auth.GenerateToken(user.ID.String(), true)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+	}
+
+	// TODO: Send verification email with token
+
+	return c.JSON(http.StatusCreated, map[string]interface{}{
+		"id":            user.ID,
+		"session_token": token,
+		"has_email":     true,
+	})
+}
+
 func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
+	ctx := c.Request().Context()
 	queries := db.New(h.connPool)
 
-	userID, err := uuid.Parse(c.Param("user_id"))
+	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
-		return echo.NewHTTPError(400, "invalid user ID")
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
 	}
 
-	characters, err := queries.GetCharactersByUserID(c.Request().Context(), userID)
-	if err != nil {
-		// log the error for debugging
-		log.Printf("Error getting characters for user %s: %v", userID, err)
-		return echo.NewHTTPError(500, "failed to get characters")
+	// Get authenticated user ID from context
+	authedUserIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
 	}
 
-	return c.JSON(200, characters)
+	authedUserID, err := uuid.Parse(authedUserIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	// Only allow users to view their own characters
+	if requestedUserID != authedUserID {
+		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' characters")
+	}
+
+	characters, err := queries.GetCharactersByUserID(ctx, requestedUserID)
+	if err != nil {
+		log.Printf("Error getting characters for user %s: %v", requestedUserID, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get characters")
+	}
+
+	return c.JSON(http.StatusOK, characters)
+}
+
+// GetUserLists returns all lists where the user is either an author or a member
+func (h *UsersHandler) GetUserLists(c echo.Context) error {
+	queries := db.New(h.connPool)
+
+	requestedUserID, err := uuid.Parse(c.Param("user_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+	}
+
+	// Get authenticated user ID from context
+	authedUserIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+	}
+
+	authedUserID, err := uuid.Parse(authedUserIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	// Only allow users to view their own lists
+	if requestedUserID != authedUserID {
+		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' lists")
+	}
+
+	ctx := c.Request().Context()
+	lists, err := queries.GetUserLists(ctx, requestedUserID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get lists")
+	}
+
+	return c.JSON(http.StatusOK, lists)
 }

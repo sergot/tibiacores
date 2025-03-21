@@ -4,32 +4,37 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('session_token') || '',
     userId: localStorage.getItem('user_id') || '',
-    isAuthenticated: !!localStorage.getItem('session_token'),
-    isAnonymous: localStorage.getItem('is_anonymous') === 'true',
+    hasEmail: localStorage.getItem('has_email') === 'true',
   }),
-  actions: {
-    setUser(data: { session_token: string; id: string; is_anonymous: boolean }) {
-      // Only set user if there is no existing authenticated user or current user is anonymous
-      if (!this.isAuthenticated || this.isAnonymous) {
-        this.token = data.session_token
-        this.userId = data.id
-        this.isAnonymous = data.is_anonymous
-        this.isAuthenticated = true
 
-        localStorage.setItem('session_token', data.session_token)
-        localStorage.setItem('user_id', data.id)
-        localStorage.setItem('is_anonymous', String(data.is_anonymous))
-      }
+  getters: {
+    // A user exists if they have a token (regardless of anonymous/registered status)
+    hasAccount: (state) => !!state.token,
+    // Anonymous just means they don't have an email yet
+    isAnonymous: (state) => state.hasAccount && !state.hasEmail,
+    // User is authenticated if they have a token
+    isAuthenticated: (state) => !!state.token,
+  },
+
+  actions: {
+    setUser(data: { session_token: string; id: string; has_email: boolean }) {
+      this.token = data.session_token
+      this.userId = data.id
+      this.hasEmail = data.has_email
+
+      localStorage.setItem('session_token', data.session_token)
+      localStorage.setItem('user_id', data.id)
+      localStorage.setItem('has_email', String(data.has_email))
     },
+
     clearUser() {
       this.token = ''
       this.userId = ''
-      this.isAnonymous = false
-      this.isAuthenticated = false
+      this.hasEmail = false
 
       localStorage.removeItem('session_token')
       localStorage.removeItem('user_id')
-      localStorage.removeItem('is_anonymous')
-    },
+      localStorage.removeItem('has_email')
+    }
   },
 })

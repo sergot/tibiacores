@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useListsStore } from '@/stores/lists'
 import type { Character as TibiaCharacter } from '../services/tibiadata'
-import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 
 interface DBCharacter extends TibiaCharacter {
@@ -11,30 +11,10 @@ interface DBCharacter extends TibiaCharacter {
   user_id: string
 }
 
-interface BaseListRequest {
-  name: string
-}
-
-interface AnonymousListRequest extends BaseListRequest {
-  session_token: string
-  character_name: string
-  world: string
-}
-
-interface ExistingCharacterListRequest extends BaseListRequest {
-  character_id: string
-  user_id: string
-}
-
-interface NewCharacterListRequest extends BaseListRequest {
-  character_name: string
-  world: string
-  user_id: string
-}
-
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const listsStore = useListsStore()
 const character = ref<TibiaCharacter | DBCharacter | null>(null)
 const listName = ref('')
 const error = ref('')
@@ -50,78 +30,51 @@ onMounted(() => {
     character.value = JSON.parse(characterData)
     useExisting.value = route.query.useExisting === 'true'
   } catch (e) {
+    error.value = 'Invalid character data'
     console.error('Failed to parse character data:', e)
-    router.push('/')
+    setTimeout(() => router.push('/'), 2000)
   }
 })
 
-const isAnonymousListRequest = (
-  data:
-    | BaseListRequest
-    | AnonymousListRequest
-    | ExistingCharacterListRequest
-    | NewCharacterListRequest,
-): data is AnonymousListRequest => {
-  return 'session_token' in data
-}
-
-const createList = async () => {
-  if (!character.value) return
+const handleSubmit = async () => {
+  if (!character.value || !listName.value) return
 
   loading.value = true
   error.value = ''
 
   try {
-    let requestData:
-      | BaseListRequest
-      | AnonymousListRequest
-      | ExistingCharacterListRequest
-      | NewCharacterListRequest = {
+    const requestData = {
       name: listName.value,
-    }
-
-    // Case 1: First-time user with session token
-    if (!userStore.isAuthenticated) {
-      const sessionToken = uuidv4()
-      requestData = {
-        ...requestData,
-        session_token: sessionToken,
-        character_name: character.value.name,
-        world: character.value.world,
-      }
-    }
-    // Case 2a: Existing character with ID
-    else if (useExisting.value && 'id' in character.value) {
-      requestData = {
-        ...requestData,
+      ...(useExisting.value && 'id' in character.value && {
         character_id: character.value.id,
-        user_id: userStore.userId,
-      }
-    }
-    // Case 2b: New character for existing user
-    else {
-      requestData = {
-        ...requestData,
+      }),
+      ...(!useExisting.value && {
         character_name: character.value.name,
         world: character.value.world,
-        user_id: userStore.userId,
-      }
+      }),
     }
 
     const response = await axios.post('/api/lists', requestData)
-
-    // Set user state with anonymous user data if this is a first-time user
-    if (!userStore.isAuthenticated && isAnonymousListRequest(requestData)) {
+    
+    // For anonymous users, get the token from response header
+    const authToken = response.headers['x-auth-token']
+    if (authToken && !userStore.isAuthenticated) {
       userStore.setUser({
-        session_token: requestData.session_token,
+        session_token: authToken,
         id: response.data.author_id,
-        is_anonymous: true,
+        has_email: false,
       })
     }
 
+    // Fetch updated lists and redirect to home
+    await listsStore.fetchUserLists()
     router.push('/')
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to create list'
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response) {
+      error.value = err.response.data.message || 'Failed to create list'
+    } else {
+      error.value = 'Network error. Please try again.'
+    }
   } finally {
     loading.value = false
   }
@@ -130,6 +83,10 @@ const createList = async () => {
 
 <template>
   <div class="max-w-2xl mx-auto px-4 py-8">
+    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <p class="text-red-700">{{ error }}</p>
+    </div>
+    
     <div v-if="character" class="bg-white rounded-lg shadow p-6">
       <h1 class="text-2xl font-semibold mb-6">Create New List</h1>
 
@@ -155,7 +112,7 @@ const createList = async () => {
         </div>
       </div>
 
-      <form @submit.prevent="createList" class="space-y-4">
+      <form @submit.prevent="handleSubmit" class="space-y-4">
         <div>
           <label for="listName" class="block text-sm font-medium text-gray-700 mb-1">
             List Name
@@ -171,14 +128,33 @@ const createList = async () => {
           />
         </div>
 
-        <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
-
         <div class="flex gap-4">
           <button
             type="submit"
             :disabled="loading"
-            class="flex-1 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400"
+            class="flex-1 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400 flex items-center justify-center"
           >
+            <svg
+              v-if="loading"
+              class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
             {{ loading ? 'Creating...' : 'Create List' }}
           </button>
           <button

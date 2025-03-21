@@ -1,5 +1,5 @@
 -- name: CreateAnonymousUser :one
-INSERT INTO users (session_token, is_anonymous)
+INSERT INTO users (id, is_anonymous)
 VALUES ($1, TRUE)
 RETURNING *;
 
@@ -8,7 +8,6 @@ INSERT INTO users (email, password, email_verification_token, email_verification
 VALUES ($1, $2, $3, $4, FALSE)
 RETURNING *;
 
-
 -- name: MigrateAnonymousUser :one
 UPDATE users
 SET email = $1,
@@ -16,7 +15,7 @@ SET email = $1,
     email_verification_token = $3,
     email_verification_expires_at = $4,
     is_anonymous = false
-WHERE id = $5
+WHERE id = $5 AND is_anonymous = true
 RETURNING *;
 
 -- name: VerifyEmail :exec
@@ -26,11 +25,9 @@ SET email_verified = true,
     email_verification_expires_at = NULL
 WHERE id = $1 AND email_verification_token = $2;
 
-
 -- name: GetUserByEmail :one
 SELECT * FROM users
 WHERE email = $1;
-
 
 -- name: GetUserLists :many
 WITH user_lists AS (

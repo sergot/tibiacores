@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
   Bars3Icon,
@@ -11,10 +11,17 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const userStore = useUserStore()
+const router = useRouter()
 const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
+}
+
+const handleLogout = () => {
+  userStore.clearUser()
+  router.push('/signin')
+  isMenuOpen.value = false
 }
 </script>
 
@@ -74,6 +81,13 @@ const toggleMenu = () => {
               <UserIcon class="h-5 w-5 mr-2" />
               Profile
             </RouterLink>
+            <button
+              @click="handleLogout"
+              class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center"
+            >
+              <ArrowRightStartOnRectangleIcon class="h-5 w-5 mr-2" />
+              Sign out
+            </button>
           </template>
         </div>
 
@@ -139,6 +153,13 @@ const toggleMenu = () => {
               <UserIcon class="h-5 w-5 mr-2" />
               Profile
             </RouterLink>
+            <button
+              @click="handleLogout"
+              class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium inline-flex items-center w-full text-left"
+            >
+              <ArrowRightStartOnRectangleIcon class="h-5 w-5 mr-2" />
+              Sign out
+            </button>
           </template>
         </div>
       </div>

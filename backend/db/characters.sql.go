@@ -11,6 +11,21 @@ import (
 	"github.com/google/uuid"
 )
 
+const addCharacterSoulcore = `-- name: AddCharacterSoulcore :exec
+INSERT INTO characters_soulcores (character_id, creature_id)
+VALUES ($1, $2)
+`
+
+type AddCharacterSoulcoreParams struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	CreatureID  uuid.UUID `json:"creature_id"`
+}
+
+func (q *Queries) AddCharacterSoulcore(ctx context.Context, arg AddCharacterSoulcoreParams) error {
+	_, err := q.db.Exec(ctx, addCharacterSoulcore, arg.CharacterID, arg.CreatureID)
+	return err
+}
+
 const createCharacter = `-- name: CreateCharacter :one
 INSERT INTO characters (user_id, name, world)
 VALUES ($1, $2, $3)
@@ -119,4 +134,19 @@ func (q *Queries) GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]Ge
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeCharacterSoulcore = `-- name: RemoveCharacterSoulcore :exec
+DELETE FROM characters_soulcores
+WHERE character_id = $1 AND creature_id = $2
+`
+
+type RemoveCharacterSoulcoreParams struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	CreatureID  uuid.UUID `json:"creature_id"`
+}
+
+func (q *Queries) RemoveCharacterSoulcore(ctx context.Context, arg RemoveCharacterSoulcoreParams) error {
+	_, err := q.db.Exec(ctx, removeCharacterSoulcore, arg.CharacterID, arg.CreatureID)
+	return err
 }

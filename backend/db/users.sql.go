@@ -13,18 +13,17 @@ import (
 )
 
 const createAnonymousUser = `-- name: CreateAnonymousUser :one
-INSERT INTO users (session_token, is_anonymous)
+INSERT INTO users (id, is_anonymous)
 VALUES ($1, TRUE)
-RETURNING id, is_anonymous, session_token, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
+RETURNING id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
 `
 
-func (q *Queries) CreateAnonymousUser(ctx context.Context, sessionToken uuid.UUID) (User, error) {
-	row := q.db.QueryRow(ctx, createAnonymousUser, sessionToken)
+func (q *Queries) CreateAnonymousUser(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, createAnonymousUser, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.IsAnonymous,
-		&i.SessionToken,
 		&i.Email,
 		&i.Password,
 		&i.EmailVerified,
@@ -39,7 +38,7 @@ func (q *Queries) CreateAnonymousUser(ctx context.Context, sessionToken uuid.UUI
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (email, password, email_verification_token, email_verification_expires_at, is_anonymous)
 VALUES ($1, $2, $3, $4, FALSE)
-RETURNING id, is_anonymous, session_token, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
+RETURNING id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -60,7 +59,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	err := row.Scan(
 		&i.ID,
 		&i.IsAnonymous,
-		&i.SessionToken,
 		&i.Email,
 		&i.Password,
 		&i.EmailVerified,
@@ -73,7 +71,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, is_anonymous, session_token, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at FROM users
+SELECT id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at FROM users
 WHERE email = $1
 `
 
@@ -83,7 +81,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, 
 	err := row.Scan(
 		&i.ID,
 		&i.IsAnonymous,
-		&i.SessionToken,
 		&i.Email,
 		&i.Password,
 		&i.EmailVerified,
@@ -175,8 +172,8 @@ SET email = $1,
     email_verification_token = $3,
     email_verification_expires_at = $4,
     is_anonymous = false
-WHERE id = $5
-RETURNING id, is_anonymous, session_token, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
+WHERE id = $5 AND is_anonymous = true
+RETURNING id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
 `
 
 type MigrateAnonymousUserParams struct {
@@ -199,7 +196,6 @@ func (q *Queries) MigrateAnonymousUser(ctx context.Context, arg MigrateAnonymous
 	err := row.Scan(
 		&i.ID,
 		&i.IsAnonymous,
-		&i.SessionToken,
 		&i.Email,
 		&i.Password,
 		&i.EmailVerified,

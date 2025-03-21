@@ -35,6 +35,18 @@ const router = createRouter({
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),
     },
+    {
+      path: '/lists/:id',
+      name: 'list-detail',
+      component: () => import('../views/ListDetailView.vue'),
+      props: true,
+    },
+    {
+      path: '/join/:share_code',
+      name: 'join-list',
+      component: () => import('../views/JoinListView.vue'),
+      props: true,
+    },
   ],
 })
 
