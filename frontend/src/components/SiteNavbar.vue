@@ -8,20 +8,35 @@ import {
   ArrowRightStartOnRectangleIcon,
   UserPlusIcon,
   UserIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 
 const userStore = useUserStore()
 const router = useRouter()
 const isMenuOpen = ref(false)
+const showLogoutWarning = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
+}
+
+const initiateLogout = () => {
+  if (userStore.isAnonymous) {
+    showLogoutWarning.value = true
+  } else {
+    handleLogout()
+  }
 }
 
 const handleLogout = () => {
   userStore.clearUser()
   router.push('/signin')
   isMenuOpen.value = false
+  showLogoutWarning.value = false
+}
+
+const cancelLogout = () => {
+  showLogoutWarning.value = false
 }
 </script>
 
@@ -82,7 +97,7 @@ const handleLogout = () => {
               Profile
             </RouterLink>
             <button
-              @click="handleLogout"
+              @click="initiateLogout"
               class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center"
             >
               <ArrowRightStartOnRectangleIcon class="h-5 w-5 mr-2" />
@@ -154,7 +169,7 @@ const handleLogout = () => {
               Profile
             </RouterLink>
             <button
-              @click="handleLogout"
+              @click="initiateLogout"
               class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium inline-flex items-center w-full text-left"
             >
               <ArrowRightStartOnRectangleIcon class="h-5 w-5 mr-2" />
@@ -165,4 +180,46 @@ const handleLogout = () => {
       </div>
     </div>
   </nav>
+
+  <!-- Logout warning modal -->
+  <div v-if="showLogoutWarning" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full p-6">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <ExclamationTriangleIcon class="h-6 w-6 text-yellow-400" />
+        </div>
+        <div class="ml-3">
+          <h3 class="text-lg font-medium text-gray-900">Warning: You're using an anonymous account</h3>
+          <div class="mt-2">
+            <p class="text-sm text-gray-500">
+              If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.
+            </p>
+          </div>
+          <div class="mt-4 flex space-x-4">
+            <RouterLink
+              to="/signup"
+              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
+              @click="showLogoutWarning = false"
+            >
+              Register now
+            </RouterLink>
+            <button
+              type="button"
+              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
+              @click="handleLogout"
+            >
+              Sign out anyway
+            </button>
+            <button
+              type="button"
+              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
+              @click="cancelLogout"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
