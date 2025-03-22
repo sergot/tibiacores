@@ -11,3 +11,4 @@
 - [x] Join list view should check if the user exists in tibiadata api
 - [ ] Create a logo and some branding for the app
 - [ ] Character name should be unique
+- [ ] Claiming character name system - by adding a comment on tibia.com profile
