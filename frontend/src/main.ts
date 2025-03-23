@@ -14,6 +14,9 @@ app.use(router)
 
 // Configure axios after Pinia is initialized
 import { useUserStore } from './stores/user'
+import { useListsStore } from './stores/lists'
+
+// Request interceptor
 axios.interceptors.request.use((config) => {
   const userStore = useUserStore()
   if (userStore.token) {
@@ -22,13 +25,23 @@ axios.interceptors.request.use((config) => {
   return config
 })
 
+// Response interceptor
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       const userStore = useUserStore()
+      const listsStore = useListsStore()
+
+      // Clear both user data and lists
       userStore.clearUser()
-      router.push('/signin')
+      listsStore.clearLists()
+
+      // Only redirect if not already on signin/signup pages
+      const authRoutes = ['/signin', '/signup']
+      if (!authRoutes.includes(router.currentRoute.value.path)) {
+        router.push('/signin')
+      }
     }
     return Promise.reject(error)
   }

@@ -27,9 +27,11 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	creaturesHandler := handlers.NewCreaturesHandler(connPool)
 	oauthHandler := handlers.NewOAuthHandler(connPool)
 
-	// Public list endpoints
-	api.GET("/lists/preview/:share_code", listsHandler.GetListPreview)
-	api.POST("/lists/join/:share_code", listsHandler.JoinList)
+	// Public list endpoints that allow optional auth
+	optionalAuth := api.Group("", auth.OptionalAuthMiddleware)
+	optionalAuth.GET("/lists/preview/:share_code", listsHandler.GetListPreview)
+	optionalAuth.POST("/lists/join/:share_code", listsHandler.JoinList)
+	optionalAuth.POST("/lists", listsHandler.CreateList) // Moved here from protected routes
 
 	// User management routes
 	api.POST("/signup", usersHandler.Signup)
@@ -42,13 +44,10 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 
 	// Protected routes with auth middleware
 	protected := api.Group("", auth.AuthMiddleware)
-
 	protected.GET("/creatures", creaturesHandler.GetCreatures)
-	protected.POST("/lists", listsHandler.CreateList)
 	protected.GET("/lists/:id", listsHandler.GetList)
 	protected.POST("/lists/:id/soulcores", listsHandler.AddSoulcore)
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
-
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
 }

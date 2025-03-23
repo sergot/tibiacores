@@ -21,6 +21,12 @@ interface ListPreview {
   member_count: number
 }
 
+// Add interface for member type
+interface ListMember {
+  user_id: string
+  character_name: string
+}
+
 const props = defineProps<{
   share_code: string
 }>()
@@ -32,12 +38,13 @@ const listsStore = useListsStore()
 
 const characterName = ref('')
 const error = ref('')
+const characterError = ref('')
 const loading = ref(true)
 const existingCharacters = ref<DBCharacter[]>([])
 const selectedCharacter = ref<DBCharacter | null>(null)
-const character = ref<TibiaCharacter | null>(null)
 const listPreview = ref<ListPreview | null>(null)
-const isExistingCharacter = ref(false)
+const showDropdown = ref(false)
+const filteredCharacters = ref<DBCharacter[]>([])
 
 onMounted(async () => {
   try {
@@ -51,11 +58,10 @@ onMounted(async () => {
       existingCharacters.value = charResponse.data.filter(char => char.world === listPreview.value?.world)
     }
 
-    // If character name was provided in query, verify it
+    // If character name was provided in query, set it
     const queryCharacter = route.query.character as string
     if (queryCharacter) {
       characterName.value = queryCharacter
-      await verifyCharacter()
     }
   } catch (e) {
     if (axios.isAxiosError(e)) {
@@ -69,30 +75,9 @@ onMounted(async () => {
   }
 })
 
-const verifyCharacter = async () => {
-  error.value = ''
-  loading.value = true
-  character.value = null
-
-  try {
-    const tibiaCharacter = await tibiaDataService.getCharacter(characterName.value)
-    
-    // Verify world matches
-    if (tibiaCharacter.world !== listPreview.value?.world) {
-      throw new Error(`Character must be from ${listPreview.value?.world}`)
-    }
-
-    character.value = tibiaCharacter
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to verify character'
-    character.value = null
-  } finally {
-    loading.value = false
-  }
-}
-
 const handleJoin = async () => {
   error.value = ''
+  characterError.value = ''
   loading.value = true
 
   try {
@@ -101,27 +86,53 @@ const handleJoin = async () => {
     // If user selected existing character
     if (selectedCharacter.value) {
       requestData = {
-        character_id: selectedCharacter.value.id,
+        character_id: selectedCharacter.value.id as string,
       }
     }
-    // If user verified a new character
-    else if (character.value) {
-      requestData = {
-        character_name: character.value.name,
-        world: character.value.world,
+    // If user entered a new character name, verify it first
+    else if (characterName.value) {
+      try {
+        const tibiaCharacter = await tibiaDataService.getCharacter(characterName.value)
+
+        // Verify world matches
+        if (tibiaCharacter.world !== listPreview.value?.world) {
+          characterError.value = `Character must be from ${listPreview.value?.world}`
+          loading.value = false
+          return
+        }
+
+        requestData = {
+          character_name: tibiaCharacter.name,
+          world: tibiaCharacter.world,
+        }
+      } catch (e) {
+        characterError.value = 'Character not found'
+        loading.value = false
+        return
       }
     } else {
-      throw new Error('Please verify your character first')
+      characterError.value = 'Please enter a character name'
+      loading.value = false
+      return
     }
 
-    const response = await axios.post(`/api/lists/join/${props.share_code}`, requestData)
-    
-    // For anonymous users, get the token from response header
+    const response = await axios.post<{ id: string, members: ListMember[] }>(`/api/lists/join/${props.share_code}`, requestData)
+
+    // For anonymous users, get the token from response header and find our user ID
+    // from the members list (we'll be the only member with the character we just added)
     const authToken = response.headers['x-auth-token']
     if (authToken && !userStore.isAuthenticated) {
+      // Find our user ID from the response - we'll be the member with the character we just joined with
+      const ourCharacterName = selectedCharacter.value?.name || characterName.value
+      const ourMember = response.data.members.find((m: ListMember) => m.character_name === ourCharacterName)
+
+      if (!ourMember) {
+        throw new Error('Failed to identify user after joining')
+      }
+
       userStore.setUser({
         session_token: authToken,
-        id: response.data.author_id,
+        id: ourMember.user_id,
         has_email: false,
       })
     }
@@ -140,10 +151,41 @@ const handleJoin = async () => {
   }
 }
 
+const filterCharacters = (input: string) => {
+  if (!input) {
+    filteredCharacters.value = existingCharacters.value
+    return
+  }
+
+  filteredCharacters.value = existingCharacters.value.filter((char) =>
+    char.name.toLowerCase().includes(input.toLowerCase()),
+  )
+}
+
+const handleInput = (event: Event) => {
+  const input = (event.target as HTMLInputElement).value
+  characterName.value = input
+  selectedCharacter.value = null
+  characterError.value = '' // Clear error on input
+  filterCharacters(input)
+  showDropdown.value = true
+}
+
+const handleFocus = () => {
+  showDropdown.value = true
+  filterCharacters(characterName.value)
+}
+
+const handleBlur = () => {
+  setTimeout(() => {
+    showDropdown.value = false
+  }, 200)
+}
+
 const selectExistingCharacter = (char: DBCharacter) => {
   selectedCharacter.value = char
-  character.value = null
   characterName.value = char.name
+  showDropdown.value = false
 }
 </script>
 
@@ -192,81 +234,40 @@ const selectExistingCharacter = (char: DBCharacter) => {
 
         <div class="space-y-6">
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="text-lg font-medium">Character Information</h3>
-              <div class="space-x-4">
-                <button
-                  v-if="userStore.isAuthenticated && existingCharacters.length > 0 && !isExistingCharacter"
-                  type="button"
-                  class="text-sm text-indigo-600 hover:text-indigo-800"
-                  @click="isExistingCharacter = true"
-                >
-                  Use existing character
-                </button>
-                <button
-                  v-if="isExistingCharacter"
-                  type="button"
-                  class="text-sm text-indigo-600 hover:text-indigo-800"
-                  @click="isExistingCharacter = false; selectedCharacter = null"
-                >
-                  Add new character
-                </button>
+            <h3 class="text-lg font-medium mb-2">Character Information</h3>
+            <div class="relative">
+              <input
+                v-model="characterName"
+                type="text"
+                :placeholder="`Enter character name from ${listPreview.world}`"
+                :class="{
+                  'w-full p-3 border rounded-lg focus:outline-none focus:ring-2': true,
+                  'border-red-300 focus:ring-red-500': characterError,
+                  'border-gray-300 focus:ring-indigo-500': !characterError
+                }"
+                @input="handleInput"
+                @focus="handleFocus"
+                @blur="handleBlur"
+              />
+              <div
+                v-if="characterError"
+                class="mt-1 text-sm text-red-600"
+              >
+                {{ characterError }}
               </div>
-            </div>
-
-            <!-- Existing characters selection -->
-            <div v-if="isExistingCharacter" class="mb-4">
-              <div class="grid gap-2">
-                <button
-                  v-for="char in existingCharacters"
+              <div
+                v-if="showDropdown && userStore.isAuthenticated && filteredCharacters.length > 0"
+                class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto"
+              >
+                <div
+                  v-for="char in filteredCharacters"
                   :key="char.id"
                   @click="selectExistingCharacter(char)"
-                  class="p-3 text-left border rounded-lg hover:bg-gray-50"
-                  :class="selectedCharacter?.id === char.id ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'"
+                  @mousedown.prevent
+                  class="p-3 hover:bg-gray-50 cursor-pointer"
                 >
                   <div class="font-medium">{{ char.name }}</div>
                   <div class="text-sm text-gray-500">{{ char.world }}</div>
-                </button>
-              </div>
-            </div>
-
-            <!-- New character verification -->
-            <div v-else>
-              <div class="flex gap-2">
-                <input
-                  v-model="characterName"
-                  type="text"
-                  :placeholder="`Enter character name from ${listPreview.world}`"
-                  class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  @click="verifyCharacter"
-                  :disabled="!characterName || loading"
-                  class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400"
-                >
-                  Verify
-                </button>
-              </div>
-
-              <!-- Character details after verification -->
-              <div v-if="character" class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <p class="text-gray-600">Name</p>
-                    <p class="font-medium">{{ character.name }}</p>
-                  </div>
-                  <div>
-                    <p class="text-gray-600">World</p>
-                    <p class="font-medium">{{ character.world }}</p>
-                  </div>
-                  <div>
-                    <p class="text-gray-600">Level</p>
-                    <p class="font-medium">{{ character.level }}</p>
-                  </div>
-                  <div>
-                    <p class="text-gray-600">Vocation</p>
-                    <p class="font-medium">{{ character.vocation }}</p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -275,7 +276,7 @@ const selectExistingCharacter = (char: DBCharacter) => {
           <div class="flex gap-4">
             <button
               @click="handleJoin"
-              :disabled="loading || (!selectedCharacter && !character)"
+              :disabled="loading || (!selectedCharacter && !characterName)"
               class="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400 transition-colors duration-200 flex items-center justify-center"
             >
               <svg

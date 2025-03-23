@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -401,9 +402,9 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 
 // JoinListRequest represents the request body for joining a list
 type JoinListRequest struct {
-	CharacterName string     `json:"character_name,omitempty"`
-	World         string     `json:"world,omitempty"`
-	CharacterID   *uuid.UUID `json:"character_id,omitempty"`
+	CharacterName string `json:"character_name,omitempty"`
+	World         string `json:"world,omitempty"`
+	CharacterID   string `json:"character_id,omitempty"`
 }
 
 // JoinList allows a user to join a list using its share code
@@ -428,12 +429,20 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 	}
 
 	// Check if user is authenticated
-	userIDStr := c.Get("user_id")
 	var userID uuid.UUID
 	var token string
 
-	if userIDStr == nil {
+	// Get authenticated user ID from context
+	if userIDStr, ok := c.Get("user_id").(string); ok && userIDStr != "" {
+		// User is authenticated, parse their ID
+		userID, err = uuid.Parse(userIDStr)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		}
+		log.Printf("Using existing authenticated user: %s", userID)
+	} else {
 		// Create new anonymous user account
+		log.Printf("No authenticated user found, creating anonymous user")
 		newUser, err := queries.CreateAnonymousUser(ctx, uuid.New())
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
@@ -447,20 +456,9 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		}
 		c.Response().Header().Set("X-Auth-Token", token)
 
-		// For new users, we need character info
-		if req.CharacterName == "" || req.World == "" {
+		// For new users joining with a new character, require character info
+		if req.CharacterID == "" && (req.CharacterName == "" || req.World == "") {
 			return echo.NewHTTPError(http.StatusBadRequest, "character_name and world are required for first join")
-		}
-	} else {
-		// Use existing user
-		var ok bool
-		userIDStr, ok := userIDStr.(string)
-		if !ok {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
-		}
-		userID, err = uuid.Parse(userIDStr)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 		}
 	}
 
@@ -477,16 +475,30 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 	}
 
 	var character db.Character
-	if req.CharacterID != nil {
-		// Verify character exists and belongs to user
-		character, err = queries.GetCharacter(ctx, *req.CharacterID)
+	if req.CharacterID != "" {
+		// Parse character ID from string to UUID
+		characterID, err := uuid.Parse(req.CharacterID)
 		if err != nil {
+			log.Printf("Failed to parse character ID %q: %v", req.CharacterID, err)
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID format")
+		}
+		log.Printf("Parsed character ID: %s", characterID)
+
+		// Verify character exists and belongs to user
+		character, err = queries.GetCharacter(ctx, characterID)
+		if err != nil {
+			log.Printf("Failed to find character with ID %s: %v", characterID, err)
 			return echo.NewHTTPError(http.StatusNotFound, "character not found")
 		}
+		log.Printf("Found character: ID=%s, UserID=%s, Name=%s, World=%s", character.ID, character.UserID, character.Name, character.World)
+		log.Printf("Current user ID: %s", userID)
+
 		if character.UserID != userID {
+			log.Printf("Character %s belongs to user %s, but current user is %s", character.ID, character.UserID, userID)
 			return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
 		}
 		if character.World != list.World {
+			log.Printf("Character world %s does not match list world %s", character.World, list.World)
 			return echo.NewHTTPError(http.StatusBadRequest, "character world does not match list world")
 		}
 	} else {
@@ -511,6 +523,22 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add character to list")
 	}
 
+	// Get member stats for the newly added member
+	members, err := queries.GetListMembers(ctx, list.ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+	}
+
+	memberStats := make([]MemberStats, len(members))
+	for i, m := range members {
+		memberStats[i] = MemberStats{
+			UserID:        m.UserID,
+			CharacterName: m.CharacterName,
+			ObtainedCount: m.ObtainedCount,
+			UnlockedCount: m.UnlockedCount,
+		}
+	}
+
 	// Return list details
 	return c.JSON(http.StatusOK, ListDetailResponse{
 		ID:         list.ID,
@@ -520,7 +548,7 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		World:      list.World,
 		CreatedAt:  list.CreatedAt.Time,
 		UpdatedAt:  list.UpdatedAt.Time,
-		Members:    []MemberStats{},
+		Members:    memberStats,
 		SoulCores:  []db.GetListSoulcoresRow{},
 		TotalCores: 0,
 	})
