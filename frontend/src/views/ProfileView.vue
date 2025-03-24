@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import RegisterSuggestion from '@/components/RegisterSuggestion.vue'
 import axios from 'axios'
@@ -8,6 +8,7 @@ interface Character {
   id: string
   name: string
   world: string
+  soulcore_count?: number
 }
 
 const userStore = useUserStore()
@@ -19,7 +20,17 @@ const fetchCharacters = async () => {
   try {
     loading.value = true
     const response = await axios.get(`/api/users/${userStore.userId}/characters`)
-    characters.value = response.data
+    const chars = response.data
+    
+    // Fetch soulcore counts for each character
+    const charsWithCounts = await Promise.all(chars.map(async (char: Character) => {
+      const soulcores = await axios.get(`/api/characters/${char.id}/soulcores`)
+      return {
+        ...char,
+        soulcore_count: soulcores.data.length
+      }
+    }))
+    characters.value = charsWithCounts
   } catch (err) {
     error.value = 'Failed to load characters'
     console.error('Error fetching characters:', err)
@@ -27,6 +38,13 @@ const fetchCharacters = async () => {
     loading.value = false
   }
 }
+
+const characterWithMostCores = computed(() => {
+  if (characters.value.length === 0) return null
+  return characters.value.reduce((prev, current) => 
+    (prev.soulcore_count || 0) > (current.soulcore_count || 0) ? prev : current
+  )
+})
 
 onMounted(() => {
   if (userStore.isAuthenticated) {
@@ -41,43 +59,60 @@ onMounted(() => {
       <RegisterSuggestion />
     </div>
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-      <div class="px-4 py-5 sm:px-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Profile</h3>
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-900">Profile</h3>
         <p class="mt-1 max-w-2xl text-sm text-gray-500">Your personal information and characters</p>
       </div>
-      <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
-        <dl class="sm:divide-y sm:divide-gray-200">
-          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      
+      <div class="px-4 py-5 sm:p-6">
+        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div class="bg-gray-50 px-4 py-5 rounded-lg">
             <dt class="text-sm font-medium text-gray-500">User ID</dt>
-            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ userStore.userId }}</dd>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ userStore.userId }}</dd>
           </div>
-          <div class="py-4 sm:py-5 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500 mb-4">Characters</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-              <div v-if="loading" class="text-gray-500">Loading characters...</div>
-              <div v-else-if="error" class="text-red-500">{{ error }}</div>
-              <div v-else-if="characters.length === 0" class="text-gray-500 italic">
-                No characters added yet
-              </div>
-              <ul v-else class="divide-y divide-gray-200">
-                <li v-for="character in characters" :key="character.id" class="py-3">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <router-link 
-                        :to="{ name: 'character-details', params: { id: character.id }}"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                      >
-                        {{ character.name }}
-                      </router-link>
-                      <p class="text-sm text-gray-500">{{ character.world }}</p>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+
+          <div class="bg-gray-50 px-4 py-5 rounded-lg">
+            <dt class="text-sm font-medium text-gray-500">Account Type</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              {{ userStore.isAnonymous ? 'Anonymous' : 'Registered' }}
+            </dd>
+          </div>
+
+          <div v-if="characterWithMostCores" class="bg-gray-50 px-4 py-5 rounded-lg">
+            <dt class="text-sm font-medium text-gray-500">Most Advanced Character</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              {{ characterWithMostCores.name }}
+              <span class="text-sm text-gray-600">({{ characterWithMostCores.soulcore_count }} cores)</span>
             </dd>
           </div>
         </dl>
+
+        <div class="mt-8">
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Your Characters</h4>
+          <div v-if="loading" class="text-gray-500 flex items-center space-x-2">
+            <div class="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full"></div>
+            <span>Loading characters...</span>
+          </div>
+          <div v-else-if="error" class="text-red-500 bg-red-50 p-4 rounded-lg">{{ error }}</div>
+          <div v-else-if="characters.length === 0" class="text-gray-500 italic bg-gray-50 p-4 rounded-lg">
+            No characters added yet
+          </div>
+          <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <router-link 
+              v-for="character in characters" 
+              :key="character.id"
+              :to="{ name: 'character-details', params: { id: character.id }}"
+              class="block group"
+            >
+              <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-indigo-500 hover:shadow-md transition-all duration-200">
+                <h5 class="font-medium text-gray-900 group-hover:text-indigo-600">{{ character.name }}</h5>
+                <p class="text-sm text-gray-500">{{ character.world }}</p>
+                <p class="text-sm text-gray-500 mt-1">{{ character.soulcore_count || 0 }} soul cores</p>
+              </div>
+            </router-link>
+          </div>
+        </div>
       </div>
     </div>
   </div>

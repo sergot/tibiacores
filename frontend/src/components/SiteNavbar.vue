@@ -72,12 +72,14 @@ onBeforeUnmount(() => {
   <nav class="bg-white shadow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <div class="flex">
-          <div class="flex-shrink-0 flex items-center">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
             <RouterLink to="/" class="text-xl font-bold text-gray-800">FiendList</RouterLink>
           </div>
         </div>
-        <div class="flex items-center">
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
           <div v-if="!userStore.isAuthenticated" class="flex space-x-4">
             <RouterLink
               to="/signin"
@@ -87,7 +89,7 @@ onBeforeUnmount(() => {
             </RouterLink>
             <RouterLink
               to="/signup"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Sign up
             </RouterLink>
@@ -103,16 +105,17 @@ onBeforeUnmount(() => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 <span
+                  v-if="suggestionsStore.totalPendingSuggestions > 0"
                   class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full"
                 >
                   {{ suggestionsStore.totalPendingSuggestions }}
                 </span>
               </button>
               
-              <!-- Dropdown menu -->
+              <!-- Suggestions Dropdown Menu -->
               <div
                 v-if="showSuggestions"
-                class="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg py-1 z-50"
+                class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
                 @click.stop
               >
                 <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
@@ -128,7 +131,7 @@ onBeforeUnmount(() => {
                   >
                     <div class="flex justify-between items-center">
                       <span>{{ char.character_name }}</span>
-                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">
+                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         {{ char.suggestion_count }} {{ char.suggestion_count === 1 ? 'suggestion' : 'suggestions' }}
                       </span>
                     </div>
@@ -139,9 +142,10 @@ onBeforeUnmount(() => {
 
             <RouterLink
               to="/profile"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
-              Profile
+              <UserIcon class="h-5 w-5" />
+              <span>Profile</span>
             </RouterLink>
             <RouterLink
               to="/about"
@@ -151,11 +155,82 @@ onBeforeUnmount(() => {
             </RouterLink>
             <button
               @click="initiateLogout"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
-              Log out
+              <ArrowRightStartOnRectangleIcon class="h-5 w-5" />
+              <span>Sign out</span>
             </button>
           </div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button
+            @click="toggleMenu"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            <span class="sr-only">Open main menu</span>
+            <Bars3Icon v-if="!isMenuOpen" class="block h-6 w-6" />
+            <XMarkIcon v-else class="block h-6 w-6" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div 
+      v-if="isMenuOpen" 
+      class="md:hidden bg-white border-t border-gray-200"
+    >
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <div v-if="!userStore.isAuthenticated" class="space-y-2">
+          <RouterLink
+            to="/signin"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            Sign in
+          </RouterLink>
+          <RouterLink
+            to="/signup"
+            class="block px-3 py-2 rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700"
+            @click="isMenuOpen = false"
+          >
+            Sign up
+          </RouterLink>
+        </div>
+        <div v-else class="space-y-2">
+          <RouterLink
+            v-if="suggestionsStore.hasPendingSuggestions"
+            :to="{ name: 'character-details', params: { id: suggestionsStore.pendingSuggestions[0]?.character_id }}"
+            class="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            <span>Suggestions</span>
+            <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {{ suggestionsStore.totalPendingSuggestions }}
+            </span>
+          </RouterLink>
+          <RouterLink
+            to="/profile"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            Profile
+          </RouterLink>
+          <RouterLink
+            to="/about"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            About
+          </RouterLink>
+          <button
+            @click="initiateLogout"
+            class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            Sign out
+          </button>
         </div>
       </div>
     </div>
@@ -175,7 +250,7 @@ onBeforeUnmount(() => {
               If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.
             </p>
           </div>
-          <div class="mt-4 flex space-x-4">
+          <div class="mt-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
             <RouterLink
               to="/signup"
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
