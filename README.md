@@ -12,4 +12,9 @@
 - [ ] Create a logo and some branding for the app
 - [x] Character name should be unique
 - [x] Claiming character name system - by adding a comment on tibia.com profile
-- [ ] Adding soulcore to list has bugs: dropdown is too small when there are too many completions
+- [x] Adding soulcore to list has bugs: dropdown is too small when there are too many completions
+- [ ] Implement stats and achievements on profile view and character detail view
+- [x] Implement removing soulcores from list view and from character view
+- [ ] Characters section in profile view should look better
+- [ ] Write a comprehensive README.md file
+- [ ] Write a comprehensive CONTRIBUTING.md file

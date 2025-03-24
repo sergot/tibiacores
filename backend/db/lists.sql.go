@@ -311,6 +311,21 @@ func (q *Queries) IsUserListMember(ctx context.Context, arg IsUserListMemberPara
 	return is_member, err
 }
 
+const removeListSoulcore = `-- name: RemoveListSoulcore :exec
+DELETE FROM lists_soulcores
+WHERE list_id = $1 AND creature_id = $2
+`
+
+type RemoveListSoulcoreParams struct {
+	ListID     uuid.UUID `json:"list_id"`
+	CreatureID uuid.UUID `json:"creature_id"`
+}
+
+func (q *Queries) RemoveListSoulcore(ctx context.Context, arg RemoveListSoulcoreParams) error {
+	_, err := q.db.Exec(ctx, removeListSoulcore, arg.ListID, arg.CreatureID)
+	return err
+}
+
 const updateSoulcoreStatus = `-- name: UpdateSoulcoreStatus :exec
 UPDATE lists_soulcores
 SET status = $3

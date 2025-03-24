@@ -65,6 +65,9 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	protected.GET("/lists/:id", listsHandler.GetList)
 	protected.POST("/lists/:id/soulcores", listsHandler.AddSoulcore)
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
+	protected.DELETE("/lists/:id/soulcores/:creature_id", listsHandler.RemoveSoulcore)
+
+	// User endpoints
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
 	protected.GET("/pending-suggestions", listsHandler.GetPendingSuggestions)
@@ -72,6 +75,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	// Character and suggestion endpoints
 	protected.GET("/characters/:id", usersHandler.GetCharacter)
 	protected.GET("/characters/:id/soulcores", usersHandler.GetCharacterSoulcores)
+	protected.DELETE("/characters/:id/soulcores/:creature_id", usersHandler.RemoveCharacterSoulcore)
 	protected.GET("/characters/:id/suggestions", listsHandler.GetCharacterSuggestions)
 	protected.POST("/characters/:id/suggestions/accept", listsHandler.AcceptSoulcoreSuggestion)
 	protected.POST("/characters/:id/suggestions/dismiss", listsHandler.DismissSoulcoreSuggestion)

@@ -123,12 +123,12 @@ onBeforeUnmount(() => {
       placeholder="Select creature..."
       @focus="isOpen = true"
       @keydown="handleKeydown"
-      class="w-64 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+      class="w-full min-w-[16rem] max-w-xl p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
     />
     <div
       v-if="isOpen && filteredCreatures.length > 0"
       class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-y-auto"
-      style="max-height: 12rem;"
+      style="max-height: 16rem;"
     >
       <div
         v-for="(creature, index) in filteredCreatures"

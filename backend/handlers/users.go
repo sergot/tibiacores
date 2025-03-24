@@ -289,6 +289,49 @@ func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 	return c.JSON(http.StatusOK, soulcores)
 }
 
+// RemoveCharacterSoulcore removes a soulcore from a character
+func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	creatureID, err := uuid.Parse(c.Param("creature_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid creature ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Verify character belongs to user
+	character, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if character.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	// Remove the soulcore
+	err = queries.RemoveCharacterSoulcore(ctx, db.RemoveCharacterSoulcoreParams{
+		CharacterID: characterID,
+		CreatureID:  creatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to remove soul core")
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
 // GetPendingSuggestions returns all characters with pending soulcore suggestions
 func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 	// Get authenticated user ID from context

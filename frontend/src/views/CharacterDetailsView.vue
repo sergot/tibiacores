@@ -9,8 +9,14 @@
       <div class="mb-6">
         <h2 class="text-xl font-semibold mb-3">Unlocked Soul Cores</h2>
         <div v-if="unlockedCores.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div v-for="core in unlockedCores" :key="core.creature_id" class="p-3 bg-gray-50 rounded">
+          <div v-for="core in unlockedCores" :key="core.creature_id" class="p-3 bg-gray-50 rounded flex justify-between items-center">
             <span class="font-medium">{{ core.creature_name }}</span>
+            <button
+              @click="removeSoulcore(core.creature_id)"
+              class="text-sm text-red-600 hover:text-red-800"
+            >
+              Remove
+            </button>
           </div>
         </div>
         <p v-else class="text-gray-500">No soul cores unlocked yet.</p>
@@ -63,6 +69,15 @@ const loadUnlockedCores = async () => {
     unlockedCores.value = response.data
   } catch (error) {
     console.error('Failed to load unlocked cores:', error)
+  }
+}
+
+const removeSoulcore = async (creatureId: string) => {
+  try {
+    await axios.delete(`/api/characters/${characterId}/soulcores/${creatureId}`)
+    loadUnlockedCores()
+  } catch (error) {
+    console.error('Failed to remove soul core:', error)
   }
 }
 

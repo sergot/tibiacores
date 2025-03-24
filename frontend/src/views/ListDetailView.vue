@@ -127,6 +127,19 @@ const updateSoulcoreStatus = async (creatureId: string, status: 'obtained' | 'un
   }
 }
 
+const removeSoulcore = async (creatureId: string) => {
+  try {
+    await axios.delete(`/api/lists/${props.id}/soulcores/${creatureId}`)
+    await fetchListDetails()
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to remove soul core'
+    } else {
+      error.value = 'Failed to remove soul core'
+    }
+  }
+}
+
 const origin = window.location.origin
 
 const copyShareLink = async () => {
@@ -394,20 +407,28 @@ onMounted(async () => {
                   </td>
                   <td class="px-4 py-2 text-gray-600">{{ core.added_by || '-' }}</td>
                   <td class="px-4 py-2 text-right">
-                    <button
-                      v-if="core.status === 'obtained'"
-                      @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
-                      class="text-sm text-indigo-600 hover:text-indigo-800"
-                    >
-                      Mark as Unlocked
-                    </button>
-                    <button
-                      v-else
-                      @click="updateSoulcoreStatus(core.creature_id, 'obtained')"
-                      class="text-sm text-indigo-600 hover:text-indigo-800"
-                    >
-                      Mark as Obtained
-                    </button>
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        v-if="core.status === 'obtained'"
+                        @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
+                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                      >
+                        Mark as Unlocked
+                      </button>
+                      <button
+                        v-else
+                        @click="updateSoulcoreStatus(core.creature_id, 'obtained')"
+                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                      >
+                        Mark as Obtained
+                      </button>
+                      <button
+                        @click="removeSoulcore(core.creature_id)"
+                        class="text-sm text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>

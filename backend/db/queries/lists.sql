@@ -69,6 +69,10 @@ UPDATE lists_soulcores
 SET status = $3
 WHERE list_id = $1 AND creature_id = $2;
 
+-- name: RemoveListSoulcore :exec
+DELETE FROM lists_soulcores
+WHERE list_id = $1 AND creature_id = $2;
+
 -- name: DeactivateCharacterListMemberships :exec
 UPDATE lists_users
 SET active = false

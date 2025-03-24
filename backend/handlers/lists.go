@@ -575,6 +575,53 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// RemoveSoulcore removes a soul core from a list
+func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
+	listID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+	}
+
+	creatureID, err := uuid.Parse(c.Param("creature_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid creature ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Check if user is a member of the list
+	isMember, err := queries.IsUserListMember(ctx, db.IsUserListMemberParams{
+		ListID: listID,
+		UserID: userID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+	}
+
+	if !isMember {
+		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+	}
+
+	// Delete the soulcore from the list
+	err = queries.RemoveListSoulcore(ctx, db.RemoveListSoulcoreParams{
+		ListID:     listID,
+		CreatureID: creatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to remove soul core")
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
 // JoinListRequest represents the request body for joining a list
 type JoinListRequest struct {
 	CharacterName string `json:"character_name,omitempty"`
