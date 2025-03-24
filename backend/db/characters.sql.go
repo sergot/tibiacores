@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addCharacterSoulcore = `-- name: AddCharacterSoulcore :exec
@@ -52,6 +53,34 @@ func (q *Queries) CreateCharacter(ctx context.Context, arg CreateCharacterParams
 	return i, err
 }
 
+const createCharacterClaim = `-- name: CreateCharacterClaim :one
+INSERT INTO character_claims (character_id, claimer_id, verification_code, status)
+VALUES ($1, $2, $3, 'pending')
+RETURNING id, character_id, claimer_id, verification_code, status, last_checked_at, created_at, updated_at
+`
+
+type CreateCharacterClaimParams struct {
+	CharacterID      uuid.UUID `json:"character_id"`
+	ClaimerID        uuid.UUID `json:"claimer_id"`
+	VerificationCode string    `json:"verification_code"`
+}
+
+func (q *Queries) CreateCharacterClaim(ctx context.Context, arg CreateCharacterClaimParams) (CharacterClaim, error) {
+	row := q.db.QueryRow(ctx, createCharacterClaim, arg.CharacterID, arg.ClaimerID, arg.VerificationCode)
+	var i CharacterClaim
+	err := row.Scan(
+		&i.ID,
+		&i.CharacterID,
+		&i.ClaimerID,
+		&i.VerificationCode,
+		&i.Status,
+		&i.LastCheckedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getCharacter = `-- name: GetCharacter :one
 SELECT id, user_id, name, world, created_at, updated_at FROM characters
 WHERE id = $1
@@ -65,6 +94,51 @@ func (q *Queries) GetCharacter(ctx context.Context, id uuid.UUID) (Character, er
 		&i.UserID,
 		&i.Name,
 		&i.World,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getCharacterByName = `-- name: GetCharacterByName :one
+SELECT id, user_id, name, world, created_at, updated_at FROM characters
+WHERE name = $1
+`
+
+func (q *Queries) GetCharacterByName(ctx context.Context, name string) (Character, error) {
+	row := q.db.QueryRow(ctx, getCharacterByName, name)
+	var i Character
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.World,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getCharacterClaim = `-- name: GetCharacterClaim :one
+SELECT id, character_id, claimer_id, verification_code, status, last_checked_at, created_at, updated_at FROM character_claims
+WHERE character_id = $1 AND claimer_id = $2
+`
+
+type GetCharacterClaimParams struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	ClaimerID   uuid.UUID `json:"claimer_id"`
+}
+
+func (q *Queries) GetCharacterClaim(ctx context.Context, arg GetCharacterClaimParams) (CharacterClaim, error) {
+	row := q.db.QueryRow(ctx, getCharacterClaim, arg.CharacterID, arg.ClaimerID)
+	var i CharacterClaim
+	err := row.Scan(
+		&i.ID,
+		&i.CharacterID,
+		&i.ClaimerID,
+		&i.VerificationCode,
+		&i.Status,
+		&i.LastCheckedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -92,6 +166,144 @@ func (q *Queries) GetCharactersByUserID(ctx context.Context, userID uuid.UUID) (
 			&i.World,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getClaimByID = `-- name: GetClaimByID :one
+SELECT c.id, c.character_id, c.claimer_id, c.verification_code, 
+       c.status, c.last_checked_at, c.created_at, c.updated_at,
+       ch.name as character_name
+FROM character_claims c
+JOIN characters ch ON c.character_id = ch.id
+WHERE c.id = $1
+`
+
+type GetClaimByIDRow struct {
+	ID               uuid.UUID          `json:"id"`
+	CharacterID      uuid.UUID          `json:"character_id"`
+	ClaimerID        uuid.UUID          `json:"claimer_id"`
+	VerificationCode string             `json:"verification_code"`
+	Status           string             `json:"status"`
+	LastCheckedAt    pgtype.Timestamptz `json:"last_checked_at"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
+	CharacterName    string             `json:"character_name"`
+}
+
+func (q *Queries) GetClaimByID(ctx context.Context, id uuid.UUID) (GetClaimByIDRow, error) {
+	row := q.db.QueryRow(ctx, getClaimByID, id)
+	var i GetClaimByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.CharacterID,
+		&i.ClaimerID,
+		&i.VerificationCode,
+		&i.Status,
+		&i.LastCheckedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.CharacterName,
+	)
+	return i, err
+}
+
+const getPendingClaims = `-- name: GetPendingClaims :many
+SELECT c.id, c.character_id, c.claimer_id, c.verification_code, c.status, c.last_checked_at, c.created_at, c.updated_at, ch.name as character_name
+FROM character_claims c
+JOIN characters ch ON c.character_id = ch.id
+WHERE c.status = 'pending' AND c.last_checked_at < NOW() - INTERVAL '1 hour'
+`
+
+type GetPendingClaimsRow struct {
+	ID               uuid.UUID          `json:"id"`
+	CharacterID      uuid.UUID          `json:"character_id"`
+	ClaimerID        uuid.UUID          `json:"claimer_id"`
+	VerificationCode string             `json:"verification_code"`
+	Status           string             `json:"status"`
+	LastCheckedAt    pgtype.Timestamptz `json:"last_checked_at"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
+	CharacterName    string             `json:"character_name"`
+}
+
+func (q *Queries) GetPendingClaims(ctx context.Context) ([]GetPendingClaimsRow, error) {
+	rows, err := q.db.Query(ctx, getPendingClaims)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPendingClaimsRow{}
+	for rows.Next() {
+		var i GetPendingClaimsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CharacterID,
+			&i.ClaimerID,
+			&i.VerificationCode,
+			&i.Status,
+			&i.LastCheckedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CharacterName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPendingClaimsToCheck = `-- name: GetPendingClaimsToCheck :many
+SELECT c.id, c.character_id, c.claimer_id, c.verification_code, c.status, c.last_checked_at, c.created_at, c.updated_at, ch.name as character_name
+FROM character_claims c
+JOIN characters ch ON c.character_id = ch.id
+WHERE c.status = 'pending' 
+  AND c.last_checked_at < NOW() - INTERVAL '1 minute'
+  AND c.created_at > NOW() - INTERVAL '24 hours'
+`
+
+type GetPendingClaimsToCheckRow struct {
+	ID               uuid.UUID          `json:"id"`
+	CharacterID      uuid.UUID          `json:"character_id"`
+	ClaimerID        uuid.UUID          `json:"claimer_id"`
+	VerificationCode string             `json:"verification_code"`
+	Status           string             `json:"status"`
+	LastCheckedAt    pgtype.Timestamptz `json:"last_checked_at"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
+	CharacterName    string             `json:"character_name"`
+}
+
+func (q *Queries) GetPendingClaimsToCheck(ctx context.Context) ([]GetPendingClaimsToCheckRow, error) {
+	rows, err := q.db.Query(ctx, getPendingClaimsToCheck)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPendingClaimsToCheckRow{}
+	for rows.Next() {
+		var i GetPendingClaimsToCheckRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CharacterID,
+			&i.ClaimerID,
+			&i.VerificationCode,
+			&i.Status,
+			&i.LastCheckedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CharacterName,
 		); err != nil {
 			return nil, err
 		}
@@ -149,4 +361,62 @@ type RemoveCharacterSoulcoreParams struct {
 func (q *Queries) RemoveCharacterSoulcore(ctx context.Context, arg RemoveCharacterSoulcoreParams) error {
 	_, err := q.db.Exec(ctx, removeCharacterSoulcore, arg.CharacterID, arg.CreatureID)
 	return err
+}
+
+const updateCharacterOwner = `-- name: UpdateCharacterOwner :one
+UPDATE characters
+SET user_id = $2,
+    updated_at = NOW()
+WHERE id = $1
+RETURNING id, user_id, name, world, created_at, updated_at
+`
+
+type UpdateCharacterOwnerParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) UpdateCharacterOwner(ctx context.Context, arg UpdateCharacterOwnerParams) (Character, error) {
+	row := q.db.QueryRow(ctx, updateCharacterOwner, arg.ID, arg.UserID)
+	var i Character
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.World,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateClaimStatus = `-- name: UpdateClaimStatus :one
+UPDATE character_claims
+SET status = $3,
+    last_checked_at = NOW(),
+    updated_at = NOW()
+WHERE character_id = $1 AND claimer_id = $2
+RETURNING id, character_id, claimer_id, verification_code, status, last_checked_at, created_at, updated_at
+`
+
+type UpdateClaimStatusParams struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	ClaimerID   uuid.UUID `json:"claimer_id"`
+	Status      string    `json:"status"`
+}
+
+func (q *Queries) UpdateClaimStatus(ctx context.Context, arg UpdateClaimStatusParams) (CharacterClaim, error) {
+	row := q.db.QueryRow(ctx, updateClaimStatus, arg.CharacterID, arg.ClaimerID, arg.Status)
+	var i CharacterClaim
+	err := row.Scan(
+		&i.ID,
+		&i.CharacterID,
+		&i.ClaimerID,
+		&i.VerificationCode,
+		&i.Status,
+		&i.LastCheckedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

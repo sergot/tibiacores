@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -26,12 +27,33 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	listsHandler := handlers.NewListsHandler(connPool)
 	creaturesHandler := handlers.NewCreaturesHandler(connPool)
 	oauthHandler := handlers.NewOAuthHandler(connPool)
+	claimsHandler := handlers.NewClaimsHandler(connPool)
+
+	// Claims routes
+	claimsGroup := api.Group("/claims", auth.OptionalAuthMiddleware)
+	claimsGroup.POST("", claimsHandler.StartClaim)
+	claimsGroup.GET("/:id", claimsHandler.CheckClaim)
+
+	// Start background claim checker
+	go func() {
+		ticker := time.NewTicker(1 * time.Minute) // Changed from Hour to Minute
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				if err := claimsHandler.ProcessPendingClaims(); err != nil {
+					log.Printf("Error processing pending claims: %v", err)
+				}
+			}
+		}
+	}()
 
 	// Public list endpoints that allow optional auth
 	optionalAuth := api.Group("", auth.OptionalAuthMiddleware)
 	optionalAuth.GET("/lists/preview/:share_code", listsHandler.GetListPreview)
 	optionalAuth.POST("/lists/join/:share_code", listsHandler.JoinList)
-	optionalAuth.POST("/lists", listsHandler.CreateList) // Moved here from protected routes
+	optionalAuth.POST("/lists", listsHandler.CreateList)
 
 	// User management routes
 	api.POST("/signup", usersHandler.Signup)
@@ -78,47 +100,6 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339} ${id} ${remote_ip} ${method} ${uri} ${status} ${latency_human}\n",
 	}))
-
-	// Recovery middleware
-	// e.Use(middleware.Recover())
-
-	// Body limit middleware
-	// e.Use(middleware.BodyLimit("2M"))
-
-	// Secure middleware
-	// e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-	// 	XSSProtection:         "1; mode=block",
-	// 	ContentTypeNosniff:    "nosniff",
-	// 	XFrameOptions:         "SAMEORIGIN",
-	// 	HSTSMaxAge:            3600,
-	// 	ContentSecurityPolicy: "default-src 'self'",
-	// }))
-
-	// Rate limiter middleware for anonymous users
-	// e.Use(middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
-	// 	Skipper: func(c echo.Context) bool {
-	// 		// Skip rate limiting for authenticated users
-	// 		return c.Get("is_anonymous") == false
-	// 	},
-	// 	Store: middleware.NewRateLimiterMemoryStore(60), // 60 requests
-	// 	IdentifierExtractor: func(ctx echo.Context) (string, error) {
-	// 		return ctx.RealIP(), nil
-	// 	},
-	// 	ErrorHandler: func(context echo.Context, err error) error {
-	// 		return echo.NewHTTPError(429, "Too many requests")
-	// 	},
-	// 	DenyHandler: func(context echo.Context, identifier string, err error) error {
-	// 		return echo.NewHTTPError(429, "Too many requests")
-	// 	},
-	// }))
-
-	// CORS middleware
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	// 	AllowOrigins:  []string{"http://localhost:5173"}, // Frontend dev server
-	// 	AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-	// 	AllowMethods:  []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
-	// 	ExposeHeaders: []string{"X-Auth-Token"}, // Expose the auth token header
-	// }))
 
 	setupRoutes(e, connPool)
 	e.Logger.Fatal(e.Start(":8080"))

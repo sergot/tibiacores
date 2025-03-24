@@ -63,6 +63,17 @@ type Character struct {
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
+type CharacterClaim struct {
+	ID               uuid.UUID          `json:"id"`
+	CharacterID      uuid.UUID          `json:"character_id"`
+	ClaimerID        uuid.UUID          `json:"claimer_id"`
+	VerificationCode string             `json:"verification_code"`
+	Status           string             `json:"status"`
+	LastCheckedAt    pgtype.Timestamptz `json:"last_checked_at"`
+	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
+}
+
 type CharactersSoulcore struct {
 	CharacterID uuid.UUID `json:"character_id"`
 	CreatureID  uuid.UUID `json:"creature_id"`
@@ -94,6 +105,7 @@ type ListsUser struct {
 	ListID      uuid.UUID `json:"list_id"`
 	UserID      uuid.UUID `json:"user_id"`
 	CharacterID uuid.UUID `json:"character_id"`
+	Active      bool      `json:"active"`
 }
 
 type User struct {

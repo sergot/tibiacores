@@ -79,6 +79,17 @@ func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) (List, e
 	return i, err
 }
 
+const deactivateCharacterListMemberships = `-- name: DeactivateCharacterListMemberships :exec
+UPDATE lists_users
+SET active = false
+WHERE character_id = $1
+`
+
+func (q *Queries) DeactivateCharacterListMemberships(ctx context.Context, characterID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deactivateCharacterListMemberships, characterID)
+	return err
+}
+
 const getList = `-- name: GetList :one
 SELECT id, author_id, name, share_code, world, created_at, updated_at FROM lists
 WHERE id = $1
@@ -129,7 +140,7 @@ FROM lists_users lu
 JOIN users u ON lu.user_id = u.id
 JOIN characters c ON lu.character_id = c.id
 LEFT JOIN lists_soulcores ls ON ls.list_id = $1 AND ls.added_by_user_id = u.id
-WHERE lu.list_id = $1
+WHERE lu.list_id = $1 AND lu.active = true
 GROUP BY u.id, c.name
 `
 
@@ -251,7 +262,7 @@ func (q *Queries) GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([
 }
 
 const getMembers = `-- name: GetMembers :many
-SELECT list_id, user_id, character_id FROM lists_users
+SELECT list_id, user_id, character_id, active FROM lists_users
 WHERE list_id = $1
 `
 
@@ -264,7 +275,12 @@ func (q *Queries) GetMembers(ctx context.Context, listID uuid.UUID) ([]ListsUser
 	items := []ListsUser{}
 	for rows.Next() {
 		var i ListsUser
-		if err := rows.Scan(&i.ListID, &i.UserID, &i.CharacterID); err != nil {
+		if err := rows.Scan(
+			&i.ListID,
+			&i.UserID,
+			&i.CharacterID,
+			&i.Active,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -279,7 +295,7 @@ const isUserListMember = `-- name: IsUserListMember :one
 SELECT EXISTS (
   SELECT 1
   FROM lists_users
-  WHERE list_id = $1 AND user_id = $2
+  WHERE list_id = $1 AND user_id = $2 AND active = true
 ) as is_member
 `
 

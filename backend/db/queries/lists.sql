@@ -27,7 +27,7 @@ WHERE share_code = $1;
 SELECT EXISTS (
   SELECT 1
   FROM lists_users
-  WHERE list_id = $1 AND user_id = $2
+  WHERE list_id = $1 AND user_id = $2 AND active = true
 ) as is_member;
 
 -- name: GetListMembers :many
@@ -40,7 +40,7 @@ FROM lists_users lu
 JOIN users u ON lu.user_id = u.id
 JOIN characters c ON lu.character_id = c.id
 LEFT JOIN lists_soulcores ls ON ls.list_id = $1 AND ls.added_by_user_id = u.id
-WHERE lu.list_id = $1
+WHERE lu.list_id = $1 AND lu.active = true
 GROUP BY u.id, c.name;
 
 -- name: GetListSoulcores :many
@@ -68,3 +68,8 @@ SET status = EXCLUDED.status, added_by_user_id = EXCLUDED.added_by_user_id;
 UPDATE lists_soulcores
 SET status = $3
 WHERE list_id = $1 AND creature_id = $2;
+
+-- name: DeactivateCharacterListMemberships :exec
+UPDATE lists_users
+SET active = false
+WHERE character_id = $1;

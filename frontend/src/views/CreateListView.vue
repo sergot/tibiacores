@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { useListsStore } from '@/stores/lists'
 import type { Character as TibiaCharacter } from '../services/tibiadata'
 import axios from 'axios'
+import ClaimSuggestion from '../components/ClaimSuggestion.vue'
 
 interface DBCharacter extends TibiaCharacter {
   id: string
@@ -20,6 +21,7 @@ const listName = ref('')
 const error = ref('')
 const loading = ref(false)
 const useExisting = ref(false)
+const showNameConflict = ref(false)
 
 onMounted(() => {
   try {
@@ -41,6 +43,7 @@ const handleSubmit = async () => {
 
   loading.value = true
   error.value = ''
+  showNameConflict.value = false
 
   try {
     const requestData = {
@@ -70,14 +73,20 @@ const handleSubmit = async () => {
     await listsStore.fetchUserLists()
     router.push('/')
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      error.value = err.response.data.message || 'Failed to create list'
+    if (axios.isAxiosError(err) && err.response?.status === 409) {
+      showNameConflict.value = true
+    } else if (axios.isAxiosError(err) && err.response) {
+      error.value = err.response.data.message
     } else {
       error.value = 'Network error. Please try again.'
     }
   } finally {
     loading.value = false
   }
+}
+
+const handleTryDifferent = () => {
+  router.push('/')
 }
 </script>
 
@@ -86,8 +95,14 @@ const handleSubmit = async () => {
     <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
       <p class="text-red-700">{{ error }}</p>
     </div>
+
+    <ClaimSuggestion 
+      v-if="showNameConflict && character"
+      :character-name="character.name"
+      @try-different="handleTryDifferent"
+    />
     
-    <div v-if="character" class="bg-white rounded-lg shadow p-6">
+    <div v-else-if="character" class="bg-white rounded-lg shadow p-6">
       <h1 class="text-2xl font-semibold mb-6">Create New List</h1>
 
       <div class="mb-6 p-4 bg-gray-50 rounded-lg">

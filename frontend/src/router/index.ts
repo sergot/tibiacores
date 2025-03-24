@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import CharacterClaimView from '../views/CharacterClaimView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,12 @@ const router = createRouter({
       name: 'join-list',
       component: () => import('../views/JoinListView.vue'),
       props: true,
+    },
+    {
+      path: '/claim-character',
+      name: 'claim-character',
+      component: CharacterClaimView,
+      meta: { requiresAuth: true }
     },
   ],
 })

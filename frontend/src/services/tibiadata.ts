@@ -8,6 +8,7 @@ interface Character {
   residence: string
   lastLogin: string
   accountStatus: string
+  comment?: string
 }
 
 class TibiaDataService {
@@ -26,12 +27,22 @@ class TibiaDataService {
         residence: characterData.residence,
         lastLogin: characterData.last_login,
         accountStatus: characterData.account_status,
+        comment: characterData.comment,
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         throw new Error('Character not found')
       }
       throw new Error('Failed to fetch character data')
+    }
+  }
+
+  async verifyCharacterClaim(name: string, verificationCode: string): Promise<boolean> {
+    try {
+      const character = await this.getCharacter(name)
+      return character.comment?.includes(verificationCode) || false
+    } catch {
+      return false
     }
   }
 }

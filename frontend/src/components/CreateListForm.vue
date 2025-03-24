@@ -4,6 +4,7 @@ import { tibiaDataService, type Character as TibiaCharacter } from '../services/
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import axios from 'axios'
+import ClaimSuggestion from './ClaimSuggestion.vue'
 
 interface DBCharacter extends TibiaCharacter {
   id: string
@@ -20,6 +21,7 @@ const filteredCharacters = ref<DBCharacter[]>([])
 const isLoadingCharacters = ref(false)
 const showDropdown = ref(false)
 const selectedCharacter = ref<DBCharacter | null>(null)
+const showNameConflict = ref(false)
 
 onMounted(async () => {
   if (userStore.isAuthenticated) {
@@ -95,17 +97,31 @@ const verifyCharacter = async () => {
       query: { character: JSON.stringify(character) },
     })
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to verify character'
+    if (axios.isAxiosError(e) && e.response?.status === 409) {
+      showNameConflict.value = true
+    } else {
+      error.value = e instanceof Error ? e.message : 'Failed to verify character'
+    }
   } finally {
     loading.value = false
   }
+}
+
+const handleTryDifferent = () => {
+  showNameConflict.value = false
+  characterName.value = ''
 }
 </script>
 
 <template>
   <div class="p-6 rounded-lg">
     <h2 class="mb-4 text-2xl">Create a list</h2>
-    <form @submit.prevent="verifyCharacter" class="flex flex-col gap-4">
+    <ClaimSuggestion 
+      v-if="showNameConflict"
+      :character-name="characterName"
+      @try-different="handleTryDifferent"
+    />
+    <form v-else @submit.prevent="verifyCharacter" class="flex flex-col gap-4">
       <div class="relative">
         <input
           v-model="characterName"

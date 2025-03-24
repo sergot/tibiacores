@@ -54,6 +54,16 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "name is required")
 	}
 
+	// First, check if character exists and belongs to another user
+	if req.CharacterID == nil && req.CharacterName != "" {
+		existingChar, err := queries.GetCharacterByName(ctx, req.CharacterName)
+		if err == nil {
+			log.Printf("Character %s already exists and belongs to user %s", existingChar.Name, existingChar.UserID)
+			// Character exists, return conflict error
+			return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+		}
+	}
+
 	// Check if user is authenticated by looking for user_id in context
 	userIDStr := c.Get("user_id")
 	var userID uuid.UUID
@@ -146,6 +156,14 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 	// Handle new character case
 	if req.CharacterName == "" || req.World == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "character_name and world are required for new character")
+	}
+
+	// Check if the character name is already taken
+	if req.CharacterID == nil && req.CharacterName != "" {
+		character, err := queries.GetCharacterByName(ctx, req.CharacterName)
+		if err == nil && character.UserID != userID {
+			return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+		}
 	}
 
 	// Create character
@@ -502,6 +520,14 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, "character world does not match list world")
 		}
 	} else {
+		// Check if the character name is already taken
+		if req.CharacterName != "" {
+			existingChar, err := queries.GetCharacterByName(ctx, req.CharacterName)
+			if err == nil && existingChar.UserID != userID {
+				return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+			}
+		}
+
 		// Create new character
 		character, err = queries.CreateCharacter(ctx, db.CreateCharacterParams{
 			UserID: userID,

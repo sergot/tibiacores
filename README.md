@@ -10,5 +10,6 @@
 - [ ] Implement a suggestion system for soulcores - on character detail view, the application will suggest soulcores to add to the character as unlocked based on activity on lists they are a member of
 - [x] Join list view should check if the user exists in tibiadata api
 - [ ] Create a logo and some branding for the app
-- [ ] Character name should be unique
-- [ ] Claiming character name system - by adding a comment on tibia.com profile
+- [x] Character name should be unique
+- [x] Claiming character name system - by adding a comment on tibia.com profile
+- [ ] Adding soulcore to list has bugs: dropdown is too small when there are too many completions
