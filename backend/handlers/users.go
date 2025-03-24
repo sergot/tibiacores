@@ -222,3 +222,89 @@ func (h *UsersHandler) GetUserLists(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, lists)
 }
+
+// GetCharacter returns details about a specific character
+func (h *UsersHandler) GetCharacter(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Get character details
+	character, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+
+	// Verify character belongs to user
+	if character.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	return c.JSON(http.StatusOK, character)
+}
+
+// GetCharacterSoulcores returns all unlocked soulcores for a character
+func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Verify character belongs to user
+	character, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if character.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	// Get unlocked soulcores
+	soulcores, err := queries.GetCharacterSoulcores(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character soulcores")
+	}
+
+	return c.JSON(http.StatusOK, soulcores)
+}
+
+// GetPendingSuggestions returns all characters with pending soulcore suggestions
+func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	suggestions, err := queries.GetPendingSuggestionsForUser(ctx, userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get pending suggestions")
+	}
+
+	return c.JSON(http.StatusOK, suggestions)
+}

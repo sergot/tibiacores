@@ -363,6 +363,163 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to update soul core status")
 	}
 
+	// If the status is being set to unlocked, create suggestions for all members
+	if req.Status == "unlocked" {
+		err = queries.CreateSoulcoreSuggestions(ctx, db.CreateSoulcoreSuggestionsParams{
+			ID:         listID,
+			CreatureID: req.CreatureID,
+		})
+		if err != nil {
+			// Don't fail the request if suggestions creation fails
+			log.Printf("Failed to create soulcore suggestions: %v", err)
+		}
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// GetCharacterSuggestions returns all soulcore suggestions for a character
+func (h *ListsHandler) GetCharacterSuggestions(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Verify that the character belongs to the user
+	char, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if char.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	suggestions, err := queries.GetCharacterSuggestions(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get suggestions")
+	}
+
+	return c.JSON(http.StatusOK, suggestions)
+}
+
+// AcceptSoulcoreSuggestion accepts a soulcore suggestion for a character
+func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	var req struct {
+		CreatureID uuid.UUID `json:"creature_id"`
+	}
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Verify that the character belongs to the user
+	char, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if char.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	// Start a transaction
+	tx, err := h.connPool.Begin(ctx)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to start transaction")
+	}
+	defer tx.Rollback(ctx)
+	qtx := queries.WithTx(tx)
+
+	// Add the soulcore to the character
+	err = qtx.AddCharacterSoulcore(ctx, db.AddCharacterSoulcoreParams{
+		CharacterID: characterID,
+		CreatureID:  req.CreatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add soulcore to character")
+	}
+
+	// Remove the suggestion
+	err = qtx.DeleteSoulcoreSuggestion(ctx, db.DeleteSoulcoreSuggestionParams{
+		CharacterID: characterID,
+		CreatureID:  req.CreatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to delete suggestion")
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to commit transaction")
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+// DismissSoulcoreSuggestion dismisses a soulcore suggestion without adding it to the character
+func (h *ListsHandler) DismissSoulcoreSuggestion(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	var req struct {
+		CreatureID uuid.UUID `json:"creature_id"`
+	}
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	// Verify that the character belongs to the user
+	char, err := queries.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if char.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	// Remove the suggestion
+	err = queries.DeleteSoulcoreSuggestion(ctx, db.DeleteSoulcoreSuggestionParams{
+		CharacterID: characterID,
+		CreatureID:  req.CreatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to delete suggestion")
+	}
+
 	return c.NoContent(http.StatusOK)
 }
 
@@ -616,4 +773,24 @@ func (h *ListsHandler) GetListPreview(c echo.Context) error {
 		World:       list.World,
 		MemberCount: len(members),
 	})
+}
+
+// GetPendingSuggestions returns all characters with pending soul core suggestions for the authenticated user
+func (h *ListsHandler) GetPendingSuggestions(c echo.Context) error {
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	suggestions, err := queries.GetPendingSuggestionsForUser(ctx, userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get pending suggestions")
+	}
+
+	return c.JSON(http.StatusOK, suggestions)
 }

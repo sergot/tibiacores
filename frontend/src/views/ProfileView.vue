@@ -64,7 +64,12 @@ onMounted(() => {
                 <li v-for="character in characters" :key="character.id" class="py-3">
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-sm font-medium text-gray-900">{{ character.name }}</p>
+                      <router-link 
+                        :to="{ name: 'character-details', params: { id: character.id }}"
+                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                      >
+                        {{ character.name }}
+                      </router-link>
                       <p class="text-sm text-gray-500">{{ character.world }}</p>
                     </div>
                   </div>

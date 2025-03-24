@@ -1,1 +1,20 @@
 @import './base.css';
+
+.fiendtext {
+    overflow-wrap: break-word;
+    box-sizing: inherit;
+    vertical-align: initial;
+    border-width: 0px;
+    border-style: initial;
+    border-color: initial;
+    border-image: initial;
+    margin: 0px;
+    padding: 0px;
+    font-family: Verdana,Tahoma;
+    font-size: 8pt;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: normal;
+    color: #00F000;
+    text-shadow: 0.1em 0.1em 0.08em #000,-0.1em -0.1em 0.08em #000,0.1em -0.1em 0.08em #000,-0.1em 0.1em 0.08em #000,-0.1em 0 0.08em #000,0.1em 0 0.08em #000,0.2em 0.2em 0.08em #ee8413,-0.2em -0.2em 0.08em #ee8413,0.2em -0.2em 0.08em #ee8413,-0.2em 0.2em 0.08em #ee8413,-0.2em 0 0.08em #ee8413,0.2em 0 0.08em #ee8413,0 0 1em #ee8413;
+}

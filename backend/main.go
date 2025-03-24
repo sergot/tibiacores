@@ -29,11 +29,6 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	oauthHandler := handlers.NewOAuthHandler(connPool)
 	claimsHandler := handlers.NewClaimsHandler(connPool)
 
-	// Claims routes
-	claimsGroup := api.Group("/claims", auth.OptionalAuthMiddleware)
-	claimsGroup.POST("", claimsHandler.StartClaim)
-	claimsGroup.GET("/:id", claimsHandler.CheckClaim)
-
 	// Start background claim checker
 	go func() {
 		ticker := time.NewTicker(1 * time.Minute) // Changed from Hour to Minute
@@ -72,6 +67,18 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
+	protected.GET("/pending-suggestions", listsHandler.GetPendingSuggestions)
+
+	// Character and suggestion endpoints
+	protected.GET("/characters/:id", usersHandler.GetCharacter)
+	protected.GET("/characters/:id/soulcores", usersHandler.GetCharacterSoulcores)
+	protected.GET("/characters/:id/suggestions", listsHandler.GetCharacterSuggestions)
+	protected.POST("/characters/:id/suggestions/accept", listsHandler.AcceptSoulcoreSuggestion)
+	protected.POST("/characters/:id/suggestions/dismiss", listsHandler.DismissSoulcoreSuggestion)
+
+	protected.POST("/claims", claimsHandler.StartClaim)
+	protected.GET("/claims/:id", claimsHandler.CheckClaim)
+
 }
 
 func main() {

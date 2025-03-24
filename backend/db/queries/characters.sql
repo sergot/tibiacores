@@ -6,7 +6,8 @@ ORDER BY name;
 
 
 -- name: GetCharacter :one
-SELECT * FROM characters
+SELECT id, user_id, name, world, created_at, updated_at
+FROM characters
 WHERE id = $1;
 
 -- name: GetCharactersByUserID :many
@@ -75,3 +76,10 @@ JOIN characters ch ON c.character_id = ch.id
 WHERE c.status = 'pending' 
   AND c.last_checked_at < NOW() - INTERVAL '1 minute'
   AND c.created_at > NOW() - INTERVAL '24 hours';
+
+-- name: GetCharacterSoulcores :many
+SELECT cs.character_id, cs.creature_id, c.name as creature_name
+FROM characters_soulcores cs
+JOIN creatures c ON c.id = cs.creature_id
+WHERE cs.character_id = $1
+ORDER BY c.name;

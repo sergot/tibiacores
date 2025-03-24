@@ -82,7 +82,8 @@ func (q *Queries) CreateCharacterClaim(ctx context.Context, arg CreateCharacterC
 }
 
 const getCharacter = `-- name: GetCharacter :one
-SELECT id, user_id, name, world, created_at, updated_at FROM characters
+SELECT id, user_id, name, world, created_at, updated_at
+FROM characters
 WHERE id = $1
 `
 
@@ -143,6 +144,40 @@ func (q *Queries) GetCharacterClaim(ctx context.Context, arg GetCharacterClaimPa
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getCharacterSoulcores = `-- name: GetCharacterSoulcores :many
+SELECT cs.character_id, cs.creature_id, c.name as creature_name
+FROM characters_soulcores cs
+JOIN creatures c ON c.id = cs.creature_id
+WHERE cs.character_id = $1
+ORDER BY c.name
+`
+
+type GetCharacterSoulcoresRow struct {
+	CharacterID  uuid.UUID `json:"character_id"`
+	CreatureID   uuid.UUID `json:"creature_id"`
+	CreatureName string    `json:"creature_name"`
+}
+
+func (q *Queries) GetCharacterSoulcores(ctx context.Context, characterID uuid.UUID) ([]GetCharacterSoulcoresRow, error) {
+	rows, err := q.db.Query(ctx, getCharacterSoulcores, characterID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetCharacterSoulcoresRow{}
+	for rows.Next() {
+		var i GetCharacterSoulcoresRow
+		if err := rows.Scan(&i.CharacterID, &i.CreatureID, &i.CreatureName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getCharactersByUserID = `-- name: GetCharactersByUserID :many

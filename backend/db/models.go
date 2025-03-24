@@ -74,6 +74,13 @@ type CharacterClaim struct {
 	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
 }
 
+type CharacterSoulcoreSuggestion struct {
+	CharacterID uuid.UUID          `json:"character_id"`
+	CreatureID  uuid.UUID          `json:"creature_id"`
+	ListID      uuid.UUID          `json:"list_id"`
+	SuggestedAt pgtype.Timestamptz `json:"suggested_at"`
+}
+
 type CharactersSoulcore struct {
 	CharacterID uuid.UUID `json:"character_id"`
 	CreatureID  uuid.UUID `json:"creature_id"`

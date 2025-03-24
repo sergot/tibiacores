@@ -1,16 +1,30 @@
-<script setup lang="ts">
-import SiteNavbar from './components/SiteNavbar.vue'
-import SiteFooter from './components/SiteFooter.vue'
-</script>
-
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="min-h-screen bg-gray-100">
     <SiteNavbar />
-
-    <main class="flex-grow bg-gray-100">
-      <RouterView />
-    </main>
-
+    <router-view></router-view>
     <SiteFooter />
   </div>
 </template>
+
+<script setup lang="ts">
+import { onMounted, onBeforeUnmount } from 'vue'
+import { useUserStore } from './stores/user'
+import { useSuggestionsStore } from './stores/suggestions'
+import SiteNavbar from './components/SiteNavbar.vue'
+import SiteFooter from './components/SiteFooter.vue'
+
+const userStore = useUserStore()
+const suggestionsStore = useSuggestionsStore()
+
+onMounted(() => {
+  if (userStore.isAuthenticated) {
+    suggestionsStore.startPolling()
+  }
+})
+
+onBeforeUnmount(() => {
+  if (userStore.isAuthenticated) {
+    suggestionsStore.stopPolling()
+  }
+})
+</script>
