@@ -15,6 +15,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
     restart: always
     environment:
       DB_URL: postgresql://user:pass@db:5432/fiendlist

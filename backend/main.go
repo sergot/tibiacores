@@ -87,15 +87,18 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 
 func main() {
 	ctx := context.Background()
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file:", err)
-	}
+	
+	// Load .env file if it exists, ignore error in production
+	_ = godotenv.Load()
 
 	// Initialize OAuth providers
 	auth.PrepareOAuthProviders()
 
 	dbUrl := os.Getenv("DB_URL")
+	if dbUrl == "" {
+		log.Fatal("DB_URL environment variable is required")
+	}
+
 	connPool, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
