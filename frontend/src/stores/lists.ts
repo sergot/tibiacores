@@ -45,7 +45,7 @@ export const useListsStore = defineStore('lists', {
       this.error = null
 
       try {
-        const response = await axios.get<List[]>(`/api/users/${userStore.userId}/lists`)
+        const response = await axios.get<List[]>(`/users/${userStore.userId}/lists`)
         this.lists = response.data
       } catch (err) {
         console.error('Failed to fetch lists:', err)

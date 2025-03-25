@@ -27,7 +27,7 @@ onMounted(async () => {
   if (userStore.isAuthenticated) {
     try {
       isLoadingCharacters.value = true
-      const response = await axios.get(`/api/users/${userStore.userId}/characters`)
+      const response = await axios.get(`/users/${userStore.userId}/characters`)
       existingCharacters.value = response.data
     } catch (e) {
       console.error('Failed to fetch characters:', e)

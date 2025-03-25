@@ -19,12 +19,12 @@ const error = ref('')
 const fetchCharacters = async () => {
   try {
     loading.value = true
-    const response = await axios.get(`/api/users/${userStore.userId}/characters`)
+    const response = await axios.get(`/users/${userStore.userId}/characters`)
     const chars = response.data
     
     // Fetch soulcore counts for each character
     const charsWithCounts = await Promise.all(chars.map(async (char: Character) => {
-      const soulcores = await axios.get(`/api/characters/${char.id}/soulcores`)
+      const soulcores = await axios.get(`/characters/${char.id}/soulcores`)
       return {
         ...char,
         soulcore_count: soulcores.data.length

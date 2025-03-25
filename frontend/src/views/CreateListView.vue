@@ -57,7 +57,7 @@ const handleSubmit = async () => {
       }),
     }
 
-    const response = await axios.post('/api/lists', requestData)
+    const response = await axios.post('/lists', requestData)
     
     // For anonymous users, get the token from response header
     const authToken = response.headers['x-auth-token']

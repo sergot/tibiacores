@@ -52,14 +52,14 @@ const lists = ref<Record<string, { name: string }>>({})
 
 const loadSuggestions = async () => {
   try {
-    const response = await axios.get(`/api/characters/${props.characterId}/suggestions`)
+    const response = await axios.get(`/characters/${props.characterId}/suggestions`)
     suggestions.value = response.data
     
     // Load list names for all unique list IDs
     const listIds = [...new Set(suggestions.value.map(s => s.list_id))]
     await Promise.all(listIds.map(async (listId) => {
       try {
-        const listResponse = await axios.get(`/api/lists/${listId}`)
+        const listResponse = await axios.get(`/lists/${listId}`)
         lists.value[listId] = { name: listResponse.data.name }
       } catch (error) {
         console.error('Failed to load list details:', error)
@@ -76,7 +76,7 @@ const getListName = (listId: string): string => {
 
 const acceptSuggestion = async (suggestion: Suggestion) => {
   try {
-    await axios.post(`/api/characters/${props.characterId}/suggestions/accept`, {
+    await axios.post(`/characters/${props.characterId}/suggestions/accept`, {
       creature_id: suggestion.creature_id
     })
     emit('suggestion-accepted')
@@ -89,7 +89,7 @@ const acceptSuggestion = async (suggestion: Suggestion) => {
 
 const dismissSuggestion = async (suggestion: Suggestion) => {
   try {
-    await axios.post(`/api/characters/${props.characterId}/suggestions/dismiss`, {
+    await axios.post(`/characters/${props.characterId}/suggestions/dismiss`, {
       creature_id: suggestion.creature_id
     })
     // Refresh suggestions after dismissing one

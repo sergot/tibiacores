@@ -67,7 +67,7 @@ const availableCreatures = computed(() => {
 
 const fetchListDetails = async () => {
   try {
-    const response = await axios.get<ListDetails>(`/api/lists/${props.id}`)
+    const response = await axios.get<ListDetails>(`/lists/${props.id}`)
     listDetails.value = response.data
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -80,7 +80,7 @@ const fetchListDetails = async () => {
 
 const fetchCreatures = async () => {
   try {
-    const response = await axios.get<Creature[]>('/api/creatures')
+    const response = await axios.get<Creature[]>('/creatures')
     creatures.value = response.data
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -96,7 +96,7 @@ const addSoulcore = async () => {
   if (!creature) return
 
   try {
-    await axios.post(`/api/lists/${props.id}/soulcores`, {
+    await axios.post(`/lists/${props.id}/soulcores`, {
       creature_id: creature.id,
       status: 'obtained',
     })
@@ -113,7 +113,7 @@ const addSoulcore = async () => {
 
 const updateSoulcoreStatus = async (creatureId: string, status: 'obtained' | 'unlocked') => {
   try {
-    await axios.put(`/api/lists/${props.id}/soulcores`, {
+    await axios.put(`/lists/${props.id}/soulcores`, {
       creature_id: creatureId,
       status,
     })
@@ -129,7 +129,7 @@ const updateSoulcoreStatus = async (creatureId: string, status: 'obtained' | 'un
 
 const removeSoulcore = async (creatureId: string) => {
   try {
-    await axios.delete(`/api/lists/${props.id}/soulcores/${creatureId}`)
+    await axios.delete(`/lists/${props.id}/soulcores/${creatureId}`)
     await fetchListDetails()
   } catch (err) {
     if (axios.isAxiosError(err)) {

@@ -12,6 +12,8 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
+// XXX: add interceptor for handling x-auth-token?
+
 // Configure axios base URL
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
 

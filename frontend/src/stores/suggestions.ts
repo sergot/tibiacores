@@ -28,7 +28,7 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
     error.value = ''
 
     try {
-      const response = await axios.get('/api/pending-suggestions')
+      const response = await axios.get('/pending-suggestions')
       pendingSuggestions.value = response.data
     } catch (err) {
       console.error('Failed to fetch pending suggestions:', err)

@@ -38,7 +38,7 @@ const handleSubmit = async () => {
     const tibiaChar = await tibiaDataService.getCharacter(characterName.value)
 
     // Now join the list with the verified character info
-    const response = await axios.post(`/api/lists/join/${shareCode.value}`, {
+    const response = await axios.post(`/lists/join/${shareCode.value}`, {
       character_id: selectedCharacter.value?.id,
       character_name: characterName.value,
       world: tibiaChar.world,

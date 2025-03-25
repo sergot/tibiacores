@@ -49,12 +49,12 @@ const filteredCharacters = ref<DBCharacter[]>([])
 onMounted(async () => {
   try {
     // Try to get list preview
-    const response = await axios.get<ListPreview>(`/api/lists/preview/${props.share_code}`)
+    const response = await axios.get<ListPreview>(`/lists/preview/${props.share_code}`)
     listPreview.value = response.data
 
     // If user is authenticated, fetch their characters from the same world
     if (userStore.isAuthenticated) {
-      const charResponse = await axios.get<DBCharacter[]>(`/api/users/${userStore.userId}/characters`)
+      const charResponse = await axios.get<DBCharacter[]>(`/users/${userStore.userId}/characters`)
       existingCharacters.value = charResponse.data.filter(char => char.world === listPreview.value?.world)
     }
 
@@ -116,7 +116,7 @@ const handleJoin = async () => {
       return
     }
 
-    const response = await axios.post<{ id: string, members: ListMember[] }>(`/api/lists/join/${props.share_code}`, requestData)
+    const response = await axios.post<{ id: string, members: ListMember[] }>(`/lists/join/${props.share_code}`, requestData)
 
     // For anonymous users, get the token from response header and find our user ID
     // from the members list (we'll be the only member with the character we just added)

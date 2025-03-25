@@ -53,7 +53,7 @@ const startClaim = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post<ClaimResponse>('/api/claims', {
+    const response = await axios.post<ClaimResponse>('/claims', {
       character_name: characterName.value
     })
     
@@ -84,7 +84,7 @@ const checkClaim = async (id?: string) => {
   error.value = ''
   
   try {
-    const response = await axios.get(`/api/claims/${id || claim.value?.claim_id}`)
+    const response = await axios.get(`/claims/${id || claim.value?.claim_id}`)
     claim.value = response.data
     lastCheckTime.value = Date.now()
     

@@ -20,7 +20,7 @@ const handleSubmit = async () => {
       return
     }
 
-    const response = await axios.post('/api/signup', {
+    const response = await axios.post('/signup', {
       email: email.value,
       password: password.value,
       ...(userStore.hasAccount && { user_id: userStore.userId }),

@@ -146,7 +146,7 @@ const totalProgress = computed(() => {
 
 const loadCharacterDetails = async () => {
   try {
-    const response = await axios.get(`/api/characters/${characterId}`)
+    const response = await axios.get(`/characters/${characterId}`)
     character.value = response.data
   } catch (error) {
     console.error('Failed to load character details:', error)
@@ -156,8 +156,8 @@ const loadCharacterDetails = async () => {
 const loadUnlockedCores = async () => {
   try {
     const [soulcoresResponse, creaturesResponse] = await Promise.all([
-      axios.get(`/api/characters/${characterId}/soulcores`),
-      axios.get('/api/creatures')
+      axios.get(`/characters/${characterId}/soulcores`),
+      axios.get('/creatures')
     ])
     unlockedCores.value = soulcoresResponse.data
     totalCreatures.value = creaturesResponse.data.length
@@ -168,7 +168,7 @@ const loadUnlockedCores = async () => {
 
 const removeSoulcore = async (creatureId: string) => {
   try {
-    await axios.delete(`/api/characters/${characterId}/soulcores/${creatureId}`)
+    await axios.delete(`/characters/${characterId}/soulcores/${creatureId}`)
     loadUnlockedCores()
   } catch (error) {
     console.error('Failed to remove soul core:', error)
