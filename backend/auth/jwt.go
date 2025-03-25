@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"time"
@@ -20,7 +21,18 @@ func init() {
 			panic("JWT_SECRET environment variable must be set in production")
 		}
 	}
-	jwtSecret = []byte(secret)
+
+	// If not in development, decode the base64 secret
+	if os.Getenv("APP_ENV") == "production" {
+		decoded, err := base64.StdEncoding.DecodeString(secret)
+		if err != nil {
+			panic(fmt.Sprintf("JWT_SECRET must be a valid base64 string in production: %v", err))
+		}
+		jwtSecret = decoded
+	} else {
+		// In development, use the raw string
+		jwtSecret = []byte(secret)
+	}
 }
 
 type Claims struct {

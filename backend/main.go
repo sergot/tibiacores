@@ -89,14 +89,32 @@ func main() {
 	ctx := context.Background()
 
 	// Load .env file if it exists, ignore error in production
-	_ = godotenv.Load()
+	if os.Getenv("APP_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Printf("Warning: .env file not found: %v", err)
+		}
+	}
 
 	// Initialize OAuth providers
 	auth.PrepareOAuthProviders()
 
+	// Required environment variables
 	dbUrl := os.Getenv("DB_URL")
 	if dbUrl == "" {
 		log.Fatal("DB_URL environment variable is required")
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		if os.Getenv("APP_ENV") == "production" {
+			log.Fatal("FRONTEND_URL environment variable is required in production")
+		}
+		frontendURL = "http://localhost:5173" // Default for development
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" && os.Getenv("APP_ENV") == "production" {
+		log.Fatal("JWT_SECRET environment variable is required in production")
 	}
 
 	connPool, err := pgxpool.New(ctx, dbUrl)
@@ -107,6 +125,13 @@ func main() {
 
 	e := echo.New()
 
+	// CORS middleware
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{frontendURL},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+	}))
+
 	// Request ID middleware
 	e.Use(middleware.RequestID())
 
@@ -116,5 +141,10 @@ func main() {
 	}))
 
 	setupRoutes(e, connPool)
-	e.Logger.Fatal(e.Start(":8080"))
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	e.Logger.Fatal(e.Start(":" + port))
 }
