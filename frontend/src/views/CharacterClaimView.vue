@@ -57,16 +57,17 @@ const startClaim = async () => {
       character_name: characterName.value
     })
     
-    // For new users, save the auth token and set up axios
-    if (response.data.token && response.data.claimer_id && !userStore.isAuthenticated) {
+    // handle anonymous users
+    const authToken = response.headers['x-auth-token']
+    if (authToken && response.data.claimer_id && !userStore.isAuthenticated) {
       userStore.setUser({
-        session_token: response.data.token,
+        session_token: authToken,
         id: response.data.claimer_id, // Backend provides claimer_id
         has_email: false
       })
       
       // Set the token for future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
+      axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
     }
     
     claim.value = response.data

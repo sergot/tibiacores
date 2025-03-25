@@ -26,7 +26,6 @@ type StartClaimResponse struct {
 	ClaimID          string `json:"claim_id"`
 	VerificationCode string `json:"verification_code"`
 	Status           string `json:"status"`
-	Token            string `json:"token,omitempty"`      // For anonymous users
 	ClaimerID        string `json:"claimer_id,omitempty"` // ID of the claiming user
 }
 
@@ -64,8 +63,6 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	// Get or create user
 	var userID uuid.UUID
 	var token string
-	var isNewUser bool
-
 	// Check if user is authenticated
 	if userIDStr, ok := c.Get("user_id").(string); ok && userIDStr != "" {
 		// User is authenticated, parse their ID
@@ -80,13 +77,14 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
 		}
 		userID = newUser.ID
-		isNewUser = true
 
 		// Generate token
 		token, err = auth.GenerateToken(userID.String(), false)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
 		}
+
+		c.Response().Header().Set("X-Auth-Token", token)
 	}
 
 	// Check if there's already an active claim
@@ -99,7 +97,6 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 			ClaimID:          existingClaim.ID.String(),
 			VerificationCode: existingClaim.VerificationCode,
 			Status:           existingClaim.Status,
-			Token:            token, // Only included for new users
 		})
 	}
 
@@ -125,11 +122,6 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		VerificationCode: claim.VerificationCode,
 		Status:           claim.Status,
 		ClaimerID:        userID.String(),
-	}
-
-	// Include token for new users
-	if isNewUser {
-		resp.Token = token
 	}
 
 	return c.JSON(http.StatusCreated, resp)
