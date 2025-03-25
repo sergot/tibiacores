@@ -29,15 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { api } from '@/services/api'
-import type { AxiosError } from 'axios'
-import type { ListDetails, SoulCore, APIErrorResponse } from '@/services/api'
-
-interface Suggestion extends SoulCore {
-  character_id: string
-  list_id: string
-  suggested_at: string
-}
+import axios from 'axios'
 
 const props = defineProps<{
   characterId: string
@@ -47,33 +39,34 @@ const emit = defineEmits<{
   (e: 'suggestion-accepted'): void
 }>()
 
+interface Suggestion {
+  character_id: string
+  creature_id: string
+  list_id: string
+  suggested_at: string
+  creature_name: string
+}
+
 const suggestions = ref<Suggestion[]>([])
 const lists = ref<Record<string, { name: string }>>({})
 
 const loadSuggestions = async () => {
   try {
-    const response = await api.characters.getSuggestions(props.characterId)
-    suggestions.value = response.map(core => ({
-      ...core,
-      character_id: props.characterId,
-      list_id: '', // Will be updated when we load list details
-      suggested_at: new Date().toISOString() // Default value
-    }))
+    const response = await axios.get(`/api/characters/${props.characterId}/suggestions`)
+    suggestions.value = response.data
     
     // Load list names for all unique list IDs
     const listIds = [...new Set(suggestions.value.map(s => s.list_id))]
     await Promise.all(listIds.map(async (listId) => {
       try {
-        const listResponse = await api.lists.get(listId)
-        lists.value[listId] = { name: listResponse.name }
-      } catch (err) {
-        const axiosError = err as AxiosError<APIErrorResponse>
-        console.error('Failed to load list details:', axiosError)
+        const listResponse = await axios.get(`/api/lists/${listId}`)
+        lists.value[listId] = { name: listResponse.data.name }
+      } catch (error) {
+        console.error('Failed to load list details:', error)
       }
     }))
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to load suggestions:', axiosError)
+  } catch (error) {
+    console.error('Failed to load suggestions:', error)
   }
 }
 
@@ -83,28 +76,26 @@ const getListName = (listId: string): string => {
 
 const acceptSuggestion = async (suggestion: Suggestion) => {
   try {
-    await api.characters.acceptSuggestion(props.characterId, {
+    await axios.post(`/api/characters/${props.characterId}/suggestions/accept`, {
       creature_id: suggestion.creature_id
     })
     emit('suggestion-accepted')
     // Refresh suggestions after accepting one
     await loadSuggestions()
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to accept suggestion:', axiosError)
+  } catch (error) {
+    console.error('Failed to accept suggestion:', error)
   }
 }
 
 const dismissSuggestion = async (suggestion: Suggestion) => {
   try {
-    await api.characters.dismissSuggestion(props.characterId, {
+    await axios.post(`/api/characters/${props.characterId}/suggestions/dismiss`, {
       creature_id: suggestion.creature_id
     })
     // Refresh suggestions after dismissing one
     await loadSuggestions()
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to dismiss suggestion:', axiosError)
+  } catch (error) {
+    console.error('Failed to dismiss suggestion:', error)
   }
 }
 

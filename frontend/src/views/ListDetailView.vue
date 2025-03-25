@@ -2,10 +2,21 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { api } from '@/services/api'
+import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
-import type { AxiosError } from 'axios'
-import type { ListDetails, Creature, APIErrorResponse } from '@/services/api'
+
+interface ListDetails {
+  id: string
+  author_id: string
+  name: string
+  share_code: string
+  world: string
+  created_at: string
+  updated_at: string
+  members: MemberStats[]
+  soul_cores: SoulCore[]
+  total_cores: number
+}
 
 interface MemberStats {
   user_id: string
@@ -20,6 +31,11 @@ interface SoulCore {
   status: 'obtained' | 'unlocked'
   added_by: string | null
   added_by_user_id: string
+}
+
+interface Creature {
+  id: string
+  name: string
 }
 
 const props = defineProps<{
@@ -51,21 +67,27 @@ const availableCreatures = computed(() => {
 
 const fetchListDetails = async () => {
   try {
-    const response = await api.lists.get(props.id)
-    listDetails.value = response
+    const response = await axios.get<ListDetails>(`/api/lists/${props.id}`)
+    listDetails.value = response.data
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to fetch list details'
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to fetch list details'
+    } else {
+      error.value = 'Failed to fetch list details'
+    }
   }
 }
 
 const fetchCreatures = async () => {
   try {
-    const response = await api.creatures.getAll()
-    creatures.value = response
+    const response = await axios.get<Creature[]>('/api/creatures')
+    creatures.value = response.data
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to fetch creatures'
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to fetch creatures'
+    } else {
+      error.value = 'Failed to fetch creatures'
+    }
   }
 }
 
@@ -74,38 +96,47 @@ const addSoulcore = async () => {
   if (!creature) return
 
   try {
-    await api.lists.addSoulcore(props.id, {
+    await axios.post(`/api/lists/${props.id}/soulcores`, {
       creature_id: creature.id,
       status: 'obtained',
     })
     await fetchListDetails()
     selectedCreatureName.value = '' // Clear input after adding
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to add soul core'
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to add soul core'
+    } else {
+      error.value = 'Failed to add soul core'
+    }
   }
 }
 
 const updateSoulcoreStatus = async (creatureId: string, status: 'obtained' | 'unlocked') => {
   try {
-    await api.lists.updateSoulcore(props.id, {
+    await axios.put(`/api/lists/${props.id}/soulcores`, {
       creature_id: creatureId,
       status,
     })
     await fetchListDetails()
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to update soul core'
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to update soul core'
+    } else {
+      error.value = 'Failed to update soul core'
+    }
   }
 }
 
 const removeSoulcore = async (creatureId: string) => {
   try {
-    await api.lists.removeSoulcore(props.id, creatureId)
+    await axios.delete(`/api/lists/${props.id}/soulcores/${creatureId}`)
     await fetchListDetails()
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to remove soul core'
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to remove soul core'
+    } else {
+      error.value = 'Failed to remove soul core'
+    }
   }
 }
 

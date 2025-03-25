@@ -2,13 +2,25 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { api } from '@/services/api'
-import type { AxiosError } from 'axios'
-import type { ClaimResponse, APIErrorResponse } from '@/services/api'
+import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+
+interface Claim {
+  claim_id: string
+  verification_code: string
+  status: string
+}
+
+interface ClaimResponse {
+  claim_id: string
+  verification_code: string
+  status: string
+  token?: string
+  claimer_id?: string  // matches the backend's snake_case naming
+}
 
 const characterName = ref('')
 const claim = ref<ClaimResponse | null>(null)
@@ -41,32 +53,25 @@ const startClaim = async () => {
   error.value = ''
   
   try {
-    const response = await api.claims.create({
+    const response = await axios.post<ClaimResponse>('/api/claims', {
       character_name: characterName.value
     })
     
     // For new users, save the auth token and set up axios
-    if (response.token && response.claimer_id && !userStore.isAuthenticated) {
+    if (response.data.token && response.data.claimer_id && !userStore.isAuthenticated) {
       userStore.setUser({
-        session_token: response.token,
-        id: response.claimer_id,
+        session_token: response.data.token,
+        id: response.data.claimer_id, // Backend provides claimer_id
         has_email: false
       })
+      
+      // Set the token for future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
     }
     
-    claim.value = response
-    lastCheckTime.value = Date.now()
-    
-    // Update URL with claim ID
-    router.replace({ 
-      query: { 
-        ...route.query, 
-        claim_id: response.claim_id 
-      }
-    })
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    error.value = axiosError.response?.data?.message || 'Failed to start claim'
+    claim.value = response.data
+  } catch (err: any) {
+    error.value = err.response?.data?.message || 'Failed to start claim'
   } finally {
     loading.value = false
   }
@@ -79,8 +84,8 @@ const checkClaim = async (id?: string) => {
   error.value = ''
   
   try {
-    const response = await api.claims.get(id || claim.value?.claim_id!)
-    claim.value = response
+    const response = await axios.get(`/api/claims/${id || claim.value?.claim_id}`)
+    claim.value = response.data
     lastCheckTime.value = Date.now()
     
     // Update URL with claim ID if not already there
@@ -88,25 +93,25 @@ const checkClaim = async (id?: string) => {
       router.replace({ 
         query: { 
           ...route.query, 
-          claim_id: response.claim_id 
+          claim_id: response.data.claim_id 
         }
       })
     }
     
-    if (response.status === 'approved') {
+    if (response.data.status === 'approved') {
       setTimeout(() => {
         router.push('/profile')
       }, 2000)
     }
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    if (axiosError.response?.status === 403) {
-      error.value = 'This claim has expired. Please start a new one.'
-      setTimeout(() => {
-        router.push('/')
-      }, 2000)
+  } catch (err: any) {
+    if (err.response?.status === 403) {
+      // If forbidden (claim doesn't belong to user), start a new claim
+      claim.value = null
+      claimId.value = null
+      router.replace({ query: { character: characterName.value }})
+      startClaim()
     } else {
-      error.value = axiosError.response?.data?.message || 'Failed to check claim status'
+      error.value = err.response?.data?.message || 'Failed to check claim'
     }
   } finally {
     loading.value = false

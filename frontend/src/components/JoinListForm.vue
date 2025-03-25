@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { tibiaDataService } from '../services/tibiadata'
 import ClaimSuggestion from './ClaimSuggestion.vue'
-import { api } from '@/services/api'
 import type { Character } from '../services/tibiadata'
-import type { AxiosError } from 'axios'
-import type { ListDetails, APIErrorResponse } from '@/services/api'
 
 interface DBCharacter extends Character {
   id: string
@@ -36,29 +34,26 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    const shareCodeValue = extractShareCode(shareCode.value)
     // First verify character exists in Tibia and get their world
     const tibiaChar = await tibiaDataService.getCharacter(characterName.value)
 
     // Now join the list with the verified character info
-    const response = await api.lists.join(shareCodeValue, {
+    const response = await axios.post(`/api/lists/join/${shareCode.value}`, {
       character_id: selectedCharacter.value?.id,
       character_name: characterName.value,
       world: tibiaChar.world,
-    }) as ListDetails & { id: string }
-    
+    })
     router.push({
       name: 'list-detail',
-      params: { id: response.id }
+      params: { id: response.data.id }
     })
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    if (axiosError.response?.status === 409) {
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.status === 409) {
       showNameConflict.value = true
     } else if (err instanceof Error && err.message === 'Character not found') {
       error.value = 'Character not found in Tibia. Please check the name and try again.'
     } else {
-      error.value = axiosError.response?.data?.message || 'Failed to join list'
+      error.value = axios.isAxiosError(err) ? err.response?.data?.message || 'Failed to join list' : 'Failed to join list'
     }
   } finally {
     loading.value = false

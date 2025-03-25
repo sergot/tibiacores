@@ -3,9 +3,7 @@ import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, RouterLink } from 'vue-router'
 import { LockClosedIcon } from '@heroicons/vue/24/solid'
-import { api } from '@/services/api'
-import type { AxiosError } from 'axios'
-import type { AuthResponse, APIErrorResponse } from '@/services/api'
+import axios from 'axios'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -16,20 +14,22 @@ const error = ref('')
 
 const handleSubmit = async () => {
   try {
-    const response = await api.auth.login(email.value, password.value)
+    const response = await axios.post('/api/login', {
+      email: email.value,
+      password: password.value,
+    })
     
     userStore.setUser({
-      session_token: response.session_token,
-      id: response.id,
-      has_email: response.has_email,
+      session_token: response.data.session_token,
+      id: response.data.id,
+      has_email: response.data.has_email,
     })
 
     error.value = ''
     router.push('/')
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    if (axiosError.response) {
-      error.value = axiosError.response.data.error || 'Invalid email or password'
+    if (axios.isAxiosError(err) && err.response) {
+      error.value = err.response.data.error || 'Invalid email or password'
     } else {
       error.value = 'An error occurred during login'
     }

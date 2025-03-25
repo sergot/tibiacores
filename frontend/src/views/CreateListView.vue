@@ -4,10 +4,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useListsStore } from '@/stores/lists'
 import type { Character as TibiaCharacter } from '../services/tibiadata'
-import { api } from '@/services/api'
+import axios from 'axios'
 import ClaimSuggestion from '../components/ClaimSuggestion.vue'
-import type { AxiosError } from 'axios'
-import type { ListDetails, APIErrorResponse } from '@/services/api'
 
 interface DBCharacter extends TibiaCharacter {
   id: string
@@ -59,14 +57,14 @@ const handleSubmit = async () => {
       }),
     }
 
-    const response = await api.lists.create(requestData) as ListDetails & { headers?: { 'x-auth-token'?: string } }
+    const response = await axios.post('/api/lists', requestData)
     
     // For anonymous users, get the token from response header
-    const authToken = response.headers?.['x-auth-token']
+    const authToken = response.headers['x-auth-token']
     if (authToken && !userStore.isAuthenticated) {
       userStore.setUser({
         session_token: authToken,
-        id: response.author_id,
+        id: response.data.author_id,
         has_email: false,
       })
     }
@@ -75,11 +73,10 @@ const handleSubmit = async () => {
     await listsStore.fetchUserLists()
     router.push('/')
   } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    if (axiosError.response?.status === 409) {
+    if (axios.isAxiosError(err) && err.response?.status === 409) {
       showNameConflict.value = true
-    } else if (axiosError.response) {
-      error.value = axiosError.response.data.message
+    } else if (axios.isAxiosError(err) && err.response) {
+      error.value = err.response.data.message
     } else {
       error.value = 'Network error. Please try again.'
     }

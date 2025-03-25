@@ -3,10 +3,8 @@ import { ref, onMounted } from 'vue'
 import { tibiaDataService, type Character as TibiaCharacter } from '../services/tibiadata'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
-import { api } from '@/services/api'
+import axios from 'axios'
 import ClaimSuggestion from './ClaimSuggestion.vue'
-import type { AxiosError } from 'axios'
-import type { Character, APIErrorResponse } from '@/services/api'
 
 interface DBCharacter extends TibiaCharacter {
   id: string
@@ -29,11 +27,10 @@ onMounted(async () => {
   if (userStore.isAuthenticated) {
     try {
       isLoadingCharacters.value = true
-      const response = await api.characters.getAll(userStore.userId)
-      existingCharacters.value = response as DBCharacter[]
-    } catch (err) {
-      const axiosError = err as AxiosError<APIErrorResponse>
-      console.error('Failed to fetch characters:', axiosError)
+      const response = await axios.get(`/api/users/${userStore.userId}/characters`)
+      existingCharacters.value = response.data
+    } catch (e) {
+      console.error('Failed to fetch characters:', e)
     } finally {
       isLoadingCharacters.value = false
     }
@@ -78,7 +75,6 @@ const selectCharacter = (character: DBCharacter) => {
 
 const verifyCharacter = async () => {
   error.value = ''
-  showNameConflict.value = false
   loading.value = true
 
   try {
@@ -101,13 +97,10 @@ const verifyCharacter = async () => {
       query: { character: JSON.stringify(character) },
     })
   } catch (e) {
-    const axiosError = e as AxiosError<APIErrorResponse>
-    if (axiosError.response?.status === 409) {
+    if (axios.isAxiosError(e) && e.response?.status === 409) {
       showNameConflict.value = true
-    } else if (e instanceof Error) {
-      error.value = e.message
     } else {
-      error.value = 'Failed to verify character'
+      error.value = e instanceof Error ? e.message : 'Failed to verify character'
     }
   } finally {
     loading.value = false

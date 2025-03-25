@@ -100,10 +100,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '@/services/api'
+import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
-import type { AxiosError } from 'axios'
-import type { SoulCore, APIErrorResponse } from '@/services/api'
+
+const route = useRoute()
+const router = useRouter()
+const characterId = route.params.id as string
 
 interface Character {
   id: string
@@ -115,10 +117,6 @@ interface UnlockedCore {
   creature_id: string
   creature_name: string
 }
-
-const route = useRoute()
-const router = useRouter()
-const characterId = route.params.id as string
 
 const character = ref<Character | null>(null)
 const unlockedCores = ref<UnlockedCore[]>([])
@@ -148,35 +146,32 @@ const totalProgress = computed(() => {
 
 const loadCharacterDetails = async () => {
   try {
-    const response = await api.characters.get(characterId)
-    character.value = response
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to load character details:', axiosError)
+    const response = await axios.get(`/api/characters/${characterId}`)
+    character.value = response.data
+  } catch (error) {
+    console.error('Failed to load character details:', error)
   }
 }
 
 const loadUnlockedCores = async () => {
   try {
-    const [soulcores, creatures] = await Promise.all([
-      api.characters.getSoulcores(characterId),
-      api.creatures.getAll()
+    const [soulcoresResponse, creaturesResponse] = await Promise.all([
+      axios.get(`/api/characters/${characterId}/soulcores`),
+      axios.get('/api/creatures')
     ])
-    unlockedCores.value = soulcores
-    totalCreatures.value = creatures.length
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to load unlocked cores:', axiosError)
+    unlockedCores.value = soulcoresResponse.data
+    totalCreatures.value = creaturesResponse.data.length
+  } catch (error) {
+    console.error('Failed to load unlocked cores:', error)
   }
 }
 
 const removeSoulcore = async (creatureId: string) => {
   try {
-    await api.characters.removeSoulcore(characterId, creatureId)
+    await axios.delete(`/api/characters/${characterId}/soulcores/${creatureId}`)
     loadUnlockedCores()
-  } catch (err) {
-    const axiosError = err as AxiosError<APIErrorResponse>
-    console.error('Failed to remove soul core:', axiosError)
+  } catch (error) {
+    console.error('Failed to remove soul core:', error)
   }
 }
 
