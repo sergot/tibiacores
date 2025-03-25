@@ -3,22 +3,13 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useListsStore } from '@/stores/lists'
-import type { Character as TibiaCharacter } from '../services/tibiadata'
-import { tibiaDataService } from '../services/tibiadata'
-import axios from 'axios'
+import { api } from '@/services/api'
+import { tibiaDataService } from '@/services/tibiadata'
+import type { Character, ListPreview, ListDetails, APIErrorResponse } from '@/services/api'
+import type { AxiosError } from 'axios'
 
-interface DBCharacter {
-  id: string
+interface DBCharacter extends Character {
   user_id: string
-  name: string
-  world: string
-}
-
-interface ListPreview {
-  id: string
-  name: string
-  world: string
-  member_count: number
 }
 
 // Add interface for member type
@@ -49,13 +40,16 @@ const filteredCharacters = ref<DBCharacter[]>([])
 onMounted(async () => {
   try {
     // Try to get list preview
-    const response = await axios.get<ListPreview>(`/api/lists/preview/${props.share_code}`)
-    listPreview.value = response.data
+    const listPreviewData = await api.lists.getPreview(props.share_code)
+    listPreview.value = listPreviewData
 
     // If user is authenticated, fetch their characters from the same world
     if (userStore.isAuthenticated) {
-      const charResponse = await axios.get<DBCharacter[]>(`/api/users/${userStore.userId}/characters`)
-      existingCharacters.value = charResponse.data.filter(char => char.world === listPreview.value?.world)
+      const charResponse = await api.characters.getAll(userStore.userId)
+      existingCharacters.value = charResponse.map((char: Character) => ({
+        ...char,
+        user_id: userStore.userId
+      })).filter((char: DBCharacter) => char.world === listPreview.value?.world)
     }
 
     // If character name was provided in query, set it
@@ -63,9 +57,10 @@ onMounted(async () => {
     if (queryCharacter) {
       characterName.value = queryCharacter
     }
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      error.value = e.response?.data?.message || 'Failed to load list details'
+  } catch (err) {
+    const axiosError = err as AxiosError<APIErrorResponse>
+    if (axiosError.response?.data?.message) {
+      error.value = axiosError.response.data.message
     } else {
       error.value = 'Failed to load list details'
     }
@@ -86,45 +81,39 @@ const handleJoin = async () => {
     // If user selected existing character
     if (selectedCharacter.value) {
       requestData = {
-        character_id: selectedCharacter.value.id as string,
+        character_id: selectedCharacter.value.id,
       }
     }
     // If user entered a new character name, verify it first
     else if (characterName.value) {
       try {
-        const tibiaCharacter = await tibiaDataService.getCharacter(characterName.value)
+        const tibiaChar = await tibiaDataService.getCharacter(characterName.value)
 
         // Verify world matches
-        if (tibiaCharacter.world !== listPreview.value?.world) {
+        if (tibiaChar.world !== listPreview.value?.world) {
           characterError.value = `Character must be from ${listPreview.value?.world}`
           loading.value = false
           return
         }
 
         requestData = {
-          character_name: tibiaCharacter.name,
-          world: tibiaCharacter.world,
+          character_name: tibiaChar.name,
         }
       } catch (e) {
         characterError.value = 'Character not found'
         loading.value = false
         return
       }
-    } else {
-      characterError.value = 'Please enter a character name'
-      loading.value = false
-      return
     }
 
-    const response = await axios.post<{ id: string, members: ListMember[] }>(`/api/lists/join/${props.share_code}`, requestData)
+    const response = await api.lists.join(props.share_code, requestData) as ListDetails & { headers?: { 'x-auth-token'?: string } }
 
-    // For anonymous users, get the token from response header and find our user ID
-    // from the members list (we'll be the only member with the character we just added)
-    const authToken = response.headers['x-auth-token']
+    // For anonymous users, get the token from response header
+    const authToken = response.headers?.['x-auth-token']
     if (authToken && !userStore.isAuthenticated) {
       // Find our user ID from the response - we'll be the member with the character we just joined with
       const ourCharacterName = selectedCharacter.value?.name || characterName.value
-      const ourMember = response.data.members.find((m: ListMember) => m.character_name === ourCharacterName)
+      const ourMember = response.members.find((m: ListMember) => m.character_name === ourCharacterName)
 
       if (!ourMember) {
         throw new Error('Failed to identify user after joining')
@@ -139,13 +128,10 @@ const handleJoin = async () => {
 
     // Fetch updated lists and redirect to the joined list
     await listsStore.fetchUserLists()
-    router.push(`/lists/${response.data.id}`)
+    router.push(`/lists/${response.id}`)
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      error.value = err.response?.data?.message || 'Failed to join list'
-    } else {
-      error.value = err instanceof Error ? err.message : 'Failed to join list'
-    }
+    const axiosError = err as AxiosError<APIErrorResponse>
+    error.value = axiosError.response?.data?.message || 'Failed to join list'
   } finally {
     loading.value = false
   }

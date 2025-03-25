@@ -2,37 +2,36 @@
 import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import RegisterSuggestion from '@/components/RegisterSuggestion.vue'
-import axios from 'axios'
+import { api } from '@/services/api'
+import type { AxiosError } from 'axios'
+import type { Character, SoulCore, APIErrorResponse } from '@/services/api'
 
-interface Character {
-  id: string
-  name: string
-  world: string
+interface CharacterWithSoulcores extends Character {
   soulcore_count?: number
 }
 
 const userStore = useUserStore()
-const characters = ref<Character[]>([])
+const characters = ref<CharacterWithSoulcores[]>([])
 const loading = ref(false)
 const error = ref('')
 
 const fetchCharacters = async () => {
   try {
     loading.value = true
-    const response = await axios.get(`/api/users/${userStore.userId}/characters`)
-    const chars = response.data
+    const chars = await api.characters.getAll(userStore.userId)
     
     // Fetch soulcore counts for each character
     const charsWithCounts = await Promise.all(chars.map(async (char: Character) => {
-      const soulcores = await axios.get(`/api/characters/${char.id}/soulcores`)
+      const soulcores = await api.characters.getSoulcores(char.id)
       return {
         ...char,
-        soulcore_count: soulcores.data.length
+        soulcore_count: soulcores.length
       }
     }))
     characters.value = charsWithCounts
   } catch (err) {
-    error.value = 'Failed to load characters'
+    const axiosError = err as AxiosError<APIErrorResponse>
+    error.value = axiosError.response?.data?.message || 'Failed to load characters'
     console.error('Error fetching characters:', err)
   } finally {
     loading.value = false

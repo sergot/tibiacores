@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, RouterLink } from 'vue-router'
 import { PlusIcon } from '@heroicons/vue/24/solid'
-import axios from 'axios'
+import { api } from '@/services/api'
+import type { AxiosError } from 'axios'
+import type { AuthResponse, APIErrorResponse } from '@/services/api'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -20,22 +22,23 @@ const handleSubmit = async () => {
       return
     }
 
-    const response = await axios.post('/api/signup', {
+    const response = await api.auth.signup({
       email: email.value,
       password: password.value,
       ...(userStore.hasAccount && { user_id: userStore.userId }),
     })
     
     userStore.setUser({
-      session_token: response.data.session_token,
-      id: response.data.id,
-      has_email: response.data.has_email,
+      session_token: response.session_token,
+      id: response.id,
+      has_email: response.has_email,
     })
 
     router.push('/')
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      error.value = err.response.data.message || 'Registration failed'
+    const axiosError = err as AxiosError<APIErrorResponse>
+    if (axiosError.response) {
+      error.value = axiosError.response.data.message || 'Registration failed'
     } else {
       error.value = 'Registration failed'
     }

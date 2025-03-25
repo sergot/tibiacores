@@ -1,7 +1,5 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { useUserStore } from './user'
+import { api } from '@/services/api'
 
 interface PendingSuggestion {
   character_id: string
@@ -9,66 +7,49 @@ interface PendingSuggestion {
   suggestion_count: number
 }
 
-export const useSuggestionsStore = defineStore('suggestions', () => {
-  const userStore = useUserStore()
-  const pendingSuggestions = ref<PendingSuggestion[]>([])
-  const loading = ref(false)
-  const error = ref('')
+interface SuggestionsState {
+  pendingSuggestions: PendingSuggestion[]
+  error: string | null
+  pollingInterval: ReturnType<typeof setInterval> | null
+}
 
-  const totalPendingSuggestions = computed(() => {
-    return pendingSuggestions.value.reduce((total, char) => total + char.suggestion_count, 0)
-  })
+export const useSuggestionsStore = defineStore('suggestions', {
+  state: (): SuggestionsState => ({
+    pendingSuggestions: [],
+    error: null,
+    pollingInterval: null,
+  }),
 
-  const hasPendingSuggestions = computed(() => totalPendingSuggestions.value > 0)
+  getters: {
+    hasPendingSuggestions: (state) => state.pendingSuggestions.length > 0,
+    totalPendingSuggestions: (state) =>
+      state.pendingSuggestions.reduce((total, char) => total + char.suggestion_count, 0),
+  },
 
-  const fetchPendingSuggestions = async () => {
-    if (!userStore.isAuthenticated) return
+  actions: {
+    async fetchPendingSuggestions() {
+      try {
+        this.pendingSuggestions = await api.suggestions.getPending()
+      } catch (err) {
+        console.error('Failed to fetch pending suggestions:', err)
+        this.error = 'Failed to fetch pending suggestions'
+      }
+    },
 
-    loading.value = true
-    error.value = ''
+    startPolling() {
+      // Start polling every 30 seconds
+      this.pollingInterval = setInterval(() => {
+        this.fetchPendingSuggestions()
+      }, 30000)
+      // Initial fetch
+      this.fetchPendingSuggestions()
+    },
 
-    try {
-      const response = await axios.get('/api/pending-suggestions')
-      pendingSuggestions.value = response.data
-    } catch (err) {
-      console.error('Failed to fetch pending suggestions:', err)
-      error.value = 'Failed to load suggestions'
-      pendingSuggestions.value = []
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // Start polling when store is initialized
-  let pollInterval: number | undefined
-  
-  const startPolling = () => {
-    if (pollInterval) return
-    fetchPendingSuggestions()
-    pollInterval = window.setInterval(fetchPendingSuggestions, 60000) // Check every minute
-  }
-
-  const stopPolling = () => {
-    if (pollInterval) {
-      window.clearInterval(pollInterval)
-      pollInterval = undefined
-    }
-  }
-
-  // Clean up on store destruction
-  const $dispose = () => {
-    stopPolling()
-  }
-
-  return {
-    pendingSuggestions,
-    loading,
-    error,
-    hasPendingSuggestions,
-    totalPendingSuggestions,
-    fetchPendingSuggestions,
-    startPolling,
-    stopPolling,
-    $dispose
-  }
+    stopPolling() {
+      if (this.pollingInterval) {
+        clearInterval(this.pollingInterval)
+        this.pollingInterval = null
+      }
+    },
+  },
 })

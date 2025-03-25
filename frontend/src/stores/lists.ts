@@ -1,14 +1,10 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { api } from '@/services/api'
 import { useUserStore } from './user'
+import type { AxiosError } from 'axios'
+import type { ListDetails, APIErrorResponse } from '@/services/api'
 
-export interface List {
-  id: string
-  name: string
-  world: string
-  share_code: string
-  created_at: string
-  updated_at: string
+interface List extends ListDetails {
   is_author: boolean
   character_name?: string
 }
@@ -45,15 +41,16 @@ export const useListsStore = defineStore('lists', {
       this.error = null
 
       try {
-        const response = await axios.get<List[]>(`/api/users/${userStore.userId}/lists`)
-        this.lists = response.data
+        const lists = await api.lists.getAll(userStore.userId)
+        // Add is_author flag based on whether the user ID matches the author ID
+        this.lists = lists.map(list => ({
+          ...list,
+          is_author: list.author_id === userStore.userId
+        }))
       } catch (err) {
+        const axiosError = err as AxiosError<APIErrorResponse>
         console.error('Failed to fetch lists:', err)
-        if (axios.isAxiosError(err)) {
-          this.error = err.response?.data?.message || 'Failed to fetch lists'
-        } else {
-          this.error = 'Failed to fetch lists'
-        }
+        this.error = axiosError.response?.data?.message || 'Failed to fetch lists'
         this.lists = []
       } finally {
         this.isLoading = false
