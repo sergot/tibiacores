@@ -36,11 +36,13 @@ FROM alpine:latest AS prod
 
 WORKDIR /app
 
-# install goose
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
-
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
+
+# copy migrations and install goose
+COPY --from=builder /app/db/migrations ./db/migrations
+RUN apk add --no-cache git go
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 
 # Expose the port the app runs on
 EXPOSE 8080
