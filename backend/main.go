@@ -87,7 +87,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 
 func main() {
 	ctx := context.Background()
-	
+
 	// Load .env file if it exists, ignore error in production
 	_ = godotenv.Load()
 
