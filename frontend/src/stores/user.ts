@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user', {
     // A user exists if they have a token (regardless of anonymous/registered status)
     hasAccount: (state) => !!state.token,
     // Anonymous just means they don't have an email yet
-    isAnonymous: (state) => state.hasAccount && !state.hasEmail,
+    isAnonymous: (state) => !!state.token && !state.hasEmail,
     // User is authenticated if they have a token
     isAuthenticated: (state) => !!state.token,
   },
