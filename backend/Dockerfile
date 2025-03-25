@@ -36,6 +36,9 @@ FROM alpine:latest AS prod
 
 WORKDIR /app
 
+# install goose
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
 
