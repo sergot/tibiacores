@@ -21,3 +21,4 @@
 - [ ] Implement login with Discord
 - [ ] Implement login with Google
 - [ ] Implement email service
+- [ ] i18n support

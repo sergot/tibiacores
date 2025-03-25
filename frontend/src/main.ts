@@ -12,6 +12,9 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
+// Configure axios base URL
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
+
 // Configure axios after Pinia is initialized
 import { useUserStore } from './stores/user'
 import { useListsStore } from './stores/lists'
