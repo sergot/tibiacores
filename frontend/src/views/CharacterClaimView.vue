@@ -65,8 +65,9 @@ const startClaim = async () => {
     }
     
     claim.value = response.data
-  } catch (err: any) {
-    error.value = err.response?.data?.message || 'Failed to start claim'
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : 
+      'response' in (err as any) ? (err as any).response?.data?.message || 'Failed to start claim' : 'Failed to start claim'
   } finally {
     loading.value = false
   }
@@ -98,15 +99,16 @@ const checkClaim = async (id?: string) => {
         router.push('/profile')
       }, 2000)
     }
-  } catch (err: any) {
-    if (err.response?.status === 403) {
+  } catch (err: unknown) {
+    if ('response' in (err as any) && (err as any).response?.status === 403) {
       // If forbidden (claim doesn't belong to user), start a new claim
       claim.value = null
       claimId.value = null
       router.replace({ query: { character: characterName.value }})
       startClaim()
     } else {
-      error.value = err.response?.data?.message || 'Failed to check claim'
+      error.value = err instanceof Error ? err.message :
+        'response' in (err as any) ? (err as any).response?.data?.message || 'Failed to check claim' : 'Failed to check claim'
     }
   } finally {
     loading.value = false

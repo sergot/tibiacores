@@ -104,7 +104,7 @@ const handleJoin = async () => {
           character_name: tibiaCharacter.name,
           world: tibiaCharacter.world,
         }
-      } catch (e) {
+      } catch {
         characterError.value = 'Character not found'
         loading.value = false
         return

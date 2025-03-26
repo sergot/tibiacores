@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 
@@ -151,7 +150,7 @@ const copyShareLink = async () => {
     setTimeout(() => {
       showCopiedMessage.value = false
     }, 2000)
-  } catch (err) {
+  } catch {
     error.value = 'Failed to copy share link'
   }
 }
@@ -191,7 +190,7 @@ const sortedAndFilteredSoulCores = computed(() => {
 onMounted(async () => {
   try {
     await Promise.all([fetchListDetails(), fetchCreatures()])
-  } catch (err) {
+} catch (err) {
     console.error('Error loading data:', err)
   } finally {
     loading.value = false
