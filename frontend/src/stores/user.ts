@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -8,11 +9,8 @@ export const useUserStore = defineStore('user', {
   }),
 
   getters: {
-    // A user exists if they have a token (regardless of anonymous/registered status)
     hasAccount: (state) => !!state.token,
-    // Anonymous just means they don't have an email yet
     isAnonymous: (state) => !!state.token && !state.hasEmail,
-    // User is authenticated if they have a token
     isAuthenticated: (state) => !!state.token,
   },
 
@@ -25,6 +23,8 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem('session_token', data.session_token)
       localStorage.setItem('user_id', data.id)
       localStorage.setItem('has_email', String(data.has_email))
+      
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.session_token}`
     },
 
     clearUser() {
@@ -35,6 +35,8 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('session_token')
       localStorage.removeItem('user_id')
       localStorage.removeItem('has_email')
+      
+      delete axios.defaults.headers.common['Authorization']
     }
-  },
+  }
 })

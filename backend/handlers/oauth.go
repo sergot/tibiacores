@@ -26,7 +26,8 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	return c.Redirect(http.StatusTemporaryRedirect, redirectURL)
+
+	return c.String(http.StatusOK, redirectURL)
 }
 
 // Callback handles OAuth2 callback from providers
@@ -71,7 +72,11 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
 	}
 
-	// Redirect to frontend with token
-	return c.Redirect(http.StatusTemporaryRedirect,
-		auth.GetFrontendCallbackURL(token, user.ID.String()))
+	// Set token in X-Auth-Token header
+	c.Response().Header().Set("X-Auth-Token", token)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"id":        user.ID,
+		"has_email": false, // OAuth users start without email
+	})
 }

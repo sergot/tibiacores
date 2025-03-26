@@ -23,11 +23,15 @@ const handleSubmit = async () => {
     const response = await axios.post('/signup', {
       email: email.value,
       password: password.value,
-      ...(userStore.hasAccount && { user_id: userStore.userId }),
     })
     
+    const token = response.headers['x-auth-token']
+    if (!token) {
+      throw new Error('No token received')
+    }
+
     userStore.setUser({
-      session_token: response.data.session_token,
+      session_token: token,
       id: response.data.id,
       has_email: response.data.has_email,
     })
@@ -43,7 +47,7 @@ const handleSubmit = async () => {
 }
 
 const handleDiscordSignup = () => {
-  // TODO: Implement Discord OAuth
+  router.push('/oauth/discord')
 }
 
 const handleGoogleSignup = () => {

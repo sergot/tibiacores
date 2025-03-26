@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -70,10 +71,12 @@ func (h *UsersHandler) Login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
 	}
 
+	// Set token in X-Auth-Token header
+	c.Response().Header().Set("X-Auth-Token", token)
+
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"id":            user.ID,
-		"session_token": token,
-		"has_email":     true,
+		"id":        user.ID,
+		"has_email": true,
 	})
 }
 
@@ -91,15 +94,21 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
+	// Check if user exists with this email
+	var email pgtype.Text
+	email.String = req.Email
+	email.Valid = true
+
+	existingUser, getUserErr := queries.GetUserByEmail(ctx, email)
+	if getUserErr == nil && !existingUser.IsAnonymous {
+		return echo.NewHTTPError(http.StatusConflict, "email already in use")
+	}
+
 	// Hash password
 	hashedPassword, err := auth.HashPassword(req.Password)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to process password")
 	}
-
-	var email pgtype.Text
-	email.String = req.Email
-	email.Valid = true
 
 	var password pgtype.Text
 	password.String = hashedPassword
@@ -113,9 +122,18 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 
 	var user db.User
 
-	if req.UserID != "" {
-		// Update existing account with email/password
-		userID, parseErr := uuid.Parse(req.UserID)
+	// Check for existing session token
+	authHeader := c.Request().Header.Get("Authorization")
+	var existingUserID *string
+	if authHeader != "" {
+		if claims, err := auth.ValidateToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
+			existingUserID = &claims.UserID
+		}
+	}
+
+	if existingUserID != nil {
+		// Migrate existing anonymous user
+		userID, parseErr := uuid.Parse(*existingUserID)
 		if parseErr != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID format")
 		}
@@ -127,19 +145,35 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			EmailVerificationExpiresAt: expiresAt,
 			ID:                         userID,
 		})
+		if err != nil {
+			log.Printf("Failed to migrate anonymous user: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to migrate user")
+		}
+	} else if getUserErr == nil && existingUser.IsAnonymous {
+		// Update existing anonymous user found by email
+		user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+			Email:                      email,
+			Password:                   password,
+			EmailVerificationToken:     verificationToken,
+			EmailVerificationExpiresAt: expiresAt,
+			ID:                         existingUser.ID,
+		})
+		if err != nil {
+			log.Printf("Failed to migrate existing user: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to update user")
+		}
 	} else {
-		// Create new account with email/password
+		// Create new user
 		user, err = queries.CreateUser(ctx, db.CreateUserParams{
 			Email:                      email,
 			Password:                   password,
 			EmailVerificationToken:     verificationToken,
 			EmailVerificationExpiresAt: expiresAt,
 		})
-	}
-
-	if err != nil {
-		log.Printf("Failed to create/update user: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+		if err != nil {
+			log.Printf("Failed to create user: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+		}
 	}
 
 	// Generate new token
@@ -154,10 +188,12 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		// Don't return error to client, as the account was created successfully
 	}
 
-	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"id":            user.ID,
-		"session_token": token,
-		"has_email":     true,
+	// Set token in X-Auth-Token header
+	c.Response().Header().Set("X-Auth-Token", token)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"id":        user.ID,
+		"has_email": true,
 	})
 }
 

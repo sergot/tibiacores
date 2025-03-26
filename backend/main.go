@@ -97,6 +97,11 @@ func main() {
 		}
 	}
 
+	// Set default redirect URI if not provided
+	if os.Getenv("DISCORD_REDIRECT_URI") == "" {
+		os.Setenv("DISCORD_REDIRECT_URI", "http://localhost:5173/oauth/discord/callback")
+	}
+
 	// Initialize OAuth providers
 	auth.PrepareOAuthProviders()
 
@@ -129,9 +134,10 @@ func main() {
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{frontendURL},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+		AllowOrigins:  []string{frontendURL},
+		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowMethods:  []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+		ExposeHeaders: []string{"X-Auth-Token"}, // Allow frontend to read X-Auth-Token header
 	}))
 
 	// Request ID middleware

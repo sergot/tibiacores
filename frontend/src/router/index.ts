@@ -73,6 +73,16 @@ const router = createRouter({
       path: '/verify-email',
       name: 'verify-email',
       component: () => import('../views/EmailVerificationView.vue')
+    },
+    {
+      path: '/oauth/:provider/callback',
+      name: 'oauth-callback',
+      component: () => import('../views/OAuthCallbackView.vue')
+    },
+    {
+      path: '/oauth/:provider',
+      name: 'oauth-initiate',
+      component: () => import('../views/OAuthInitiateView.vue')
     }
   ]
 })
