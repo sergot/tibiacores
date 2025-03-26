@@ -19,16 +19,6 @@ const loading = ref(false)
 const showNameConflict = ref(false)
 const selectedCharacter = ref<DBCharacter | null>(null)
 
-const extractShareCode = (input: string): string => {
-  try {
-    const url = new URL(input)
-    const parts = url.pathname.split('/')
-    return parts[parts.length - 1]
-  } catch {
-    return input
-  }
-}
-
 const handleSubmit = async () => {
   loading.value = true
   error.value = ''

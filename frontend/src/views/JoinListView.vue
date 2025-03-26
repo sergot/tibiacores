@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useListsStore } from '@/stores/lists'
-import type { Character as TibiaCharacter } from '../services/tibiadata'
 import { tibiaDataService } from '../services/tibiadata'
 import axios from 'axios'
 

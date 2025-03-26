@@ -43,7 +43,6 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
-const userStore = useUserStore()
 const listDetails = ref<ListDetails | null>(null)
 const loading = ref(true)
 const error = ref('')
@@ -156,18 +155,6 @@ const copyShareLink = async () => {
     error.value = 'Failed to copy share link'
   }
 }
-
-const sortedSoulCores = computed(() => {
-  if (!listDetails.value) return []
-
-  return [...listDetails.value.soul_cores].sort((a, b) => {
-    const aValue = sortField.value === 'creature_name' ? a.creature_name : a.status
-    const bValue = sortField.value === 'creature_name' ? b.creature_name : b.status
-    const modifier = sortDirection.value === 'asc' ? 1 : -1
-
-    return aValue > bValue ? modifier : -modifier
-  })
-})
 
 const toggleSort = (field: 'creature_name' | 'status') => {
   if (sortField.value === field) {

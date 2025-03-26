@@ -7,7 +7,6 @@ import {
   Bars3Icon,
   XMarkIcon,
   ArrowRightStartOnRectangleIcon,
-  UserPlusIcon,
   UserIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
@@ -72,10 +71,16 @@ onBeforeUnmount(() => {
   <nav class="bg-white shadow">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-8">
           <div class="flex-shrink-0">
             <RouterLink to="/" class="text-xl font-bold text-gray-800">TibiaCores</RouterLink>
           </div>
+          <RouterLink
+            to="/about"
+            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            About
+          </RouterLink>
         </div>
 
         <!-- Desktop Navigation -->
@@ -146,12 +151,6 @@ onBeforeUnmount(() => {
             >
               <UserIcon class="h-5 w-5" />
               <span>Profile</span>
-            </RouterLink>
-            <RouterLink
-              to="/about"
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              About
             </RouterLink>
             <button
               @click="initiateLogout"

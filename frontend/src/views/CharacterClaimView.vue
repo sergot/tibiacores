@@ -8,12 +8,6 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-interface Claim {
-  claim_id: string
-  verification_code: string
-  status: string
-}
-
 interface ClaimResponse {
   claim_id: string
   verification_code: string

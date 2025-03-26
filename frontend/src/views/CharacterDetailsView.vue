@@ -99,12 +99,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
 
 const route = useRoute()
-const router = useRouter()
 const characterId = route.params.id as string
 
 interface Character {
