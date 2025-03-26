@@ -68,8 +68,13 @@ const router = createRouter({
       name: 'character-details',
       component: CharacterDetailsView,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('../views/EmailVerificationView.vue')
     }
-  ],
+  ]
 })
 
 export default router

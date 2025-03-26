@@ -12,10 +12,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/fiendlist/backend/auth"
 	"github.com/sergot/fiendlist/backend/db"
+	"github.com/sergot/fiendlist/backend/services"
 )
 
 type UsersHandler struct {
-	connPool *pgxpool.Pool
+	connPool     *pgxpool.Pool
+	emailService *services.EmailService
 }
 
 type SignupRequest struct {
@@ -29,8 +31,8 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func NewUsersHandler(connPool *pgxpool.Pool) *UsersHandler {
-	return &UsersHandler{connPool}
+func NewUsersHandler(connPool *pgxpool.Pool, emailService *services.EmailService) *UsersHandler {
+	return &UsersHandler{connPool: connPool, emailService: emailService}
 }
 
 // Login authenticates a user with email and password
@@ -146,7 +148,11 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
 	}
 
-	// TODO: Send verification email with token
+	// Send verification email
+	if err := h.emailService.SendVerificationEmail(ctx, email.String, verificationToken.String(), user.ID.String()); err != nil {
+		log.Printf("Failed to send verification email: %v", err)
+		// Don't return error to client, as the account was created successfully
+	}
 
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"id":            user.ID,
@@ -350,4 +356,31 @@ func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, suggestions)
+}
+
+// VerifyEmail verifies a user's email address using the verification token
+func (h *UsersHandler) VerifyEmail(c echo.Context) error {
+	userID, err := uuid.Parse(c.QueryParam("user_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+	}
+
+	token, err := uuid.Parse(c.QueryParam("token"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid verification token")
+	}
+
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
+
+	err = queries.VerifyEmail(ctx, db.VerifyEmailParams{
+		ID:                     userID,
+		EmailVerificationToken: token,
+	})
+	if err != nil {
+		log.Printf("Failed to verify email: %v", err)
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid or expired verification token")
+	}
+
+	return c.NoContent(http.StatusOK)
 }

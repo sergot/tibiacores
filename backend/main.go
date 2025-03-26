@@ -12,9 +12,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sergot/fiendlist/backend/auth"
 	"github.com/sergot/fiendlist/backend/handlers"
+	"github.com/sergot/fiendlist/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
+func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.EmailService) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -23,7 +24,8 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 	})
 
 	// Handlers initialization
-	usersHandler := handlers.NewUsersHandler(connPool)
+	usersHandler := handlers.NewUsersHandler(connPool, emailService)
+
 	listsHandler := handlers.NewListsHandler(connPool)
 	creaturesHandler := handlers.NewCreaturesHandler(connPool)
 	oauthHandler := handlers.NewOAuthHandler(connPool)
@@ -31,7 +33,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool) {
 
 	// Start background claim checker
 	go func() {
-		ticker := time.NewTicker(1 * time.Minute) // Changed from Hour to Minute
+		ticker := time.NewTicker(15 * time.Minute)
 		defer ticker.Stop()
 
 		for {
@@ -140,7 +142,12 @@ func main() {
 		Format: "${time_rfc3339} ${id} ${remote_ip} ${method} ${uri} ${status} ${latency_human}\n",
 	}))
 
-	setupRoutes(e, connPool)
+	emailService, err := services.NewEmailService()
+	if err != nil {
+		log.Fatal("Error initializing email service: ", err)
+	}
+
+	setupRoutes(e, connPool, emailService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
