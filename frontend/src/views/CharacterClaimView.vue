@@ -16,6 +16,15 @@ interface ClaimResponse {
   claimer_id?: string  // matches the backend's snake_case naming
 }
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string
+    }
+    status?: number
+  }
+}
+
 const characterName = ref('')
 const claim = ref<ClaimResponse | null>(null)
 const error = ref('')
@@ -67,7 +76,7 @@ const startClaim = async () => {
     claim.value = response.data
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : 
-      'response' in (err as any) ? (err as any).response?.data?.message || 'Failed to start claim' : 'Failed to start claim'
+      ((err as ApiError).response?.data?.message || 'Failed to start claim')
   } finally {
     loading.value = false
   }
@@ -100,7 +109,8 @@ const checkClaim = async (id?: string) => {
       }, 2000)
     }
   } catch (err: unknown) {
-    if ('response' in (err as any) && (err as any).response?.status === 403) {
+    const apiError = err as ApiError
+    if (apiError.response?.status === 403) {
       // If forbidden (claim doesn't belong to user), start a new claim
       claim.value = null
       claimId.value = null
@@ -108,7 +118,7 @@ const checkClaim = async (id?: string) => {
       startClaim()
     } else {
       error.value = err instanceof Error ? err.message :
-        'response' in (err as any) ? (err as any).response?.data?.message || 'Failed to check claim' : 'Failed to check claim'
+        (apiError.response?.data?.message || 'Failed to check claim')
     }
   } finally {
     loading.value = false

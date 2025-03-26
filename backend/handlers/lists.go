@@ -355,7 +355,7 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 
 	// Get the soulcore to check ownership
 	soulcore, err := queries.GetListSoulcore(ctx, db.GetListSoulcoreParams{
-		ListID: listID,
+		ListID:     listID,
 		CreatureID: req.CreatureID,
 	})
 	if err != nil {
@@ -629,7 +629,7 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 
 	// Get the soulcore to check ownership
 	soulcore, err := queries.GetListSoulcore(ctx, db.GetListSoulcoreParams{
-		ListID: listID,
+		ListID:     listID,
 		CreatureID: creatureID,
 	})
 	if err != nil {
