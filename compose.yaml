@@ -3,7 +3,7 @@ services:
     image: postgres:17.4
     restart: always
     environment:
-      POSTGRES_DB: fiendlist
+      POSTGRES_DB: tibiacores
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
     ports:
@@ -17,14 +17,25 @@ services:
       dockerfile: Dockerfile
       target: dev
     restart: always
-    environment:
-      DB_URL: postgresql://user:pass@db:5432/fiendlist
     ports:
       - "8080:8080"
     depends_on:
       - db
     volumes:
       - ./backend:/app
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app  # Mount the entire frontend directory for hot reloading
+      - /app/node_modules  # Use container's node_modules
 
 volumes:
   db:

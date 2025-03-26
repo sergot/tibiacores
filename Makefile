@@ -1,7 +1,7 @@
 migrations_dir = backend/db/migrations
 
 export GOOSE_DRIVER=postgres
-export GOOSE_DBSTRING=postgresql://user:pass@localhost:5432/fiendlist
+export GOOSE_DBSTRING=postgresql://user:pass@localhost:5432/tibiacores
 
 goose/create:
 	goose -dir $(migrations_dir) create rename_this_file sql
