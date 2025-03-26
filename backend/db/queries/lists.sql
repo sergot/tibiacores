@@ -58,6 +58,20 @@ LEFT JOIN characters c ON lu.character_id = c.id
 WHERE ls.list_id = $1
 ORDER BY cr.name;
 
+-- name: GetListSoulcore :one
+SELECT 
+  ls.list_id,
+  ls.creature_id,
+  ls.status,
+  cr.name as creature_name,
+  c.name as added_by,
+  ls.added_by_user_id
+FROM lists_soulcores ls
+JOIN creatures cr ON ls.creature_id = cr.id
+LEFT JOIN lists_users lu ON ls.list_id = lu.list_id AND ls.added_by_user_id = lu.user_id
+LEFT JOIN characters c ON lu.character_id = c.id
+WHERE ls.list_id = $1 AND ls.creature_id = $2;
+
 -- name: AddSoulcoreToList :exec
 INSERT INTO lists_soulcores (list_id, creature_id, status, added_by_user_id)
 VALUES ($1, $2, $3, $4)

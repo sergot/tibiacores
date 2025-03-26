@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -352,8 +353,24 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
 	}
 
-	// Update soul core status - the added_by_user_id remains the same as the original creator
-	// while the status can be modified by any member
+	// Get the soulcore to check ownership
+	soulcore, err := queries.GetListSoulcore(ctx, db.GetListSoulcoreParams{
+		ListID: listID,
+		CreatureID: req.CreatureID,
+	})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusNotFound, "soulcore not found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
+	}
+
+	// Check if the user is the one who added the soulcore
+	if soulcore.AddedByUserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "only the user who added the soulcore can modify it")
+	}
+
+	// Update soul core status
 	err = queries.UpdateSoulcoreStatus(ctx, db.UpdateSoulcoreStatusParams{
 		ListID:     listID,
 		CreatureID: req.CreatureID,
@@ -608,6 +625,23 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 
 	if !isMember {
 		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+	}
+
+	// Get the soulcore to check ownership
+	soulcore, err := queries.GetListSoulcore(ctx, db.GetListSoulcoreParams{
+		ListID: listID,
+		CreatureID: creatureID,
+	})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusNotFound, "soulcore not found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
+	}
+
+	// Check if the user is the one who added the soulcore
+	if soulcore.AddedByUserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "only the user who added the soulcore can remove it")
 	}
 
 	// Delete the soulcore from the list

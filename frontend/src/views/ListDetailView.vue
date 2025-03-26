@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
+import { useUserStore } from '@/stores/user'
 
 interface ListDetails {
   id: string
@@ -53,6 +54,8 @@ const sortDirection = ref<'asc' | 'desc'>('asc')
 const searchQuery = ref('')
 
 const showCopiedMessage = ref(false)
+
+const userStore = useUserStore()
 
 const getSelectedCreature = computed(() => {
   return creatures.value.find(c => c.name === selectedCreatureName.value)
@@ -186,6 +189,10 @@ const sortedAndFilteredSoulCores = computed(() => {
     return aValue > bValue ? modifier : -modifier
   })
 })
+
+const canModifySoulcore = (soulcore: SoulCore) => {
+  return soulcore.added_by_user_id === userStore.userId
+}
 
 onMounted(async () => {
   try {
@@ -395,20 +402,21 @@ onMounted(async () => {
                   <td class="px-4 py-2 text-right">
                     <div class="flex items-center justify-end gap-2">
                       <button
-                        v-if="core.status === 'obtained'"
+                        v-if="canModifySoulcore(core) && core.status === 'obtained'"
                         @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
                         class="text-sm text-indigo-600 hover:text-indigo-800"
                       >
                         Mark as Unlocked
                       </button>
                       <button
-                        v-else
+                        v-if="canModifySoulcore(core) && core.status === 'unlocked'"
                         @click="updateSoulcoreStatus(core.creature_id, 'obtained')"
                         class="text-sm text-indigo-600 hover:text-indigo-800"
                       >
                         Mark as Obtained
                       </button>
                       <button
+                        v-if="canModifySoulcore(core)"
                         @click="removeSoulcore(core.creature_id)"
                         class="text-sm text-red-600 hover:text-red-800"
                       >

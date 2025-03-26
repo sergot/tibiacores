@@ -176,6 +176,49 @@ func (q *Queries) GetListMembers(ctx context.Context, listID uuid.UUID) ([]GetLi
 	return items, nil
 }
 
+const getListSoulcore = `-- name: GetListSoulcore :one
+SELECT 
+  ls.list_id,
+  ls.creature_id,
+  ls.status,
+  cr.name as creature_name,
+  c.name as added_by,
+  ls.added_by_user_id
+FROM lists_soulcores ls
+JOIN creatures cr ON ls.creature_id = cr.id
+LEFT JOIN lists_users lu ON ls.list_id = lu.list_id AND ls.added_by_user_id = lu.user_id
+LEFT JOIN characters c ON lu.character_id = c.id
+WHERE ls.list_id = $1 AND ls.creature_id = $2
+`
+
+type GetListSoulcoreParams struct {
+	ListID     uuid.UUID `json:"list_id"`
+	CreatureID uuid.UUID `json:"creature_id"`
+}
+
+type GetListSoulcoreRow struct {
+	ListID        uuid.UUID      `json:"list_id"`
+	CreatureID    uuid.UUID      `json:"creature_id"`
+	Status        SoulcoreStatus `json:"status"`
+	CreatureName  string         `json:"creature_name"`
+	AddedBy       pgtype.Text    `json:"added_by"`
+	AddedByUserID uuid.UUID      `json:"added_by_user_id"`
+}
+
+func (q *Queries) GetListSoulcore(ctx context.Context, arg GetListSoulcoreParams) (GetListSoulcoreRow, error) {
+	row := q.db.QueryRow(ctx, getListSoulcore, arg.ListID, arg.CreatureID)
+	var i GetListSoulcoreRow
+	err := row.Scan(
+		&i.ListID,
+		&i.CreatureID,
+		&i.Status,
+		&i.CreatureName,
+		&i.AddedBy,
+		&i.AddedByUserID,
+	)
+	return i, err
+}
+
 const getListSoulcores = `-- name: GetListSoulcores :many
 SELECT 
   ls.list_id,
