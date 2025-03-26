@@ -423,38 +423,38 @@ func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 
 // GetUser returns details about a specific user
 func (h *UsersHandler) GetUser(c echo.Context) error {
-    requestedUserID, err := uuid.Parse(c.Param("user_id"))
-    if err != nil {
-        return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
-    }
+	requestedUserID, err := uuid.Parse(c.Param("user_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+	}
 
-    // Get authenticated user ID from context
-    authedUserIDStr, ok := c.Get("user_id").(string)
-    if !ok {
-        return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
-    }
+	// Get authenticated user ID from context
+	authedUserIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+	}
 
-    authedUserID, err := uuid.Parse(authedUserIDStr)
-    if err != nil {
-        return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
-    }
+	authedUserID, err := uuid.Parse(authedUserIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
 
-    // Only allow users to view their own details
-    if requestedUserID != authedUserID {
-        return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' details")
-    }
+	// Only allow users to view their own details
+	if requestedUserID != authedUserID {
+		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' details")
+	}
 
-    queries := db.New(h.connPool)
-    ctx := c.Request().Context()
+	queries := db.New(h.connPool)
+	ctx := c.Request().Context()
 
-    // Get user details using the queries object
-    user, err := queries.GetUserByID(ctx, requestedUserID)
-    if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "failed to get user details")
-    }
+	// Get user details using the queries object
+	user, err := queries.GetUserByID(ctx, requestedUserID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get user details")
+	}
 
-    return c.JSON(http.StatusOK, map[string]interface{}{
-        "email": user.Email.String,
-        "email_verified": user.EmailVerified,
-    })
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"email":          user.Email.String,
+		"email_verified": user.EmailVerified,
+	})
 }
