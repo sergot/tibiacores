@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -58,7 +59,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	// First check if a user exists with this email
 	existingUser, err := queries.GetUserByEmail(ctx, email)
 	if err == nil {
-		// User exists, check if it's an OAuth user
+		// User exists with this email
 		if existingUser.Password.Valid {
 			// User exists with password, meaning it's not an OAuth user
 			return echo.NewHTTPError(http.StatusConflict, "email already in use with a different account type")
@@ -76,8 +77,51 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		})
 	}
 
-	// Create new user if not found
-	user, err := queries.CreateUser(ctx, db.CreateUserParams{
+	// Check for existing session token
+	authHeader := c.Request().Header.Get("Authorization")
+	var existingUserID *string
+	if authHeader != "" {
+		if claims, err := auth.ValidateToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
+			existingUserID = &claims.UserID
+		}
+	}
+
+	var user db.User
+	if existingUserID != nil {
+		// Try to migrate existing anonymous user
+		userID, parseErr := uuid.Parse(*existingUserID)
+		if parseErr == nil {
+			// Check if user exists and is anonymous
+			existingAnonymousUser, err := queries.GetUserByID(ctx, userID)
+			if err == nil && existingAnonymousUser.IsAnonymous {
+				// Migrate the anonymous user to OAuth user
+				user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+					Email:                      email,
+					Password:                   pgtype.Text{}, // No password for OAuth users
+					EmailVerificationToken:     uuid.Nil,      // OAuth users don't need verification
+					EmailVerificationExpiresAt: pgtype.Timestamptz{},
+					ID:                         userID,
+				})
+				if err == nil {
+					// Successfully migrated anonymous user
+					token, err := auth.GenerateToken(user.ID.String(), true)
+					if err != nil {
+						return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+					}
+
+					c.Response().Header().Set("X-Auth-Token", token)
+					return c.JSON(http.StatusOK, map[string]interface{}{
+						"id":        user.ID,
+						"has_email": true,
+					})
+				}
+			}
+		}
+	}
+
+	// If we get here, either there was no anonymous user to migrate or migration failed
+	// Create new user
+	user, err = queries.CreateUser(ctx, db.CreateUserParams{
 		Email:                      email,
 		Password:                   pgtype.Text{},        // No password for OAuth users
 		EmailVerificationToken:     uuid.Nil,             // OAuth users don't need verification
