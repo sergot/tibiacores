@@ -4,8 +4,8 @@ VALUES ($1, TRUE)
 RETURNING *;
 
 -- name: CreateUser :one
-INSERT INTO users (email, password, email_verification_token, email_verification_expires_at, is_anonymous)
-VALUES ($1, $2, $3, $4, FALSE)
+INSERT INTO users (email, password, email_verification_token, email_verification_expires_at, is_anonymous, email_verified)
+VALUES ($1, $2, $3, $4, FALSE, $5)
 RETURNING *;
 
 -- name: MigrateAnonymousUser :one
@@ -28,6 +28,10 @@ WHERE id = $1 AND email_verification_token = $2;
 -- name: GetUserByEmail :one
 SELECT * FROM users
 WHERE email = $1;
+
+-- name: GetUserByID :one
+SELECT * FROM users
+WHERE id = $1;
 
 -- name: GetUserLists :many
 WITH user_lists AS (

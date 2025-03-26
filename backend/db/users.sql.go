@@ -36,8 +36,8 @@ func (q *Queries) CreateAnonymousUser(ctx context.Context, id uuid.UUID) (User, 
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, password, email_verification_token, email_verification_expires_at, is_anonymous)
-VALUES ($1, $2, $3, $4, FALSE)
+INSERT INTO users (email, password, email_verification_token, email_verification_expires_at, is_anonymous, email_verified)
+VALUES ($1, $2, $3, $4, FALSE, $5)
 RETURNING id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at
 `
 
@@ -46,6 +46,7 @@ type CreateUserParams struct {
 	Password                   pgtype.Text        `json:"password"`
 	EmailVerificationToken     uuid.UUID          `json:"email_verification_token"`
 	EmailVerificationExpiresAt pgtype.Timestamptz `json:"email_verification_expires_at"`
+	EmailVerified              bool               `json:"email_verified"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -54,6 +55,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Password,
 		arg.EmailVerificationToken,
 		arg.EmailVerificationExpiresAt,
+		arg.EmailVerified,
 	)
 	var i User
 	err := row.Scan(
@@ -77,6 +79,28 @@ WHERE email = $1
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.IsAnonymous,
+		&i.Email,
+		&i.Password,
+		&i.EmailVerified,
+		&i.EmailVerificationToken,
+		&i.EmailVerificationExpiresAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUserByID = `-- name: GetUserByID :one
+SELECT id, is_anonymous, email, password, email_verified, email_verification_token, email_verification_expires_at, created_at, updated_at FROM users
+WHERE id = $1
+`
+
+func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByID, id)
 	var i User
 	err := row.Scan(
 		&i.ID,

@@ -46,7 +46,7 @@ const handleDiscordLogin = () => {
 }
 
 const handleGoogleLogin = () => {
-  // TODO: Implement Google OAuth
+  router.push('/oauth/google')
 }
 </script>
 

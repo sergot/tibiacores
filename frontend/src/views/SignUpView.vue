@@ -51,7 +51,7 @@ const handleDiscordSignup = () => {
 }
 
 const handleGoogleSignup = () => {
-  // TODO: Implement Google OAuth
+  router.push('/oauth/google')
 }
 </script>
 

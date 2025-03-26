@@ -41,6 +41,12 @@ type DiscordUser struct {
 	Discriminator string `json:"discriminator"`
 }
 
+type GoogleUser struct {
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	VerifiedEmail bool   `json:"verified_email"`
+}
+
 func init() {
 	if frontendURL == "" {
 		frontendURL = "http://localhost:5173"
@@ -132,6 +138,21 @@ func PrepareOAuthProviders() {
 		},
 	}
 	oauthConfigs["discord"] = discordConfig
+
+	googleConfig := &oauth2.Config{
+		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URI"),
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+			"https://www.googleapis.com/auth/userinfo.profile",
+		},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/v2/auth",
+			TokenURL: "https://oauth2.googleapis.com/token",
+		},
+	}
+	oauthConfigs["google"] = googleConfig
 }
 
 // GetUserInfoFromToken retrieves user information from the OAuth2 provider
@@ -139,6 +160,8 @@ func GetUserInfoFromToken(provider string, token *oauth2.Token) (*OAuthUserInfo,
 	switch provider {
 	case "discord":
 		return getDiscordUserInfo(token)
+	case "google":
+		return getGoogleUserInfo(token)
 	default:
 		return nil, fmt.Errorf("provider %s not implemented", provider)
 	}
@@ -173,6 +196,38 @@ func getDiscordUserInfo(token *oauth2.Token) (*OAuthUserInfo, error) {
 		Email:         discordUser.Email,
 		VerifiedEmail: discordUser.Verified,
 		Provider:      "discord",
+	}, nil
+}
+
+func getGoogleUserInfo(token *oauth2.Token) (*OAuthUserInfo, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://www.googleapis.com/oauth2/v2/userinfo", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var googleUser GoogleUser
+	if err := json.Unmarshal(body, &googleUser); err != nil {
+		return nil, err
+	}
+
+	return &OAuthUserInfo{
+		ID:            googleUser.ID,
+		Email:         googleUser.Email,
+		VerifiedEmail: googleUser.VerifiedEmail,
+		Provider:      "google",
 	}, nil
 }
 

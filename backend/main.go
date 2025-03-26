@@ -72,6 +72,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	// User endpoints
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
+	protected.GET("/users/:user_id", usersHandler.GetUser)  // Add this line
 	protected.GET("/pending-suggestions", listsHandler.GetPendingSuggestions)
 
 	// Character and suggestion endpoints

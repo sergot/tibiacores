@@ -16,6 +16,20 @@ const characters = ref<Character[]>([])
 const loading = ref(false)
 const error = ref('')
 
+// Add email state
+const email = ref('')
+const emailVerified = ref(false)
+
+const fetchUserInfo = async () => {
+  try {
+    const response = await axios.get(`/users/${userStore.userId}`)
+    email.value = response.data.email
+    emailVerified.value = response.data.email_verified
+  } catch (err) {
+    console.error('Error fetching user info:', err)
+  }
+}
+
 const fetchCharacters = async () => {
   try {
     loading.value = true
@@ -49,6 +63,9 @@ const characterWithMostCores = computed(() => {
 onMounted(() => {
   if (userStore.isAuthenticated) {
     fetchCharacters()
+    if (!userStore.isAnonymous) {
+      fetchUserInfo()
+    }
   }
 })
 </script>
@@ -76,6 +93,15 @@ onMounted(() => {
             <dt class="text-sm font-medium text-gray-500">Account Type</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
               {{ userStore.isAnonymous ? 'Anonymous' : 'Registered' }}
+            </dd>
+          </div>
+
+          <div v-if="!userStore.isAnonymous" class="bg-gray-50 px-4 py-5 rounded-lg">
+            <dt class="text-sm font-medium text-gray-500">Email</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ email }}</dd>
+            <dd class="mt-2 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full" 
+                :class="emailVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
+              {{ emailVerified ? 'Verified' : 'Not Verified' }}
             </dd>
           </div>
 
