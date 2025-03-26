@@ -12,9 +12,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
-	"github.com/sergot/fiendlist/backend/auth"
-	"github.com/sergot/fiendlist/backend/db"
-	"github.com/sergot/fiendlist/backend/services"
+	"github.com/sergot/tibiacores/backend/auth"
+	"github.com/sergot/tibiacores/backend/db"
+	"github.com/sergot/tibiacores/backend/services"
 )
 
 type ClaimsHandler struct {
@@ -105,7 +105,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	if _, err := rand.Read(verificationBytes); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate verification code")
 	}
-	verificationCode := "FIENDLIST-" + hex.EncodeToString(verificationBytes)
+	verificationCode := "TIBIACORES-" + hex.EncodeToString(verificationBytes)
 
 	// Create new claim
 	claim, err := queries.CreateCharacterClaim(ctx, db.CreateCharacterClaimParams{

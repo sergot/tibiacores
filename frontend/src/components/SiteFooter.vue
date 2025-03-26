@@ -3,7 +3,7 @@
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="py-4 text-center text-gray-400 text-sm">
         <p>
-          Fiendlist © 2025. All rights reserved. Tibia and TibiaME are trademarks of
+          TibiaCores © 2025. All rights reserved. Tibia and TibiaME are trademarks of
           <a
             href="https://www.cipsoft.com/en/"
             target="_blank"

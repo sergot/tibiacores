@@ -2,16 +2,16 @@
   <div class="w-full">
     <main class="max-w-6xl mx-auto px-8 py-8">
       <div class="text-center mb-8">
-        <h1 class="text-4xl mb-2">About FiendList</h1>
+        <h1 class="text-4xl mb-2">About TibiaCores</h1>
         <p class="text-xl text-gray-600">Your companion for managing creatures and characters</p>
       </div>
 
       <div class="grid gap-8 md:grid-cols-2">
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">What is FiendList?</h2>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">What is TibiaCores?</h2>
           <p class="text-gray-600">
-            FiendList is a powerful tool designed to help you organize and manage your creatures,
-            characters, and soul cores. Whether you're a player or a collector, FiendList makes it
+            TibiaCores is a powerful tool designed to help you organize and manage your creatures,
+            characters, and soul cores. Whether you're a player or a collector, TibiaCores makes it
             easy to keep track of your collection.
           </p>
         </div>

@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
       <div class="flex justify-between h-16">
         <div class="flex items-center">
           <div class="flex-shrink-0">
-            <RouterLink to="/" class="text-xl font-bold text-gray-800">FiendList</RouterLink>
+            <RouterLink to="/" class="text-xl font-bold text-gray-800">TibiaCores</RouterLink>
           </div>
         </div>
 

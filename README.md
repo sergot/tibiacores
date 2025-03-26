@@ -1,4 +1,4 @@
-# fiendlist - a soulcore tracking webapp
+# TibiaCores - a soulcore tracking webapp
 
 
 ## TODO:
@@ -18,7 +18,7 @@
 - [x] Characters section in profile view should look better
 - [ ] Write a comprehensive README.md file
 - [ ] Write a comprehensive CONTRIBUTING.md file
-- [ ] Implement login with Discord
-- [ ] Implement login with Google
-- [ ] Implement email service
+- [x] Implement login with Discord
+- [x] Implement login with Google
+- [x] Implement email service
 - [ ] i18n support

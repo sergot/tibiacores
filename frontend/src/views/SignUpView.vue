@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, RouterLink } from 'vue-router'
 import { PlusIcon } from '@heroicons/vue/24/solid'
@@ -12,6 +12,13 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const error = ref('')
+
+onMounted(() => {
+  // Redirect to home if user already has email
+  if (userStore.hasEmail) {
+    router.push('/')
+  }
+})
 
 const handleSubmit = async () => {
   try {
@@ -65,14 +72,11 @@ const handleGoogleSignup = () => {
           <img class="h-12 w-auto" src="@/assets/logo.svg" alt="Logo" />
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {{ userStore.hasAccount ? 'Complete your account' : 'Create your account' }}
+          Create your account
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-          {{ userStore.hasAccount 
-            ? 'Add email and password to access your lists from any device'
-            : 'Or' }}
+          Or
           <RouterLink 
-            v-if="!userStore.hasAccount"
             to="/signin" 
             class="font-medium text-indigo-600 hover:text-indigo-500"
           >
@@ -90,8 +94,8 @@ const handleGoogleSignup = () => {
       </div>
 
       <div class="space-y-4">
-        <!-- Social Login Buttons - Only show for new users -->
-        <div v-if="!userStore.hasAccount" class="grid grid-cols-2 gap-4">
+        <!-- Social Login Buttons -->
+        <div class="grid grid-cols-2 gap-4">
           <button
             @click="handleDiscordSignup"
             type="button"
@@ -118,7 +122,7 @@ const handleGoogleSignup = () => {
           </button>
         </div>
 
-        <div v-if="!userStore.hasAccount" class="relative">
+        <div class="relative">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>
           </div>
@@ -181,7 +185,7 @@ const handleGoogleSignup = () => {
                   aria-hidden="true"
                 />
               </span>
-              {{ userStore.hasAccount ? 'Complete Account' : 'Create Account' }}
+              Create Account
             </button>
           </div>
         </form>

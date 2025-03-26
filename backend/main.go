@@ -10,9 +10,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/sergot/fiendlist/backend/auth"
-	"github.com/sergot/fiendlist/backend/handlers"
-	"github.com/sergot/fiendlist/backend/services"
+	"github.com/sergot/tibiacores/backend/auth"
+	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/services"
 )
 
 func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.EmailService) {

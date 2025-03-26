@@ -8,8 +8,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
-	"github.com/sergot/fiendlist/backend/auth"
-	"github.com/sergot/fiendlist/backend/db"
+	"github.com/sergot/tibiacores/backend/auth"
+	"github.com/sergot/tibiacores/backend/db"
 )
 
 type OAuthHandler struct {
