@@ -7,21 +7,23 @@
       </div>
 
       <div class="grid gap-8 md:grid-cols-2">
+        <!-- What is TibiaCores section -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">What is TibiaCores?</h2>
           <p class="text-gray-600">
-            TibiaCores is a powerful tool designed to help you organize and manage your creatures,
-            characters, and soul cores. Whether you're a player or a collector, TibiaCores makes it
+            TibiaCores is a powerful tool designed to help you organize and manage your 
+            characters' soul cores progression. Whether you're looking to unlock 200 animus master or all of them, TibiaCores makes it
             easy to keep track of your collection.
           </p>
         </div>
 
+        <!-- Features section -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Features</h2>
           <ul class="space-y-2 text-gray-600">
             <li class="flex items-center">
               <span class="mr-2">•</span>
-              Create and manage custom lists
+              Create and manage soulcore lists
             </li>
             <li class="flex items-center">
               <span class="mr-2">•</span>
@@ -38,24 +40,46 @@
           </ul>
         </div>
 
+        <!-- Donation section -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Getting Started</h2>
-          <p class="text-gray-600">
-            Join our community by creating an account and start building your first list. You can
-            easily add creatures, manage characters, and share your collections with others.
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Donation</h2>
+          <p class="text-gray-600 mb-4">
+            Your donations help TibiaCores grow and improve, allowing us to add new features, maintain the servers, and provide a better experience for all users. If you'd like to support our development, you can send in-game donations to:
           </p>
+          <div class="flex items-center">
+            <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-5 h-5 mr-2" />
+            <a href="https://www.tibia.com/community/?name=Mlody+Filip" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800">
+              Mlody Filip
+            </a>
+          </div>
         </div>
 
+        <!-- Contact section -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Contact</h2>
-          <p class="text-gray-600">
-            Have questions or suggestions? We'd love to hear from you! Check out our documentation
-            or reach out to our support team.
+          <p class="text-gray-600 mb-4">
+            Have questions or suggestions? We'd love to hear from you! You can:
           </p>
+          <ul class="space-y-3 text-gray-600">
+            <li class="flex items-center">
+              <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+              </svg>
+              <span>Join our Discord: </span>
+              <a href="https://discord.gg/py9RhemV" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 ml-1">
+                discord.gg/py9RhemV
+              </a>
+            </li>
+            <li class="flex items-center">
+              <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-5 h-5 mr-2" />
+              <span>Message in-game: </span>
+              <a href="https://www.tibia.com/community/?name=Mlody+Filip" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 ml-1">
+                Mlody Filip
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </main>
   </div>
 </template>
-
-<style></style>
