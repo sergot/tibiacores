@@ -53,8 +53,15 @@ const selectedCreatureName = ref('')
 const sortField = ref<'creature_name' | 'status'>('creature_name')
 const sortDirection = ref<'asc' | 'desc'>('asc')
 const searchQuery = ref('')
+const hideUnlocked = ref(true)  // New state for hiding unlocked cores
 
 const showCopiedMessage = ref(false)
+
+// Add computed property for unlocked cores count
+const unlockedCoresCount = computed(() => {
+  if (!listDetails.value) return 0
+  return listDetails.value.soul_cores.filter(core => core.status === 'unlocked').length
+})
 
 const userStore = useUserStore()
 
@@ -179,6 +186,11 @@ const sortedAndFilteredSoulCores = computed(() => {
     filtered = filtered.filter(core => 
       core.creature_name.toLowerCase().includes(query)
     )
+  }
+
+  // Hide unlocked cores if enabled
+  if (hideUnlocked.value) {
+    filtered = filtered.filter(core => core.status !== 'unlocked')
   }
 
   // Apply sorting
@@ -315,13 +327,30 @@ onMounted(async () => {
               class="flex flex-col gap-2 p-3 rounded-lg bg-gray-50"
             >
               <div class="flex justify-between items-center">
-                <span 
-                  class="font-medium" 
-                  :class="{ 'text-gray-400': !member.is_active }"
-                  :title="!member.is_active ? 'This character is inactive due to a claim process' : ''"
-                >
-                  {{ member.character_name }}
-                </span>
+                <div class="flex items-center gap-1">
+                  <span 
+                    class="font-medium" 
+                    :class="{ 'text-gray-400': !member.is_active }"
+                  >
+                    {{ member.character_name }}
+                  </span>
+                  <svg
+                    v-if="!member.is_active"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 text-gray-400 cursor-help"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    title="This character is inactive due to a claim process"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="{
                   'bg-blue-100 text-blue-800': member.is_active,
                   'bg-gray-100 text-gray-600': !member.is_active
@@ -338,7 +367,16 @@ onMounted(async () => {
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">Soul Cores</h2>
+            <div class="flex items-center gap-4">
+              <h2 class="text-xl font-semibold">Soul Cores</h2>
+              <button
+                @click="hideUnlocked = !hideUnlocked"
+                class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+                :class="hideUnlocked ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-600'"
+              >
+                {{ hideUnlocked ? `Show Unlocked (${unlockedCoresCount})` : `Hide Unlocked (${unlockedCoresCount})` }}
+              </button>
+            </div>
             <div class="flex items-center gap-2">
               <CreatureSelect
                 v-model="selectedCreatureName"
