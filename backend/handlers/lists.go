@@ -235,6 +235,7 @@ type MemberStats struct {
 	CharacterName string    `json:"character_name"`
 	ObtainedCount int64     `json:"obtained_count"`
 	UnlockedCount int64     `json:"unlocked_count"`
+	IsActive      bool      `json:"is_active"`
 }
 
 // GetList returns detailed information about a specific list
@@ -286,6 +287,7 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 			CharacterName: m.CharacterName,
 			ObtainedCount: m.ObtainedCount,
 			UnlockedCount: m.UnlockedCount,
+			IsActive:      m.IsActive,
 		}
 	}
 
@@ -800,6 +802,7 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 			CharacterName: m.CharacterName,
 			ObtainedCount: m.ObtainedCount,
 			UnlockedCount: m.UnlockedCount,
+			IsActive:      m.IsActive,
 		}
 	}
 

@@ -23,6 +23,7 @@ interface MemberStats {
   character_name: string
   obtained_count: number
   unlocked_count: number
+  is_active: boolean
 }
 
 interface SoulCore {
@@ -314,8 +315,17 @@ onMounted(async () => {
               class="flex flex-col gap-2 p-3 rounded-lg bg-gray-50"
             >
               <div class="flex justify-between items-center">
-                <span class="font-medium">{{ member.character_name }}</span>
-                <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                <span 
+                  class="font-medium" 
+                  :class="{ 'text-gray-400': !member.is_active }"
+                  :title="!member.is_active ? 'This character is inactive due to a claim process' : ''"
+                >
+                  {{ member.character_name }}
+                </span>
+                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="{
+                  'bg-blue-100 text-blue-800': member.is_active,
+                  'bg-gray-100 text-gray-600': !member.is_active
+                }">
                   {{ member.obtained_count }} obtained
                 </span>
               </div>
