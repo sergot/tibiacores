@@ -6,13 +6,17 @@ import axios from 'axios'
 
 import App from './App.vue'
 import router from './router'
+import { i18n, getBrowserLocale, loadLocale } from './i18n'
 
 const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 
-// XXX: add interceptor for handling x-auth-token?
+// Initialize locale
+const locale = getBrowserLocale()
+loadLocale(locale)
 
 // Configure axios base URL
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
