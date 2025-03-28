@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sergot/tibiacores/backend/auth"
+	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
 	"github.com/sergot/tibiacores/backend/services"
 )
@@ -27,7 +28,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	usersHandler := handlers.NewUsersHandler(connPool, emailService)
 
 	listsHandler := handlers.NewListsHandler(connPool)
-	creaturesHandler := handlers.NewCreaturesHandler(connPool)
+	// creaturesHandler := handlers.NewCreaturesHandler(connPool)
 	oauthHandler := handlers.NewOAuthHandler(connPool)
 	claimsHandler := handlers.NewClaimsHandler(connPool)
 
@@ -63,7 +64,6 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 
 	// Protected routes with auth middleware
 	protected := api.Group("", auth.AuthMiddleware)
-	protected.GET("/creatures", creaturesHandler.GetCreatures)
 	protected.GET("/lists/:id", listsHandler.GetList)
 	protected.POST("/lists/:id/soulcores", listsHandler.AddSoulcore)
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
@@ -153,6 +153,10 @@ func main() {
 	if err != nil {
 		log.Fatal("Error initializing email service: ", err)
 	}
+
+	store := db.NewStore(connPool)
+	creaturesHandler := handlers.NewCreaturesHandler(store)
+	e.GET("/api/creatures", creaturesHandler.GetCreatures)
 
 	setupRoutes(e, connPool, emailService)
 

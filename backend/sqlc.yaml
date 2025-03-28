@@ -6,10 +6,11 @@ sql:
     gen:
       go:
         package: "db"
-        out: "db"
+        out: "db/sqlc"
         sql_package: "pgx/v5"
         emit_json_tags: true
         emit_empty_slices: true
+        emit_interface: true
         overrides:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
