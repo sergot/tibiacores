@@ -1,0 +1,16 @@
+{
+  "_locale": "en",
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "home": {
+    "owner": "Owner",
+    "member": "Member"
+  }
+} 

@@ -1,0 +1,16 @@
+{
+  "_locale": "pl",
+  "nav": {
+    "home": "Strona główna",
+    "about": "O nas",
+    "profile": "Profil",
+    "signIn": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "signOut": "Wyloguj się",
+    "language": "Język"
+  },
+  "home": {
+    "owner": "Właściciel",
+    "member": "Członek"
+  }
+} 

@@ -3,6 +3,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useSuggestionsStore } from '@/stores/suggestions'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import {
   Bars3Icon,
   XMarkIcon,
@@ -11,6 +13,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const router = useRouter()
 const suggestionsStore = useSuggestionsStore()
@@ -79,24 +82,25 @@ onBeforeUnmount(() => {
             to="/about"
             class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
           >
-            About
+            {{ t('nav.about') }}
           </RouterLink>
         </div>
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex md:items-center md:space-x-4">
+          <LanguageSwitcher />
           <div v-if="!userStore.isAuthenticated" class="flex space-x-4">
             <RouterLink
               to="/signin"
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
-              Sign in
+              {{ t('nav.signIn') }}
             </RouterLink>
             <RouterLink
               to="/signup"
               class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Sign up
+              {{ t('nav.signUp') }}
             </RouterLink>
           </div>
           <div v-else class="flex items-center space-x-4">
@@ -150,20 +154,21 @@ onBeforeUnmount(() => {
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
               <UserIcon class="h-5 w-5" />
-              <span>Profile</span>
+              <span>{{ t('nav.profile') }}</span>
             </RouterLink>
             <button
               @click="initiateLogout"
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
               <ArrowRightStartOnRectangleIcon class="h-5 w-5" />
-              <span>Sign out</span>
+              <span>{{ t('nav.signOut') }}</span>
             </button>
           </div>
         </div>
 
         <!-- Mobile menu button -->
-        <div class="flex items-center md:hidden">
+        <div class="flex items-center space-x-2 md:hidden">
+          <LanguageSwitcher />
           <button
             @click="toggleMenu"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -188,14 +193,14 @@ onBeforeUnmount(() => {
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            Sign in
+            {{ t('nav.signIn') }}
           </RouterLink>
           <RouterLink
             to="/signup"
             class="block px-3 py-2 rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700"
             @click="isMenuOpen = false"
           >
-            Sign up
+            {{ t('nav.signUp') }}
           </RouterLink>
         </div>
         <div v-else class="space-y-2">
@@ -215,20 +220,20 @@ onBeforeUnmount(() => {
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            Profile
+            {{ t('nav.profile') }}
           </RouterLink>
           <RouterLink
             to="/about"
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            About
+            {{ t('nav.about') }}
           </RouterLink>
           <button
             @click="initiateLogout"
             class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            Sign out
+            {{ t('nav.signOut') }}
           </button>
         </div>
       </div>
