@@ -18,7 +18,6 @@ type Querier interface {
 	CreateAnonymousUser(ctx context.Context, id uuid.UUID) (User, error)
 	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
 	CreateCharacterClaim(ctx context.Context, arg CreateCharacterClaimParams) (CharacterClaim, error)
-	CreateCreature(ctx context.Context, name string) (Creature, error)
 	CreateList(ctx context.Context, arg CreateListParams) (List, error)
 	CreateSoulcoreSuggestions(ctx context.Context, arg CreateSoulcoreSuggestionsParams) error
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
@@ -39,7 +38,6 @@ type Querier interface {
 	GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]GetListSoulcoresRow, error)
 	GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([]List, error)
 	GetMembers(ctx context.Context, listID uuid.UUID) ([]ListsUser, error)
-	GetPendingClaims(ctx context.Context) ([]GetPendingClaimsRow, error)
 	GetPendingClaimsToCheck(ctx context.Context) ([]GetPendingClaimsToCheckRow, error)
 	GetPendingSuggestionsForUser(ctx context.Context, userID uuid.UUID) ([]GetPendingSuggestionsForUserRow, error)
 	GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error)

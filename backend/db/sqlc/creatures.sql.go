@@ -9,19 +9,6 @@ import (
 	"context"
 )
 
-const createCreature = `-- name: CreateCreature :one
-INSERT INTO creatures (name)
-VALUES ($1)
-RETURNING id, name
-`
-
-func (q *Queries) CreateCreature(ctx context.Context, name string) (Creature, error) {
-	row := q.db.QueryRow(ctx, createCreature, name)
-	var i Creature
-	err := row.Scan(&i.ID, &i.Name)
-	return i, err
-}
-
 const getCreatures = `-- name: GetCreatures :many
 SELECT id, name
 FROM creatures

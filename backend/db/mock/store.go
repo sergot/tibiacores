@@ -6,8 +6,8 @@
 //	mockgen -package mockdb -destination db/mock/store.go github.com/sergot/tibiacores/backend/db/sqlc Store
 //
 
-// Package mockdb is a generated GoMock package.
-package mockdb
+// Package mock is a generated GoMock package.
+package mock
 
 import (
 	context "context"
@@ -15,7 +15,7 @@ import (
 
 	uuid "github.com/google/uuid"
 	pgtype "github.com/jackc/pgx/v5/pgtype"
-	sqlc "github.com/sergot/tibiacores/backend/db/sqlc"
+	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -44,7 +44,7 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // AddCharacterSoulcore mocks base method.
-func (m *MockStore) AddCharacterSoulcore(ctx context.Context, arg sqlc.AddCharacterSoulcoreParams) error {
+func (m *MockStore) AddCharacterSoulcore(ctx context.Context, arg db.AddCharacterSoulcoreParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddCharacterSoulcore", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -58,7 +58,7 @@ func (mr *MockStoreMockRecorder) AddCharacterSoulcore(ctx, arg any) *gomock.Call
 }
 
 // AddListCharacter mocks base method.
-func (m *MockStore) AddListCharacter(ctx context.Context, arg sqlc.AddListCharacterParams) error {
+func (m *MockStore) AddListCharacter(ctx context.Context, arg db.AddListCharacterParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddListCharacter", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -72,7 +72,7 @@ func (mr *MockStoreMockRecorder) AddListCharacter(ctx, arg any) *gomock.Call {
 }
 
 // AddSoulcoreToList mocks base method.
-func (m *MockStore) AddSoulcoreToList(ctx context.Context, arg sqlc.AddSoulcoreToListParams) error {
+func (m *MockStore) AddSoulcoreToList(ctx context.Context, arg db.AddSoulcoreToListParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddSoulcoreToList", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -86,10 +86,10 @@ func (mr *MockStoreMockRecorder) AddSoulcoreToList(ctx, arg any) *gomock.Call {
 }
 
 // CreateAnonymousUser mocks base method.
-func (m *MockStore) CreateAnonymousUser(ctx context.Context, id uuid.UUID) (sqlc.User, error) {
+func (m *MockStore) CreateAnonymousUser(ctx context.Context, id uuid.UUID) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateAnonymousUser", ctx, id)
-	ret0, _ := ret[0].(sqlc.User)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -101,10 +101,10 @@ func (mr *MockStoreMockRecorder) CreateAnonymousUser(ctx, id any) *gomock.Call {
 }
 
 // CreateCharacter mocks base method.
-func (m *MockStore) CreateCharacter(ctx context.Context, arg sqlc.CreateCharacterParams) (sqlc.Character, error) {
+func (m *MockStore) CreateCharacter(ctx context.Context, arg db.CreateCharacterParams) (db.Character, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCharacter", ctx, arg)
-	ret0, _ := ret[0].(sqlc.Character)
+	ret0, _ := ret[0].(db.Character)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -116,10 +116,10 @@ func (mr *MockStoreMockRecorder) CreateCharacter(ctx, arg any) *gomock.Call {
 }
 
 // CreateCharacterClaim mocks base method.
-func (m *MockStore) CreateCharacterClaim(ctx context.Context, arg sqlc.CreateCharacterClaimParams) (sqlc.CharacterClaim, error) {
+func (m *MockStore) CreateCharacterClaim(ctx context.Context, arg db.CreateCharacterClaimParams) (db.CharacterClaim, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCharacterClaim", ctx, arg)
-	ret0, _ := ret[0].(sqlc.CharacterClaim)
+	ret0, _ := ret[0].(db.CharacterClaim)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -130,26 +130,11 @@ func (mr *MockStoreMockRecorder) CreateCharacterClaim(ctx, arg any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCharacterClaim", reflect.TypeOf((*MockStore)(nil).CreateCharacterClaim), ctx, arg)
 }
 
-// CreateCreature mocks base method.
-func (m *MockStore) CreateCreature(ctx context.Context, name string) (sqlc.Creature, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateCreature", ctx, name)
-	ret0, _ := ret[0].(sqlc.Creature)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateCreature indicates an expected call of CreateCreature.
-func (mr *MockStoreMockRecorder) CreateCreature(ctx, name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCreature", reflect.TypeOf((*MockStore)(nil).CreateCreature), ctx, name)
-}
-
 // CreateList mocks base method.
-func (m *MockStore) CreateList(ctx context.Context, arg sqlc.CreateListParams) (sqlc.List, error) {
+func (m *MockStore) CreateList(ctx context.Context, arg db.CreateListParams) (db.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateList", ctx, arg)
-	ret0, _ := ret[0].(sqlc.List)
+	ret0, _ := ret[0].(db.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -161,7 +146,7 @@ func (mr *MockStoreMockRecorder) CreateList(ctx, arg any) *gomock.Call {
 }
 
 // CreateSoulcoreSuggestions mocks base method.
-func (m *MockStore) CreateSoulcoreSuggestions(ctx context.Context, arg sqlc.CreateSoulcoreSuggestionsParams) error {
+func (m *MockStore) CreateSoulcoreSuggestions(ctx context.Context, arg db.CreateSoulcoreSuggestionsParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSoulcoreSuggestions", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -175,10 +160,10 @@ func (mr *MockStoreMockRecorder) CreateSoulcoreSuggestions(ctx, arg any) *gomock
 }
 
 // CreateUser mocks base method.
-func (m *MockStore) CreateUser(ctx context.Context, arg sqlc.CreateUserParams) (sqlc.User, error) {
+func (m *MockStore) CreateUser(ctx context.Context, arg db.CreateUserParams) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, arg)
-	ret0, _ := ret[0].(sqlc.User)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -204,7 +189,7 @@ func (mr *MockStoreMockRecorder) DeactivateCharacterListMemberships(ctx, charact
 }
 
 // DeleteSoulcoreSuggestion mocks base method.
-func (m *MockStore) DeleteSoulcoreSuggestion(ctx context.Context, arg sqlc.DeleteSoulcoreSuggestionParams) error {
+func (m *MockStore) DeleteSoulcoreSuggestion(ctx context.Context, arg db.DeleteSoulcoreSuggestionParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteSoulcoreSuggestion", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -218,10 +203,10 @@ func (mr *MockStoreMockRecorder) DeleteSoulcoreSuggestion(ctx, arg any) *gomock.
 }
 
 // GetCharacter mocks base method.
-func (m *MockStore) GetCharacter(ctx context.Context, id uuid.UUID) (sqlc.Character, error) {
+func (m *MockStore) GetCharacter(ctx context.Context, id uuid.UUID) (db.Character, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacter", ctx, id)
-	ret0, _ := ret[0].(sqlc.Character)
+	ret0, _ := ret[0].(db.Character)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -233,10 +218,10 @@ func (mr *MockStoreMockRecorder) GetCharacter(ctx, id any) *gomock.Call {
 }
 
 // GetCharacterByName mocks base method.
-func (m *MockStore) GetCharacterByName(ctx context.Context, name string) (sqlc.Character, error) {
+func (m *MockStore) GetCharacterByName(ctx context.Context, name string) (db.Character, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacterByName", ctx, name)
-	ret0, _ := ret[0].(sqlc.Character)
+	ret0, _ := ret[0].(db.Character)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -248,10 +233,10 @@ func (mr *MockStoreMockRecorder) GetCharacterByName(ctx, name any) *gomock.Call 
 }
 
 // GetCharacterClaim mocks base method.
-func (m *MockStore) GetCharacterClaim(ctx context.Context, arg sqlc.GetCharacterClaimParams) (sqlc.CharacterClaim, error) {
+func (m *MockStore) GetCharacterClaim(ctx context.Context, arg db.GetCharacterClaimParams) (db.CharacterClaim, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacterClaim", ctx, arg)
-	ret0, _ := ret[0].(sqlc.CharacterClaim)
+	ret0, _ := ret[0].(db.CharacterClaim)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -263,10 +248,10 @@ func (mr *MockStoreMockRecorder) GetCharacterClaim(ctx, arg any) *gomock.Call {
 }
 
 // GetCharacterSoulcores mocks base method.
-func (m *MockStore) GetCharacterSoulcores(ctx context.Context, characterID uuid.UUID) ([]sqlc.GetCharacterSoulcoresRow, error) {
+func (m *MockStore) GetCharacterSoulcores(ctx context.Context, characterID uuid.UUID) ([]db.GetCharacterSoulcoresRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacterSoulcores", ctx, characterID)
-	ret0, _ := ret[0].([]sqlc.GetCharacterSoulcoresRow)
+	ret0, _ := ret[0].([]db.GetCharacterSoulcoresRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -278,10 +263,10 @@ func (mr *MockStoreMockRecorder) GetCharacterSoulcores(ctx, characterID any) *go
 }
 
 // GetCharacterSuggestions mocks base method.
-func (m *MockStore) GetCharacterSuggestions(ctx context.Context, characterID uuid.UUID) ([]sqlc.GetCharacterSuggestionsRow, error) {
+func (m *MockStore) GetCharacterSuggestions(ctx context.Context, characterID uuid.UUID) ([]db.GetCharacterSuggestionsRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharacterSuggestions", ctx, characterID)
-	ret0, _ := ret[0].([]sqlc.GetCharacterSuggestionsRow)
+	ret0, _ := ret[0].([]db.GetCharacterSuggestionsRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -293,10 +278,10 @@ func (mr *MockStoreMockRecorder) GetCharacterSuggestions(ctx, characterID any) *
 }
 
 // GetCharactersByUserID mocks base method.
-func (m *MockStore) GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]sqlc.Character, error) {
+func (m *MockStore) GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]db.Character, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCharactersByUserID", ctx, userID)
-	ret0, _ := ret[0].([]sqlc.Character)
+	ret0, _ := ret[0].([]db.Character)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -308,10 +293,10 @@ func (mr *MockStoreMockRecorder) GetCharactersByUserID(ctx, userID any) *gomock.
 }
 
 // GetClaimByID mocks base method.
-func (m *MockStore) GetClaimByID(ctx context.Context, id uuid.UUID) (sqlc.GetClaimByIDRow, error) {
+func (m *MockStore) GetClaimByID(ctx context.Context, id uuid.UUID) (db.GetClaimByIDRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetClaimByID", ctx, id)
-	ret0, _ := ret[0].(sqlc.GetClaimByIDRow)
+	ret0, _ := ret[0].(db.GetClaimByIDRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -323,10 +308,10 @@ func (mr *MockStoreMockRecorder) GetClaimByID(ctx, id any) *gomock.Call {
 }
 
 // GetCreatures mocks base method.
-func (m *MockStore) GetCreatures(ctx context.Context) ([]sqlc.Creature, error) {
+func (m *MockStore) GetCreatures(ctx context.Context) ([]db.Creature, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCreatures", ctx)
-	ret0, _ := ret[0].([]sqlc.Creature)
+	ret0, _ := ret[0].([]db.Creature)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -338,10 +323,10 @@ func (mr *MockStoreMockRecorder) GetCreatures(ctx any) *gomock.Call {
 }
 
 // GetList mocks base method.
-func (m *MockStore) GetList(ctx context.Context, id uuid.UUID) (sqlc.List, error) {
+func (m *MockStore) GetList(ctx context.Context, id uuid.UUID) (db.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetList", ctx, id)
-	ret0, _ := ret[0].(sqlc.List)
+	ret0, _ := ret[0].(db.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -353,10 +338,10 @@ func (mr *MockStoreMockRecorder) GetList(ctx, id any) *gomock.Call {
 }
 
 // GetListByShareCode mocks base method.
-func (m *MockStore) GetListByShareCode(ctx context.Context, shareCode uuid.UUID) (sqlc.List, error) {
+func (m *MockStore) GetListByShareCode(ctx context.Context, shareCode uuid.UUID) (db.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListByShareCode", ctx, shareCode)
-	ret0, _ := ret[0].(sqlc.List)
+	ret0, _ := ret[0].(db.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -368,10 +353,10 @@ func (mr *MockStoreMockRecorder) GetListByShareCode(ctx, shareCode any) *gomock.
 }
 
 // GetListMembers mocks base method.
-func (m *MockStore) GetListMembers(ctx context.Context, listID uuid.UUID) ([]sqlc.GetListMembersRow, error) {
+func (m *MockStore) GetListMembers(ctx context.Context, listID uuid.UUID) ([]db.GetListMembersRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListMembers", ctx, listID)
-	ret0, _ := ret[0].([]sqlc.GetListMembersRow)
+	ret0, _ := ret[0].([]db.GetListMembersRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -383,10 +368,10 @@ func (mr *MockStoreMockRecorder) GetListMembers(ctx, listID any) *gomock.Call {
 }
 
 // GetListSoulcore mocks base method.
-func (m *MockStore) GetListSoulcore(ctx context.Context, arg sqlc.GetListSoulcoreParams) (sqlc.GetListSoulcoreRow, error) {
+func (m *MockStore) GetListSoulcore(ctx context.Context, arg db.GetListSoulcoreParams) (db.GetListSoulcoreRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListSoulcore", ctx, arg)
-	ret0, _ := ret[0].(sqlc.GetListSoulcoreRow)
+	ret0, _ := ret[0].(db.GetListSoulcoreRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -398,10 +383,10 @@ func (mr *MockStoreMockRecorder) GetListSoulcore(ctx, arg any) *gomock.Call {
 }
 
 // GetListSoulcores mocks base method.
-func (m *MockStore) GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]sqlc.GetListSoulcoresRow, error) {
+func (m *MockStore) GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]db.GetListSoulcoresRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListSoulcores", ctx, listID)
-	ret0, _ := ret[0].([]sqlc.GetListSoulcoresRow)
+	ret0, _ := ret[0].([]db.GetListSoulcoresRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -413,10 +398,10 @@ func (mr *MockStoreMockRecorder) GetListSoulcores(ctx, listID any) *gomock.Call 
 }
 
 // GetListsByAuthorId mocks base method.
-func (m *MockStore) GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([]sqlc.List, error) {
+func (m *MockStore) GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([]db.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListsByAuthorId", ctx, authorID)
-	ret0, _ := ret[0].([]sqlc.List)
+	ret0, _ := ret[0].([]db.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -428,10 +413,10 @@ func (mr *MockStoreMockRecorder) GetListsByAuthorId(ctx, authorID any) *gomock.C
 }
 
 // GetMembers mocks base method.
-func (m *MockStore) GetMembers(ctx context.Context, listID uuid.UUID) ([]sqlc.ListsUser, error) {
+func (m *MockStore) GetMembers(ctx context.Context, listID uuid.UUID) ([]db.ListsUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMembers", ctx, listID)
-	ret0, _ := ret[0].([]sqlc.ListsUser)
+	ret0, _ := ret[0].([]db.ListsUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -442,26 +427,11 @@ func (mr *MockStoreMockRecorder) GetMembers(ctx, listID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMembers", reflect.TypeOf((*MockStore)(nil).GetMembers), ctx, listID)
 }
 
-// GetPendingClaims mocks base method.
-func (m *MockStore) GetPendingClaims(ctx context.Context) ([]sqlc.GetPendingClaimsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPendingClaims", ctx)
-	ret0, _ := ret[0].([]sqlc.GetPendingClaimsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPendingClaims indicates an expected call of GetPendingClaims.
-func (mr *MockStoreMockRecorder) GetPendingClaims(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPendingClaims", reflect.TypeOf((*MockStore)(nil).GetPendingClaims), ctx)
-}
-
 // GetPendingClaimsToCheck mocks base method.
-func (m *MockStore) GetPendingClaimsToCheck(ctx context.Context) ([]sqlc.GetPendingClaimsToCheckRow, error) {
+func (m *MockStore) GetPendingClaimsToCheck(ctx context.Context) ([]db.GetPendingClaimsToCheckRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPendingClaimsToCheck", ctx)
-	ret0, _ := ret[0].([]sqlc.GetPendingClaimsToCheckRow)
+	ret0, _ := ret[0].([]db.GetPendingClaimsToCheckRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -473,10 +443,10 @@ func (mr *MockStoreMockRecorder) GetPendingClaimsToCheck(ctx any) *gomock.Call {
 }
 
 // GetPendingSuggestionsForUser mocks base method.
-func (m *MockStore) GetPendingSuggestionsForUser(ctx context.Context, userID uuid.UUID) ([]sqlc.GetPendingSuggestionsForUserRow, error) {
+func (m *MockStore) GetPendingSuggestionsForUser(ctx context.Context, userID uuid.UUID) ([]db.GetPendingSuggestionsForUserRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPendingSuggestionsForUser", ctx, userID)
-	ret0, _ := ret[0].([]sqlc.GetPendingSuggestionsForUserRow)
+	ret0, _ := ret[0].([]db.GetPendingSuggestionsForUserRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -488,10 +458,10 @@ func (mr *MockStoreMockRecorder) GetPendingSuggestionsForUser(ctx, userID any) *
 }
 
 // GetUserByEmail mocks base method.
-func (m *MockStore) GetUserByEmail(ctx context.Context, email pgtype.Text) (sqlc.User, error) {
+func (m *MockStore) GetUserByEmail(ctx context.Context, email pgtype.Text) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByEmail", ctx, email)
-	ret0, _ := ret[0].(sqlc.User)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -503,10 +473,10 @@ func (mr *MockStoreMockRecorder) GetUserByEmail(ctx, email any) *gomock.Call {
 }
 
 // GetUserByID mocks base method.
-func (m *MockStore) GetUserByID(ctx context.Context, id uuid.UUID) (sqlc.User, error) {
+func (m *MockStore) GetUserByID(ctx context.Context, id uuid.UUID) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByID", ctx, id)
-	ret0, _ := ret[0].(sqlc.User)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -518,10 +488,10 @@ func (mr *MockStoreMockRecorder) GetUserByID(ctx, id any) *gomock.Call {
 }
 
 // GetUserCharacters mocks base method.
-func (m *MockStore) GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]sqlc.GetUserCharactersRow, error) {
+func (m *MockStore) GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]db.GetUserCharactersRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserCharacters", ctx, userID)
-	ret0, _ := ret[0].([]sqlc.GetUserCharactersRow)
+	ret0, _ := ret[0].([]db.GetUserCharactersRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -533,10 +503,10 @@ func (mr *MockStoreMockRecorder) GetUserCharacters(ctx, userID any) *gomock.Call
 }
 
 // GetUserLists mocks base method.
-func (m *MockStore) GetUserLists(ctx context.Context, authorID uuid.UUID) ([]sqlc.GetUserListsRow, error) {
+func (m *MockStore) GetUserLists(ctx context.Context, authorID uuid.UUID) ([]db.GetUserListsRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserLists", ctx, authorID)
-	ret0, _ := ret[0].([]sqlc.GetUserListsRow)
+	ret0, _ := ret[0].([]db.GetUserListsRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -548,7 +518,7 @@ func (mr *MockStoreMockRecorder) GetUserLists(ctx, authorID any) *gomock.Call {
 }
 
 // IsUserListMember mocks base method.
-func (m *MockStore) IsUserListMember(ctx context.Context, arg sqlc.IsUserListMemberParams) (bool, error) {
+func (m *MockStore) IsUserListMember(ctx context.Context, arg db.IsUserListMemberParams) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsUserListMember", ctx, arg)
 	ret0, _ := ret[0].(bool)
@@ -563,10 +533,10 @@ func (mr *MockStoreMockRecorder) IsUserListMember(ctx, arg any) *gomock.Call {
 }
 
 // MigrateAnonymousUser mocks base method.
-func (m *MockStore) MigrateAnonymousUser(ctx context.Context, arg sqlc.MigrateAnonymousUserParams) (sqlc.User, error) {
+func (m *MockStore) MigrateAnonymousUser(ctx context.Context, arg db.MigrateAnonymousUserParams) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MigrateAnonymousUser", ctx, arg)
-	ret0, _ := ret[0].(sqlc.User)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -578,7 +548,7 @@ func (mr *MockStoreMockRecorder) MigrateAnonymousUser(ctx, arg any) *gomock.Call
 }
 
 // RemoveCharacterSoulcore mocks base method.
-func (m *MockStore) RemoveCharacterSoulcore(ctx context.Context, arg sqlc.RemoveCharacterSoulcoreParams) error {
+func (m *MockStore) RemoveCharacterSoulcore(ctx context.Context, arg db.RemoveCharacterSoulcoreParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveCharacterSoulcore", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -592,7 +562,7 @@ func (mr *MockStoreMockRecorder) RemoveCharacterSoulcore(ctx, arg any) *gomock.C
 }
 
 // RemoveListSoulcore mocks base method.
-func (m *MockStore) RemoveListSoulcore(ctx context.Context, arg sqlc.RemoveListSoulcoreParams) error {
+func (m *MockStore) RemoveListSoulcore(ctx context.Context, arg db.RemoveListSoulcoreParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveListSoulcore", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -606,10 +576,10 @@ func (mr *MockStoreMockRecorder) RemoveListSoulcore(ctx, arg any) *gomock.Call {
 }
 
 // UpdateCharacterOwner mocks base method.
-func (m *MockStore) UpdateCharacterOwner(ctx context.Context, arg sqlc.UpdateCharacterOwnerParams) (sqlc.Character, error) {
+func (m *MockStore) UpdateCharacterOwner(ctx context.Context, arg db.UpdateCharacterOwnerParams) (db.Character, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateCharacterOwner", ctx, arg)
-	ret0, _ := ret[0].(sqlc.Character)
+	ret0, _ := ret[0].(db.Character)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -621,10 +591,10 @@ func (mr *MockStoreMockRecorder) UpdateCharacterOwner(ctx, arg any) *gomock.Call
 }
 
 // UpdateClaimStatus mocks base method.
-func (m *MockStore) UpdateClaimStatus(ctx context.Context, arg sqlc.UpdateClaimStatusParams) (sqlc.CharacterClaim, error) {
+func (m *MockStore) UpdateClaimStatus(ctx context.Context, arg db.UpdateClaimStatusParams) (db.CharacterClaim, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateClaimStatus", ctx, arg)
-	ret0, _ := ret[0].(sqlc.CharacterClaim)
+	ret0, _ := ret[0].(db.CharacterClaim)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -636,7 +606,7 @@ func (mr *MockStoreMockRecorder) UpdateClaimStatus(ctx, arg any) *gomock.Call {
 }
 
 // UpdateSoulcoreStatus mocks base method.
-func (m *MockStore) UpdateSoulcoreStatus(ctx context.Context, arg sqlc.UpdateSoulcoreStatusParams) error {
+func (m *MockStore) UpdateSoulcoreStatus(ctx context.Context, arg db.UpdateSoulcoreStatusParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateSoulcoreStatus", ctx, arg)
 	ret0, _ := ret[0].(error)
@@ -650,7 +620,7 @@ func (mr *MockStoreMockRecorder) UpdateSoulcoreStatus(ctx, arg any) *gomock.Call
 }
 
 // VerifyEmail mocks base method.
-func (m *MockStore) VerifyEmail(ctx context.Context, arg sqlc.VerifyEmailParams) error {
+func (m *MockStore) VerifyEmail(ctx context.Context, arg db.VerifyEmailParams) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VerifyEmail", ctx, arg)
 	ret0, _ := ret[0].(error)

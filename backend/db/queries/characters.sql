@@ -4,7 +4,6 @@ FROM characters
 WHERE user_id = $1
 ORDER BY name;
 
-
 -- name: GetCharacter :one
 SELECT id, user_id, name, world, created_at, updated_at
 FROM characters
@@ -35,12 +34,6 @@ RETURNING *;
 -- name: GetCharacterClaim :one
 SELECT * FROM character_claims
 WHERE character_id = $1 AND claimer_id = $2;
-
--- name: GetPendingClaims :many
-SELECT c.*, ch.name as character_name
-FROM character_claims c
-JOIN characters ch ON c.character_id = ch.id
-WHERE c.status = 'pending' AND c.last_checked_at < NOW() - INTERVAL '1 hour';
 
 -- name: UpdateClaimStatus :one
 UPDATE character_claims
