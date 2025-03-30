@@ -7,18 +7,17 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 )
 
 type OAuthHandler struct {
-	connPool *pgxpool.Pool
+	store db.Store
 }
 
-func NewOAuthHandler(connPool *pgxpool.Pool) *OAuthHandler {
-	return &OAuthHandler{connPool}
+func NewOAuthHandler(store db.Store) *OAuthHandler {
+	return &OAuthHandler{store}
 }
 
 // Login initiates OAuth2 flow for the specified provider
@@ -42,7 +41,6 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid oauth state")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := context.Background()
 
 	// Exchange code for token
@@ -57,7 +55,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	email.Valid = true
 
 	// First check if a user exists with this email
-	existingUser, err := queries.GetUserByEmail(ctx, email)
+	existingUser, err := h.store.GetUserByEmail(ctx, email)
 	if err == nil {
 		// User exists with this email
 		if existingUser.Password.Valid {
@@ -92,10 +90,10 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		userID, parseErr := uuid.Parse(*existingUserID)
 		if parseErr == nil {
 			// Check if user exists and is anonymous
-			existingAnonymousUser, err := queries.GetUserByID(ctx, userID)
+			existingAnonymousUser, err := h.store.GetUserByID(ctx, userID)
 			if err == nil && existingAnonymousUser.IsAnonymous {
 				// Migrate the anonymous user to OAuth user
-				user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+				user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
 					Email:                      email,
 					Password:                   pgtype.Text{}, // No password for OAuth users
 					EmailVerificationToken:     uuid.Nil,      // OAuth users don't need verification
@@ -121,7 +119,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 
 	// If we get here, either there was no anonymous user to migrate or migration failed
 	// Create new user
-	user, err = queries.CreateUser(ctx, db.CreateUserParams{
+	user, err = h.store.CreateUser(ctx, db.CreateUserParams{
 		Email:                      email,
 		Password:                   pgtype.Text{},        // No password for OAuth users
 		EmailVerificationToken:     uuid.Nil,             // OAuth users don't need verification

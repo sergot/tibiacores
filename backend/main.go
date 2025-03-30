@@ -16,7 +16,7 @@ import (
 	"github.com/sergot/tibiacores/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.EmailService) {
+func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Store) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -25,12 +25,11 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	})
 
 	// Handlers initialization
-	usersHandler := handlers.NewUsersHandler(connPool, emailService)
+	usersHandler := handlers.NewUsersHandler(store, emailService)
 
-	listsHandler := handlers.NewListsHandler(connPool)
-	// creaturesHandler := handlers.NewCreaturesHandler(connPool)
-	oauthHandler := handlers.NewOAuthHandler(connPool)
-	claimsHandler := handlers.NewClaimsHandler(connPool)
+	listsHandler := handlers.NewListsHandler(store)
+	oauthHandler := handlers.NewOAuthHandler(store)
+	claimsHandler := handlers.NewClaimsHandler(store)
 
 	// Start background claim checker
 	go func() {
@@ -86,6 +85,8 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	protected.POST("/claims", claimsHandler.StartClaim)
 	protected.GET("/claims/:id", claimsHandler.CheckClaim)
 
+	creaturesHandler := handlers.NewCreaturesHandler(store)
+	protected.GET("/creatures", creaturesHandler.GetCreatures)
 }
 
 func main() {
@@ -155,10 +156,8 @@ func main() {
 	}
 
 	store := db.NewStore(connPool)
-	creaturesHandler := handlers.NewCreaturesHandler(store)
-	e.GET("/api/creatures", creaturesHandler.GetCreatures)
 
-	setupRoutes(e, connPool, emailService)
+	setupRoutes(e, emailService, store)
 
 	port := os.Getenv("PORT")
 	if port == "" {

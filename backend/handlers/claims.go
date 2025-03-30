@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
@@ -18,7 +17,7 @@ import (
 )
 
 type ClaimsHandler struct {
-	connPool  *pgxpool.Pool
+	store     db.Store
 	tibiaData *services.TibiaDataService
 }
 
@@ -29,9 +28,9 @@ type StartClaimResponse struct {
 	ClaimerID        string `json:"claimer_id,omitempty"` // ID of the claiming user
 }
 
-func NewClaimsHandler(connPool *pgxpool.Pool) *ClaimsHandler {
+func NewClaimsHandler(store db.Store) *ClaimsHandler {
 	return &ClaimsHandler{
-		connPool:  connPool,
+		store:     store,
 		tibiaData: services.NewTibiaDataService(),
 	}
 }
@@ -45,7 +44,6 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// First check if character exists in TibiaData API
@@ -55,7 +53,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	}
 
 	// Check if character exists in our database
-	character, err := queries.GetCharacterByName(ctx, tibiaChar.Name)
+	character, err := h.store.GetCharacterByName(ctx, tibiaChar.Name)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "character is not registered in any list yet")
 	}
@@ -72,7 +70,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		}
 	} else {
 		// Create new anonymous user account
-		newUser, err := queries.CreateAnonymousUser(ctx, uuid.New())
+		newUser, err := h.store.CreateAnonymousUser(ctx, uuid.New())
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
 		}
@@ -88,7 +86,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	}
 
 	// Check if there's already an active claim
-	existingClaim, err := queries.GetCharacterClaim(ctx, db.GetCharacterClaimParams{
+	existingClaim, err := h.store.GetCharacterClaim(ctx, db.GetCharacterClaimParams{
 		CharacterID: character.ID,
 		ClaimerID:   userID,
 	})
@@ -108,7 +106,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	verificationCode := "TIBIACORES-" + hex.EncodeToString(verificationBytes)
 
 	// Create new claim
-	claim, err := queries.CreateCharacterClaim(ctx, db.CreateCharacterClaimParams{
+	claim, err := h.store.CreateCharacterClaim(ctx, db.CreateCharacterClaimParams{
 		CharacterID:      character.ID,
 		ClaimerID:        userID,
 		VerificationCode: verificationCode,
@@ -142,11 +140,10 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Get claim by claim ID
-	claim, err := queries.GetClaimByID(ctx, claimID)
+	claim, err := h.store.GetClaimByID(ctx, claimID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "claim not found")
 	}
@@ -166,7 +163,7 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 
 		if verified {
 			// Update claim status to approved
-			updatedClaim, err := queries.UpdateClaimStatus(ctx, db.UpdateClaimStatusParams{
+			updatedClaim, err := h.store.UpdateClaimStatus(ctx, db.UpdateClaimStatusParams{
 				CharacterID: claim.CharacterID,
 				ClaimerID:   claim.ClaimerID,
 				Status:      "approved",
@@ -176,14 +173,14 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 			}
 
 			// First deactivate any existing list memberships
-			err = queries.DeactivateCharacterListMemberships(ctx, claim.CharacterID)
+			err = h.store.DeactivateCharacterListMemberships(ctx, claim.CharacterID)
 			if err != nil {
 				log.Printf("Failed to deactivate list memberships for character %s: %v", claim.CharacterName, err)
 				// Continue anyway as this is not critical
 			}
 
 			// Update character owner
-			character, err := queries.UpdateCharacterOwner(ctx, db.UpdateCharacterOwnerParams{
+			character, err := h.store.UpdateCharacterOwner(ctx, db.UpdateCharacterOwnerParams{
 				ID:     claim.CharacterID,
 				UserID: claim.ClaimerID,
 			})
@@ -209,17 +206,16 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 // ProcessPendingClaims processes all pending claims that are due for check
 func (h *ClaimsHandler) ProcessPendingClaims() error {
 	log.Println("Processing pending claims")
-	queries := db.New(h.connPool)
 	ctx := context.Background()
 
-	pendingClaims, err := queries.GetPendingClaimsToCheck(ctx)
+	pendingClaims, err := h.store.GetPendingClaimsToCheck(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, claim := range pendingClaims {
 		// Get character
-		character, err := queries.GetCharacter(ctx, claim.CharacterID)
+		character, err := h.store.GetCharacter(ctx, claim.CharacterID)
 		if err != nil {
 			continue
 		}
@@ -238,7 +234,7 @@ func (h *ClaimsHandler) ProcessPendingClaims() error {
 		}
 
 		// Update claim status
-		_, err = queries.UpdateClaimStatus(ctx, db.UpdateClaimStatusParams{
+		_, err = h.store.UpdateClaimStatus(ctx, db.UpdateClaimStatusParams{
 			CharacterID: claim.CharacterID,
 			ClaimerID:   claim.ClaimerID,
 			Status:      status,
@@ -250,14 +246,14 @@ func (h *ClaimsHandler) ProcessPendingClaims() error {
 		// If claim is approved, update character owner and deactivate list memberships
 		if status == "approved" {
 			// First deactivate any existing list memberships
-			err = queries.DeactivateCharacterListMemberships(ctx, character.ID)
+			err = h.store.DeactivateCharacterListMemberships(ctx, character.ID)
 			if err != nil {
 				log.Printf("Failed to deactivate list memberships for character %s: %v", character.Name, err)
 				// Continue anyway as this is not critical
 			}
 
 			// Then update the character owner
-			_, err = queries.UpdateCharacterOwner(ctx, db.UpdateCharacterOwnerParams{
+			_, err = h.store.UpdateCharacterOwner(ctx, db.UpdateCharacterOwnerParams{
 				ID:     character.ID,
 				UserID: claim.ClaimerID,
 			})
