@@ -641,9 +641,10 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
 				"creature_id": creatureID,
 			})
+			require.NoError(t, err)
 
 			// Create HTTP request
 			url := fmt.Sprintf("/api/characters/%s/suggestions/accept", characterID.String())
@@ -669,7 +670,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 
 			// Execute handler
 			h := handlers.NewListsHandler(store)
-			err := h.AcceptSoulcoreSuggestion(c)
+			err = h.AcceptSoulcoreSuggestion(c)
 
 			// Check for expected error response
 			if tc.expectedError != "" {
@@ -822,9 +823,10 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
 				"creature_id": creatureID,
 			})
+			require.NoError(t, err)
 
 			// Create HTTP request
 			url := fmt.Sprintf("/api/characters/%s/suggestions/dismiss", characterID.String())
@@ -850,7 +852,7 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 
 			// Execute handler
 			h := handlers.NewListsHandler(store)
-			err := h.DismissSoulcoreSuggestion(c)
+			err = h.DismissSoulcoreSuggestion(c)
 
 			// Check for expected error response
 			if tc.expectedError != "" {
