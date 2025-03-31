@@ -36,12 +36,9 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 		ticker := time.NewTicker(15 * time.Minute)
 		defer ticker.Stop()
 
-		for {
-			select {
-			case <-ticker.C:
-				if err := claimsHandler.ProcessPendingClaims(); err != nil {
-					log.Printf("Error processing pending claims: %v", err)
-				}
+		for range ticker.C {
+			if err := claimsHandler.ProcessPendingClaims(); err != nil {
+				log.Printf("Error processing pending claims: %v", err)
 			}
 		}
 	}()
@@ -97,11 +94,6 @@ func main() {
 		if err := godotenv.Load(); err != nil {
 			log.Printf("Warning: .env file not found: %v", err)
 		}
-	}
-
-	// Set default redirect URI if not provided
-	if os.Getenv("DISCORD_REDIRECT_URI") == "" {
-		os.Setenv("DISCORD_REDIRECT_URI", "http://localhost:5173/oauth/discord/callback")
 	}
 
 	// Initialize OAuth providers

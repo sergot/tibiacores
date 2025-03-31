@@ -34,7 +34,10 @@ func NewEmailService() (*EmailService, error) {
 	mg := mailgun.NewMailgun(apiKey)
 
 	// Set EU endpoint for non-production environments
-	mg.SetAPIBase(mailgun.APIBaseEU)
+	err := mg.SetAPIBase(mailgun.APIBaseEU)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set API base: %w", err)
+	}
 
 	return &EmailService{
 		mg:          mg,
