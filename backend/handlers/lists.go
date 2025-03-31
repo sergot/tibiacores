@@ -216,16 +216,15 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 }
 
 type ListDetailResponse struct {
-	ID         uuid.UUID                `json:"id"`
-	AuthorID   uuid.UUID                `json:"author_id"`
-	Name       string                   `json:"name"`
-	ShareCode  uuid.UUID                `json:"share_code"`
-	World      string                   `json:"world"`
-	CreatedAt  time.Time                `json:"created_at"`
-	UpdatedAt  time.Time                `json:"updated_at"`
-	Members    []MemberStats            `json:"members"`
-	SoulCores  []db.GetListSoulcoresRow `json:"soul_cores"`
-	TotalCores int                      `json:"total_cores"`
+	ID        uuid.UUID                `json:"id"`
+	AuthorID  uuid.UUID                `json:"author_id"`
+	Name      string                   `json:"name"`
+	ShareCode uuid.UUID                `json:"share_code"`
+	World     string                   `json:"world"`
+	CreatedAt time.Time                `json:"created_at"`
+	UpdatedAt time.Time                `json:"updated_at"`
+	Members   []MemberStats            `json:"members"`
+	SoulCores []db.GetListSoulcoresRow `json:"soul_cores"`
 }
 
 type MemberStats struct {
@@ -252,19 +251,6 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	// Check if user is a member of the list
-	isMember, err := h.store.IsUserListMember(ctx, db.IsUserListMemberParams{
-		ListID: listID,
-		UserID: userID,
-	})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
-	}
-
-	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
-	}
-
 	// Get list details
 	list, err := h.store.GetList(ctx, listID)
 	if err != nil {
@@ -275,6 +261,18 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 	members, err := h.store.GetListMembers(ctx, listID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+	}
+
+	isMember := false
+	for _, member := range members {
+		if member.UserID == userID {
+			isMember = true
+			break
+		}
+	}
+
+	if !isMember {
+		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
 	}
 
 	memberStats := make([]MemberStats, len(members))
@@ -294,23 +292,16 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get soul cores")
 	}
 
-	// Get total number of creatures
-	creatures, err := h.store.GetCreatures(ctx)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get creatures")
-	}
-
 	return c.JSON(http.StatusOK, ListDetailResponse{
-		ID:         list.ID,
-		AuthorID:   list.AuthorID,
-		Name:       list.Name,
-		ShareCode:  list.ShareCode,
-		World:      list.World,
-		CreatedAt:  list.CreatedAt.Time,
-		UpdatedAt:  list.UpdatedAt.Time,
-		Members:    memberStats,
-		SoulCores:  soulCores,
-		TotalCores: len(creatures),
+		ID:        list.ID,
+		AuthorID:  list.AuthorID,
+		Name:      list.Name,
+		ShareCode: list.ShareCode,
+		World:     list.World,
+		CreatedAt: list.CreatedAt.Time,
+		UpdatedAt: list.UpdatedAt.Time,
+		Members:   memberStats,
+		SoulCores: soulCores,
 	})
 }
 
@@ -786,16 +777,15 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 
 	// Return list details
 	return c.JSON(http.StatusOK, ListDetailResponse{
-		ID:         list.ID,
-		AuthorID:   list.AuthorID,
-		Name:       list.Name,
-		ShareCode:  list.ShareCode,
-		World:      list.World,
-		CreatedAt:  list.CreatedAt.Time,
-		UpdatedAt:  list.UpdatedAt.Time,
-		Members:    memberStats,
-		SoulCores:  []db.GetListSoulcoresRow{},
-		TotalCores: 0,
+		ID:        list.ID,
+		AuthorID:  list.AuthorID,
+		Name:      list.Name,
+		ShareCode: list.ShareCode,
+		World:     list.World,
+		CreatedAt: list.CreatedAt.Time,
+		UpdatedAt: list.UpdatedAt.Time,
+		Members:   memberStats,
+		SoulCores: []db.GetListSoulcoresRow{},
 	})
 }
 
