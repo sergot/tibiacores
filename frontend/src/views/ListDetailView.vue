@@ -334,22 +334,28 @@ onMounted(async () => {
                   >
                     {{ member.character_name }}
                   </span>
-                  <svg
+                  <div 
                     v-if="!member.is_active"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4 text-gray-400 cursor-help"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    title="This character is inactive due to a claim process"
+                    class="group relative"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity absolute left-1/2 -translate-x-1/2 -top-2 transform -translate-y-full bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                      This character is inactive due to a claim process
+                    </div>
+                  </div>
                 </div>
                 <span class="px-2 py-1 text-xs font-medium rounded-full" :class="{
                   'bg-blue-100 text-blue-800': member.is_active,
