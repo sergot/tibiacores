@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 import { useUserStore } from '@/stores/user'
@@ -179,11 +180,11 @@ const sortedAndFilteredSoulCores = computed(() => {
   if (!listDetails.value) return []
 
   let filtered = [...listDetails.value.soul_cores]
-  
+
   // Apply search filter
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(core => 
+    filtered = filtered.filter(core =>
       core.creature_name.toLowerCase().includes(query)
     )
   }
@@ -207,6 +208,8 @@ const canModifySoulcore = (soulcore: SoulCore) => {
   return soulcore.added_by_user_id === userStore.userId
 }
 
+const { t } = useI18n()
+
 onMounted(async () => {
   try {
     await Promise.all([fetchListDetails(), fetchCreatures()])
@@ -228,11 +231,10 @@ onMounted(async () => {
       <div
         class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"
       ></div>
-      <p class="text-gray-600 font-medium">Loading list details...</p>
+      <p class="text-gray-600 font-medium">{{ t('characterDetails.soulcores.loading') }}</p>
     </div>
 
     <template v-else-if="listDetails">
-      <!-- Header Section -->
       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
         <div>
           <div class="flex items-center gap-4 mb-2">
@@ -257,7 +259,7 @@ onMounted(async () => {
             </button>
             <h1 class="text-2xl sm:text-3xl font-semibold">{{ listDetails.name }}</h1>
           </div>
-          <p class="text-gray-600">Created {{ new Date(listDetails.created_at).toLocaleDateString() }}</p>
+          <p class="text-gray-600">{{ t('listDetail.created') }} {{ new Date(listDetails.created_at).toLocaleDateString() }}</p>
         </div>
         <button
           @click="showShareDialog = true"
@@ -277,7 +279,7 @@ onMounted(async () => {
               d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
             />
           </svg>
-          Share List
+          {{ t('listDetail.shareList') }}
         </button>
       </div>
 
@@ -285,10 +287,10 @@ onMounted(async () => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Soul Core Stats -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 class="text-xl font-semibold mb-4">Soul Core Progress</h2>
+          <h2 class="text-xl font-semibold mb-4">{{ t('characterDetails.soulcores.title') }}</h2>
           <div class="space-y-4">
             <div class="flex justify-between text-sm text-gray-600">
-              <span>XP Boost Progress (200)</span>
+              <span>{{ t('listDetail.xpBoostProgress') }}</span>
               <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / 200</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
@@ -303,7 +305,7 @@ onMounted(async () => {
               ></div>
             </div>
             <div class="flex justify-between text-sm text-gray-600">
-              <span>Total Progress</span>
+              <span>{{ t('listDetail.totalProgress') }}</span>
               <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / {{ listDetails.total_cores }}</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
@@ -319,7 +321,7 @@ onMounted(async () => {
 
         <!-- Member Stats -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 class="text-xl font-semibold mb-4">Member Contributions</h2>
+          <h2 class="text-xl font-semibold mb-4">{{ t('listDetail.memberContributions') }}</h2>
           <div class="space-y-4">
             <div
               v-for="member in listDetails.members"
@@ -328,13 +330,13 @@ onMounted(async () => {
             >
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-1">
-                  <span 
-                    class="font-medium" 
+                  <span
+                    class="font-medium"
                     :class="{ 'text-gray-400': !member.is_active }"
                   >
                     {{ member.character_name }}
                   </span>
-                  <div 
+                  <div
                     v-if="!member.is_active"
                     class="group relative"
                   >
@@ -353,7 +355,7 @@ onMounted(async () => {
                       />
                     </svg>
                     <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity absolute left-1/2 -translate-x-1/2 -top-2 transform -translate-y-full bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                      This character is inactive due to a claim process
+                      {{ t('listDetail.inactiveCharacterTooltip') }}
                     </div>
                   </div>
                 </div>
@@ -361,7 +363,7 @@ onMounted(async () => {
                   'bg-blue-100 text-blue-800': member.is_active,
                   'bg-gray-100 text-gray-600': !member.is_active
                 }">
-                  {{ member.obtained_count }} obtained
+                  {{ member.obtained_count }} {{ t('listDetail.obtained') }}
                 </span>
               </div>
             </div>
@@ -374,16 +376,16 @@ onMounted(async () => {
         <div class="p-6 border-b border-gray-200">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div class="flex items-center gap-4">
-              <h2 class="text-xl font-semibold">Soul Cores</h2>
+              <h2 class="text-xl font-semibold">{{ t('characterDetails.soulcores.title') }}</h2>
               <button
                 @click="hideUnlocked = !hideUnlocked"
                 class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50 whitespace-nowrap"
                 :class="hideUnlocked ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-600'"
               >
-                {{ hideUnlocked ? `Show Unlocked (${unlockedCoresCount})` : `Hide Unlocked (${unlockedCoresCount})` }}
+                {{ hideUnlocked ? t('listDetail.showUnlocked', { count: unlockedCoresCount }) : t('listDetail.hideUnlocked', { count: unlockedCoresCount }) }}
               </button>
             </div>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
               <CreatureSelect
                 v-model="selectedCreatureName"
                 :creatures="availableCreatures"
@@ -394,7 +396,7 @@ onMounted(async () => {
                 :disabled="!getSelectedCreature"
                 class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400"
               >
-                Add Soul Core
+                {{ t('characterDetails.soulcores.addButton') }}
               </button>
             </div>
           </div>
@@ -403,7 +405,7 @@ onMounted(async () => {
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search creatures..."
+              :placeholder="t('characterDetails.soulcores.filters.search')"
               class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
@@ -416,7 +418,7 @@ onMounted(async () => {
                     @click="toggleSort('creature_name')"
                     class="px-2 sm:px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
                   >
-                    Creature Name
+                    {{ t('listDetail.creatureName') }}
                     <span v-if="sortField === 'creature_name'">
                       {{ sortDirection === 'asc' ? '↑' : '↓' }}
                     </span>
@@ -425,13 +427,13 @@ onMounted(async () => {
                     @click="toggleSort('status')"
                     class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
                   >
-                    Status
+                    {{ t('listDetail.status') }}
                     <span v-if="sortField === 'status'">
                       {{ sortDirection === 'asc' ? '↑' : '↓' }}
                     </span>
                   </th>
-                  <th class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600">Added By</th>
-                  <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">Actions</th>
+                  <th class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600">{{ t('listDetail.addedBy') }}</th>
+                  <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">{{ t('listDetail.actions') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -449,7 +451,7 @@ onMounted(async () => {
                         'bg-blue-100 text-blue-800': core.status === 'obtained'
                       }"
                     >
-                      {{ core.status }}
+                      {{ t(core.status) }}
                     </span>
                   </td>
                   <td class="hidden sm:table-cell px-4 py-2 text-gray-600">{{ core.added_by || '-' }}</td>
@@ -460,21 +462,21 @@ onMounted(async () => {
                         @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
                         class="text-sm text-indigo-600 hover:text-indigo-800"
                       >
-                        Mark as Unlocked
+                        {{ t('listDetail.markAsUnlocked') }}
                       </button>
                       <button
                         v-if="canModifySoulcore(core) && core.status === 'unlocked'"
                         @click="updateSoulcoreStatus(core.creature_id, 'obtained')"
                         class="text-sm text-indigo-600 hover:text-indigo-800"
                       >
-                        Mark as Obtained
+                        {{ t('listDetail.markAsObtained') }}
                       </button>
                       <button
                         v-if="canModifySoulcore(core)"
                         @click="removeSoulcore(core.creature_id)"
                         class="text-sm text-red-600 hover:text-red-800"
                       >
-                        Remove
+                        {{ t('characterDetails.soulcores.removeButton') }}
                       </button>
                     </div>
                   </td>
@@ -496,9 +498,9 @@ onMounted(async () => {
         class="bg-white rounded-xl p-6 max-w-lg w-full"
         @click.stop
       >
-        <h3 class="text-xl font-semibold mb-4">Share List</h3>
+        <h3 class="text-xl font-semibold mb-4">{{ t('listDetail.shareList') }}</h3>
         <p class="text-gray-600 mb-4">
-          Share this link with others to let them join your list:
+          {{ t('listDetail.shareListDescription') }}
         </p>
         <div class="flex gap-2">
           <input
@@ -512,9 +514,9 @@ onMounted(async () => {
             class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             <span v-if="showCopiedMessage" class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm">
-              Copied!
+              {{ t('listDetail.copied') }}
             </span>
-            Copy Link
+            {{ t('listDetail.copyLink') }}
           </button>
         </div>
       </div>

@@ -362,5 +362,26 @@
       "collaborate": "Dołącz i współpracuj przy innych listach"
     },
     "completeButton": "Dokończ Rejestrację"
+  },
+  "listDetail": {
+    "created": "Utworzono",
+    "shareList": "Udostępnij Listę",
+    "shareListDescription": "Udostępnij ten link innym, aby mogli dołączyć do twojej listy:",
+    "copyLink": "Kopiuj Link",
+    "copied": "Skopiowano!",
+    "memberContributions": "Wkład Członków",
+    "inactiveCharacterTooltip": "Ta postać jest nieaktywna z powodu procesu weryfikacji",
+    "xpBoostProgress": "Postęp Wzmocnienia XP (200)",
+    "totalProgress": "Całkowity Postęp",
+    "creatureName": "Nazwa Stwora",
+    "status": "Status",
+    "addedBy": "Dodane Przez",
+    "actions": "Akcje",
+    "showUnlocked": "Pokaż Odblokowane ({count})",
+    "hideUnlocked": "Ukryj Odblokowane ({count})",
+    "obtained": "zdobyte",
+    "unlocked": "odblokowane",
+    "markAsUnlocked": "Oznacz jako Odblokowane",
+    "markAsObtained": "Oznacz jako Zdobyte"
   }
 }

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useListsStore } from '@/stores/lists'
+import { useI18n } from 'vue-i18n'
 import type { Character as TibiaCharacter } from '../services/tibiadata'
 import axios from 'axios'
 import ClaimSuggestion from '../components/ClaimSuggestion.vue'
@@ -12,6 +13,7 @@ interface DBCharacter extends TibiaCharacter {
   user_id: string
 }
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
@@ -58,7 +60,7 @@ const handleSubmit = async () => {
     }
 
     const response = await axios.post('/lists', requestData)
-    
+
     // For anonymous users, get the token from response header
     const authToken = response.headers['x-auth-token']
     if (authToken && !userStore.isAuthenticated) {
@@ -96,32 +98,32 @@ const handleTryDifferent = () => {
       <p class="text-red-700">{{ error }}</p>
     </div>
 
-    <ClaimSuggestion 
+    <ClaimSuggestion
       v-if="showNameConflict && character"
       :character-name="character.name"
       @try-different="handleTryDifferent"
     />
-    
+
     <div v-else-if="character" class="bg-white rounded-lg shadow p-6">
-      <h1 class="text-2xl font-semibold mb-6">Create New List</h1>
+      <h1 class="text-2xl font-semibold mb-6">{{ t('createList.title') }}</h1>
 
       <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-        <h2 class="text-lg font-medium mb-3">Character Details</h2>
+        <h2 class="text-lg font-medium mb-3">{{ t('characterDetails.title') }}</h2>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <p class="text-gray-600">Name</p>
+            <p class="text-gray-600">{{ t('characterDetails.information.name') }}</p>
             <p class="font-medium">{{ character.name }}</p>
           </div>
           <div>
-            <p class="text-gray-600">World</p>
+            <p class="text-gray-600">{{ t('characterDetails.information.world') }}</p>
             <p class="font-medium">{{ character.world }}</p>
           </div>
           <div>
-            <p class="text-gray-600">Level</p>
+            <p class="text-gray-600">{{ t('characterDetails.information.level') }}</p>
             <p class="font-medium">{{ character.level }}</p>
           </div>
           <div>
-            <p class="text-gray-600">Vocation</p>
+            <p class="text-gray-600">{{ t('characterDetails.information.vocation') }}</p>
             <p class="font-medium">{{ character.vocation }}</p>
           </div>
         </div>
@@ -130,7 +132,7 @@ const handleTryDifferent = () => {
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div>
           <label for="listName" class="block text-sm font-medium text-gray-700 mb-1">
-            List Name
+            {{ t('lists.title') }}
           </label>
           <input
             id="listName"
@@ -138,7 +140,7 @@ const handleTryDifferent = () => {
             type="text"
             required
             :disabled="loading"
-            placeholder="Enter list name"
+            :placeholder="t('createList.form.characterNamePlaceholder')"
             class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
@@ -170,7 +172,7 @@ const handleTryDifferent = () => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            {{ loading ? 'Creating...' : 'Create List' }}
+            {{ loading ? t('createList.form.verifying') : t('createList.form.submit') }}
           </button>
           <button
             type="button"
@@ -178,7 +180,7 @@ const handleTryDifferent = () => {
             @click="router.push('/')"
             class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:bg-gray-100"
           >
-            Cancel
+            {{ t('characterDetails.confirmDelete.cancel') }}
           </button>
         </div>
       </form>

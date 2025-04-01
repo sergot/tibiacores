@@ -362,5 +362,48 @@
       "collaborate": "Join and collaborate on other lists"
     },
     "completeButton": "Complete Registration"
+  },
+  "lists": {
+    "title": "Lists",
+    "created": "Created",
+    "shareList": "Share List",
+    "shareListDescription": "Share this link with others to let them join your list:",
+    "copyLink": "Copy Link",
+    "copied": "Copied!",
+    "memberContributions": "Member Contributions",
+    "inactiveCharacterTooltip": "This character is inactive due to a claim process",
+    "xpBoostProgress": "XP Boost Progress (200)",
+    "totalProgress": "Total Progress",
+    "creatureName": "Creature Name",
+    "status": "Status",
+    "addedBy": "Added By",
+    "actions": "Actions",
+    "showUnlocked": "Show Unlocked ({count})",
+    "hideUnlocked": "Hide Unlocked ({count})",
+    "obtained": "obtained",
+    "unlocked": "unlocked",
+    "markAsUnlocked": "Mark as Unlocked",
+    "markAsObtained": "Mark as Obtained"
+  },
+  "listDetail": {
+    "created": "Created",
+    "shareList": "Share List",
+    "shareListDescription": "Share this link with others to let them join your list:",
+    "copyLink": "Copy Link",
+    "copied": "Copied!",
+    "memberContributions": "Member Contributions",
+    "inactiveCharacterTooltip": "This character is inactive due to a claim process",
+    "xpBoostProgress": "XP Boost Progress (200)",
+    "totalProgress": "Total Progress",
+    "creatureName": "Creature Name",
+    "status": "Status",
+    "addedBy": "Added By",
+    "actions": "Actions",
+    "showUnlocked": "Show Unlocked ({count})",
+    "hideUnlocked": "Hide Unlocked ({count})",
+    "obtained": "obtained",
+    "unlocked": "unlocked",
+    "markAsUnlocked": "Mark as Unlocked",
+    "markAsObtained": "Mark as Obtained"
   }
 }
