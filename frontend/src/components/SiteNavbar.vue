@@ -76,7 +76,10 @@ onBeforeUnmount(() => {
       <div class="flex justify-between h-16">
         <div class="flex items-center space-x-8">
           <div class="flex-shrink-0">
-            <RouterLink to="/" class="text-xl font-bold text-gray-800">TibiaCores</RouterLink>
+            <RouterLink to="/" class="flex items-center space-x-2">
+              <img src="/logo.png" alt="TibiaCores Logo" class="h-12 w-12" />
+              <span class="text-xl font-bold text-gray-800">TibiaCores</span>
+            </RouterLink>
           </div>
           <RouterLink
             to="/about"

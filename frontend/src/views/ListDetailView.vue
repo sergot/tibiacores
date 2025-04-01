@@ -233,7 +233,7 @@ onMounted(async () => {
 
     <template v-else-if="listDetails">
       <!-- Header Section -->
-      <div class="flex items-start justify-between mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
         <div>
           <div class="flex items-center gap-4 mb-2">
             <button
@@ -255,13 +255,13 @@ onMounted(async () => {
                 />
               </svg>
             </button>
-            <h1 class="text-3xl font-semibold">{{ listDetails.name }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-semibold">{{ listDetails.name }}</h1>
           </div>
           <p class="text-gray-600">Created {{ new Date(listDetails.created_at).toLocaleDateString() }}</p>
         </div>
         <button
           @click="showShareDialog = true"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+          class="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -282,7 +282,7 @@ onMounted(async () => {
       </div>
 
       <!-- Stats Section -->
-      <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Soul Core Stats -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <h2 class="text-xl font-semibold mb-4">Soul Core Progress</h2>
@@ -366,18 +366,18 @@ onMounted(async () => {
       <!-- Soul Cores Table -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6 border-b border-gray-200">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div class="flex items-center gap-4">
               <h2 class="text-xl font-semibold">Soul Cores</h2>
               <button
                 @click="hideUnlocked = !hideUnlocked"
-                class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50"
+                class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50 whitespace-nowrap"
                 :class="hideUnlocked ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-600'"
               >
                 {{ hideUnlocked ? `Show Unlocked (${unlockedCoresCount})` : `Hide Unlocked (${unlockedCoresCount})` }}
               </button>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <CreatureSelect
                 v-model="selectedCreatureName"
                 :creatures="availableCreatures"
@@ -408,7 +408,7 @@ onMounted(async () => {
                 <tr class="border-b border-gray-200">
                   <th
                     @click="toggleSort('creature_name')"
-                    class="px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
+                    class="px-2 sm:px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
                   >
                     Creature Name
                     <span v-if="sortField === 'creature_name'">
@@ -417,15 +417,15 @@ onMounted(async () => {
                   </th>
                   <th
                     @click="toggleSort('status')"
-                    class="px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
+                    class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600 cursor-pointer hover:text-gray-900"
                   >
                     Status
                     <span v-if="sortField === 'status'">
                       {{ sortDirection === 'asc' ? '↑' : '↓' }}
                     </span>
                   </th>
-                  <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Added By</th>
-                  <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">Actions</th>
+                  <th class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600">Added By</th>
+                  <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -434,8 +434,8 @@ onMounted(async () => {
                   :key="core.creature_id"
                   class="border-b border-gray-200 last:border-0"
                 >
-                  <td class="px-4 py-2">{{ core.creature_name }}</td>
-                  <td class="px-4 py-2">
+                  <td class="px-2 sm:px-4 py-2">{{ core.creature_name }}</td>
+                  <td class="hidden sm:table-cell px-4 py-2">
                     <span
                       :class="{
                         'px-2 py-1 text-xs font-medium rounded-full': true,
@@ -446,9 +446,9 @@ onMounted(async () => {
                       {{ core.status }}
                     </span>
                   </td>
-                  <td class="px-4 py-2 text-gray-600">{{ core.added_by || '-' }}</td>
-                  <td class="px-4 py-2 text-right">
-                    <div class="flex items-center justify-end gap-2">
+                  <td class="hidden sm:table-cell px-4 py-2 text-gray-600">{{ core.added_by || '-' }}</td>
+                  <td class="px-2 sm:px-4 py-2 text-right">
+                    <div class="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2">
                       <button
                         v-if="canModifySoulcore(core) && core.status === 'obtained'"
                         @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
