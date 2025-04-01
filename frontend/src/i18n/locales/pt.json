@@ -1,0 +1,75 @@
+{
+  "_locale": "pt",
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "profile": "Perfil",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "signOut": "Sair",
+    "language": "Idioma",
+    "suggestions": {
+      "title": "Sugestões de Núcleos de Alma pendentes",
+      "count": "{count} sugestão | {count} sugestões",
+      "none": "Sem sugestões pendentes"
+    },
+    "logout": {
+      "warning": {
+        "title": "Aviso: Você está usando uma conta anônima",
+        "message": "Se você sair agora, perderá acesso à sua sessão atual e todos os seus dados. Considere registrar uma conta para salvar seu progresso.",
+        "register": "Registrar agora",
+        "signOut": "Sair mesmo assim",
+        "cancel": "Cancelar"
+      }
+    }
+  },
+  "home": {
+    "owner": "Proprietário",
+    "member": "Membro"
+  },
+  "about": {
+    "title": "Sobre o TibiaCores",
+    "subtitle": "Seu companheiro para gerenciar criaturas e personagens no mundo de Tibia",
+    "whatIs": {
+      "title": "O que é o TibiaCores?",
+      "description": "TibiaCores é uma ferramenta poderosa projetada para ajudar você a organizar e gerenciar a progressão de núcleos de alma dos seus personagens. Seja você buscando desbloquear 200 maestrias de ânima ou todas elas, o TibiaCores torna fácil acompanhar sua coleção."
+    },
+    "features": {
+      "title": "Recursos",
+      "list": {
+        "lists": "Criar e gerenciar listas de núcleos de alma",
+        "collaboration": "Colaborar com outros usuários",
+        "tracking": "Acompanhar progressão de personagens",
+        "organization": "Organizar coleção de núcleos de alma"
+      }
+    },
+    "contribute": {
+      "title": "Contribuir",
+      "description": "TibiaCores é um projeto de código aberto e damos as boas-vindas às contribuições da comunidade. Seja você desenvolvedor, designer ou apenas tenha ideias para compartilhar, você pode ajudar a melhorar o TibiaCores:",
+      "list": {
+        "bugs": "Enviar relatórios de bugs ou solicitações de recursos",
+        "code": "Contribuir com código via pull requests",
+        "docs": "Ajudar a melhorar a documentação"
+      }
+    },
+    "comingSoon": {
+      "title": "Em breve:",
+      "list": {
+        "market": "Mercado de núcleos de alma",
+        "achievements": "Conquistas de personagens",
+        "highscores": "Ranking",
+        "more": "E muito mais"
+      }
+    },
+    "donation": {
+      "title": "Doação",
+      "description": "Suas doações ajudam o TibiaCores a crescer e melhorar, permitindo-nos adicionar novos recursos, manter os servidores e proporcionar uma melhor experiência para todos os usuários. Se você deseja apoiar nosso desenvolvimento, pode enviar doações no jogo para:"
+    },
+    "contact": {
+      "title": "Contato",
+      "description": "Tem perguntas ou sugestões? Adoraríamos ouvir de você! Você pode:",
+      "discord": "Entrar no nosso Discord: ",
+      "ingame": "Mensagem no jogo: "
+    }
+  }
+}

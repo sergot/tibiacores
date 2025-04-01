@@ -1,9 +1,12 @@
 import { createI18n } from 'vue-i18n'
 import en from '@/i18n/locales/en.json'
 import pl from '@/i18n/locales/pl.json'
+import de from '@/i18n/locales/de.json'
+import es from '@/i18n/locales/es.json'
+import pt from '@/i18n/locales/pt.json'
 
-type Locale = 'en' | 'pl'
-const SUPPORTED_LOCALES = ['en', 'pl'] as const
+type Locale = 'en' | 'pl' | 'de' | 'es' | 'pt'
+const SUPPORTED_LOCALES = ['en', 'pl', 'de', 'es', 'pt'] as const
 
 export const i18n = createI18n({
   legacy: false,
@@ -11,7 +14,10 @@ export const i18n = createI18n({
   fallbackLocale: 'en',
   messages: {
     en,
-    pl
+    pl,
+    de,
+    es,
+    pt
   }
 })
 
@@ -25,9 +31,9 @@ export function getBrowserLocale(): Locale {
     return savedLocale
   }
 
-  const navigatorLocale = 
-    navigator.languages !== undefined 
-      ? navigator.languages[0] 
+  const navigatorLocale =
+    navigator.languages !== undefined
+      ? navigator.languages[0]
       : navigator.language
 
   if (!navigatorLocale) {
@@ -44,4 +50,4 @@ export function loadLocale(locale: Locale) {
     localStorage.setItem('user-locale', locale)
     document.querySelector('html')?.setAttribute('lang', locale)
   }
-} 
+}

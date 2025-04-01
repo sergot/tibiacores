@@ -8,12 +8,15 @@ const { t } = useI18n()
 const isOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 
-const languages: Array<{ code: 'en' | 'pl', name: string }> = [
+const languages: Array<{ code: 'en' | 'pl' | 'de' | 'es' | 'pt', name: string }> = [
   { code: 'en', name: 'English' },
-  { code: 'pl', name: 'Polski' }
+  { code: 'de', name: 'Deutsch' },
+  { code: 'es', name: 'Español' },
+  { code: 'pl', name: 'Polski' },
+  { code: 'pt', name: 'Português' }
 ]
 
-const switchLanguage = (locale: 'en' | 'pl') => {
+const switchLanguage = (locale: 'en' | 'pl' | 'de' | 'es' | 'pt') => {
   loadLocale(locale)
   isOpen.value = false
 }
@@ -69,4 +72,4 @@ onBeforeUnmount(() => {
       </div>
     </div>
   </div>
-</template> 
+</template>

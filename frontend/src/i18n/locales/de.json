@@ -1,0 +1,75 @@
+{
+  "_locale": "de",
+  "nav": {
+    "home": "Startseite",
+    "about": "Über",
+    "profile": "Profil",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "signOut": "Abmelden",
+    "language": "Sprache",
+    "suggestions": {
+      "title": "Ausstehende Seelenkern-Vorschläge",
+      "count": "{count} Vorschlag | {count} Vorschläge",
+      "none": "Keine ausstehenden Vorschläge"
+    },
+    "logout": {
+      "warning": {
+        "title": "Warnung: Sie verwenden ein anonymes Konto",
+        "message": "Wenn Sie sich jetzt abmelden, verlieren Sie den Zugriff auf Ihre aktuelle Sitzung und alle Ihre Daten. Erwägen Sie die Registrierung eines Kontos, um Ihren Fortschritt zu speichern.",
+        "register": "Jetzt registrieren",
+        "signOut": "Trotzdem abmelden",
+        "cancel": "Abbrechen"
+      }
+    }
+  },
+  "home": {
+    "owner": "Besitzer",
+    "member": "Mitglied"
+  },
+  "about": {
+    "title": "Über TibiaCores",
+    "subtitle": "Ihr Begleiter für die Verwaltung von Kreaturen und Charakteren in der Welt von Tibia",
+    "whatIs": {
+      "title": "Was ist TibiaCores?",
+      "description": "TibiaCores ist ein leistungsstarkes Tool zur Organisation und Verwaltung der Seelenkern-Progression Ihrer Charaktere. Ob Sie 200 Animus-Meisterschaften oder alle freischalten möchten, TibiaCores macht es einfach, den Überblick über Ihre Sammlung zu behalten."
+    },
+    "features": {
+      "title": "Funktionen",
+      "list": {
+        "lists": "Seelenkern-Listen erstellen und verwalten",
+        "collaboration": "Mit anderen Benutzern zusammenarbeiten",
+        "tracking": "Charakterfortschritt verfolgen",
+        "organization": "Seelenkern-Sammlung organisieren"
+      }
+    },
+    "contribute": {
+      "title": "Mitmachen",
+      "description": "TibiaCores ist ein Open-Source-Projekt und wir freuen uns über Beiträge aus der Community. Ob Sie Entwickler, Designer sind oder einfach nur Ideen teilen möchten, Sie können helfen, TibiaCores zu verbessern:",
+      "list": {
+        "bugs": "Fehlerberichte oder Funktionswünsche einreichen",
+        "code": "Code über Pull Requests beitragen",
+        "docs": "Dokumentation verbessern"
+      }
+    },
+    "comingSoon": {
+      "title": "Das kommt bald:",
+      "list": {
+        "market": "Seelenkern-Markt",
+        "achievements": "Charakter-Erfolge",
+        "highscores": "Bestenlisten",
+        "more": "Und noch mehr"
+      }
+    },
+    "donation": {
+      "title": "Spende",
+      "description": "Ihre Spenden helfen TibiaCores zu wachsen und sich zu verbessern, ermöglichen uns neue Funktionen hinzuzufügen, die Server zu warten und allen Benutzern ein besseres Erlebnis zu bieten. Wenn Sie unsere Entwicklung unterstützen möchten, können Sie Spenden im Spiel senden an:"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "description": "Haben Sie Fragen oder Anregungen? Wir würden uns freuen, von Ihnen zu hören! Sie können:",
+      "discord": "Unserem Discord beitreten: ",
+      "ingame": "Nachricht im Spiel: "
+    }
+  }
+}
