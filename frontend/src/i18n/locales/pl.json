@@ -12,5 +12,50 @@
   "home": {
     "owner": "Właściciel",
     "member": "Członek"
+  },
+  "about": {
+    "title": "O TibiaCores",
+    "subtitle": "Twój towarzysz w zarządzaniu stworami i postaciami w świecie Tibii",
+    "whatIs": {
+      "title": "Czym jest TibiaCores?",
+      "description": "TibiaCores to potężne narzędzie stworzone, aby pomóc Ci organizować i zarządzać postępami w zbieraniu dusz stworów. Niezależnie od tego, czy chcesz odblokować 200 mistrzostw animusu czy wszystkie, TibiaCores ułatwia śledzenie Twojej kolekcji."
+    },
+    "features": {
+      "title": "Funkcje",
+      "list": {
+        "lists": "Twórz i zarządzaj listami dusz",
+        "collaboration": "Współpracuj z innymi użytkownikami",
+        "tracking": "Śledź postępy swojej postaci",
+        "organization": "Organizuj kolekcję dusz stworów"
+      }
+    },
+    "contribute": {
+      "title": "Współtwórz",
+      "description": "TibiaCores to projekt open-source i z chęcią przyjmujemy wkład od społeczności. Niezależnie od tego, czy jesteś programistą, projektantem, czy po prostu masz pomysły do podzielenia się, możesz pomóc ulepszyć TibiaCores:",
+      "list": {
+        "bugs": "Zgłaszaj błędy lub propozycje funkcji",
+        "code": "Współtwórz kod poprzez pull requesty",
+        "docs": "Pomóż ulepszyć dokumentację"
+      }
+    },
+    "comingSoon": {
+      "title": "Co nas czeka:",
+      "list": {
+        "market": "Rynek dusz stworów",
+        "achievements": "Osiągnięcia postaci",
+        "highscores": "Rankingi",
+        "more": "I wiele więcej"
+      }
+    },
+    "donation": {
+      "title": "Wsparcie",
+      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores, umożliwiając nam dodawanie nowych funkcji, utrzymanie serwerów i zapewnienie lepszych wrażeń wszystkim użytkownikom. Jeśli chcesz wesprzeć nasz rozwój, możesz wysłać dotacje w grze do:"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "description": "Masz pytania lub sugestie? Chętnie je usłyszymy! Możesz:",
+      "discord": "Dołącz do naszego Discorda: ",
+      "ingame": "Napisz w grze do: "
+    }
   }
-} 
+}

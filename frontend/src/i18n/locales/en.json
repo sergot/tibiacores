@@ -12,5 +12,50 @@
   "home": {
     "owner": "Owner",
     "member": "Member"
+  },
+  "about": {
+    "title": "About TibiaCores",
+    "subtitle": "Your companion for managing creatures and characters in the world of Tibia",
+    "whatIs": {
+      "title": "What is TibiaCores?",
+      "description": "TibiaCores is a powerful tool designed to help you organize and manage your characters' soul cores progression. Whether you're looking to unlock 200 animus masteries or all of them, TibiaCores makes it easy to keep track of your collection."
+    },
+    "features": {
+      "title": "Features",
+      "list": {
+        "lists": "Create and manage soulcore lists",
+        "collaboration": "Collaborate with other users",
+        "tracking": "Track your character progression",
+        "organization": "Organize soul cores collection"
+      }
+    },
+    "contribute": {
+      "title": "Contribute",
+      "description": "TibiaCores is an open-source project, and we welcome contributions from the community. Whether you're a developer, designer, or just have ideas to share, you can help make TibiaCores better:",
+      "list": {
+        "bugs": "Submit bug reports or feature requests",
+        "code": "Contribute code via pull requests",
+        "docs": "Help improve documentation"
+      }
+    },
+    "comingSoon": {
+      "title": "Things that are coming:",
+      "list": {
+        "market": "Soul cores market",
+        "achievements": "Character achievements",
+        "highscores": "Highscores",
+        "more": "And even more"
+      }
+    },
+    "donation": {
+      "title": "Donation",
+      "description": "Your donations help TibiaCores grow and improve, allowing us to add new features, maintain the servers, and provide a better experience for all users. If you'd like to support our development, you can send in-game donations to:"
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Have questions or suggestions? We'd love to hear from you! You can:",
+      "discord": "Join our Discord: ",
+      "ingame": "Message in-game: "
+    }
   }
-} 
+}
