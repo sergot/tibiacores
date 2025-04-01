@@ -1,26 +1,49 @@
-# TibiaCores - a soulcore tracking webapp
+# ![TibiaCores Logo](/frontend/public/favicon-32x32.png) TibiaCores
 
 [![codecov](https://codecov.io/gh/sergot/tibiacores/graph/badge.svg?token=F29NYOLG42)](https://codecov.io/gh/sergot/tibiacores)
 
+A web application for tracking and managing Tibia soulcore collections.
 
-## TODO:
+[TibiaCores.com](https://tibiacores.com)
 
-- [x] Warning on trying to log out when logged in as anonymous user (they will lose their session)
-- [X] Fix printing lists being only a member (not owner) of a list
-- [x] Fix join a list form, it should contain a character name input just like the create list form - it should also veirfy that character in tibiadata api
-- [x] Add a character detail page where we list all the unlocked soulcores
-- [x] Implement a suggestion system for soulcores - on character detail view, the application will suggest soulcores to add to the character as unlocked based on activity on lists they are a member of
-- [x] Join list view should check if the user exists in tibiadata api
-- [ ] Create a logo and some branding for the app
-- [x] Character name should be unique
-- [x] Claiming character name system - by adding a comment on tibia.com profile
-- [x] Adding soulcore to list has bugs: dropdown is too small when there are too many completions
-- [ ] Implement stats and achievements on profile view and character detail view
-- [x] Implement removing soulcores from list view and from character view
-- [x] Characters section in profile view should look better
-- [ ] Write a comprehensive README.md file
-- [ ] Write a comprehensive CONTRIBUTING.md file
-- [x] Implement login with Discord
-- [x] Implement login with Google
-- [x] Implement email service
-- [ ] i18n support
+## About
+
+TibiaCores helps Tibia players track, manage, and share their soulcore collections. Create custom lists and collaborate with friends to efficiently complete your collection.
+
+
+## Development
+
+### Prerequisites
+
+- Docker compose
+- Go
+- Node.js
+
+### Development
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/sergot/tibiacores.git
+   cd tibiacores
+   ```
+
+2. Start the application using Docker Compose:
+   ```
+   docker-compose up -d
+   ```
+
+3. Copy .env.example file to .env and set your environment variables:
+   ```
+   cp .env.example .env
+   ```
+
+4. Access the application at `http://localhost:5173`
+
+
+## License
+
+This project is licensed under the terms of the license included in the [LICENSE](LICENSE) file.
+
+## Contributing
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
