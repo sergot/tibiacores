@@ -53,16 +53,6 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "name is required")
 	}
 
-	// First, check if character exists and belongs to another user
-	if req.CharacterID == nil && req.CharacterName != "" {
-		existingChar, err := h.store.GetCharacterByName(ctx, req.CharacterName)
-		if err == nil {
-			log.Printf("Character %s already exists and belongs to user %s", existingChar.Name, existingChar.UserID)
-			// Character exists, return conflict error
-			return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
-		}
-	}
-
 	// Check if user is authenticated by looking for user_id in context
 	userIDStr := c.Get("user_id")
 	var userID uuid.UUID
@@ -158,10 +148,18 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 	}
 
 	// Check if the character name is already taken
-	if req.CharacterID == nil && req.CharacterName != "" {
-		character, err := h.store.GetCharacterByName(ctx, req.CharacterName)
-		if err == nil && character.UserID != userID {
-			return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+	// This single check replaces the two separate checks in the original code
+	if req.CharacterName != "" {
+		existingChar, err := h.store.GetCharacterByName(ctx, req.CharacterName)
+		if err == nil {
+			// Character exists
+			if existingChar.UserID != userID {
+				// Character belongs to another user, return conflict error
+				log.Printf("Character %s already exists and belongs to user %s", existingChar.Name, existingChar.UserID)
+				return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+			}
+			// Character belongs to current user, we could use it but for simplicity
+			// we'll create a new one as in the original flow
 		}
 	}
 
