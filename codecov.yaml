@@ -11,9 +11,7 @@ coverage:
 
 ignore:
   - "backend/main.go"
-  - "backend/db/mock/**/*"
-  - "backend/db/sqlc/**/*"
-  - "backend/db/migrations/**/*"
+  - "backend/db/**/*"
   
 comment:
   layout: "reach,diff,flags,tree,files"
