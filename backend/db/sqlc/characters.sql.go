@@ -250,55 +250,6 @@ func (q *Queries) GetClaimByID(ctx context.Context, id uuid.UUID) (GetClaimByIDR
 	return i, err
 }
 
-const getPendingClaims = `-- name: GetPendingClaims :many
-SELECT c.id, c.character_id, c.claimer_id, c.verification_code, c.status, c.last_checked_at, c.created_at, c.updated_at, ch.name as character_name
-FROM character_claims c
-JOIN characters ch ON c.character_id = ch.id
-WHERE c.status = 'pending' AND c.last_checked_at < NOW() - INTERVAL '1 hour'
-`
-
-type GetPendingClaimsRow struct {
-	ID               uuid.UUID          `json:"id"`
-	CharacterID      uuid.UUID          `json:"character_id"`
-	ClaimerID        uuid.UUID          `json:"claimer_id"`
-	VerificationCode string             `json:"verification_code"`
-	Status           string             `json:"status"`
-	LastCheckedAt    pgtype.Timestamptz `json:"last_checked_at"`
-	CreatedAt        pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt        pgtype.Timestamptz `json:"updated_at"`
-	CharacterName    string             `json:"character_name"`
-}
-
-func (q *Queries) GetPendingClaims(ctx context.Context) ([]GetPendingClaimsRow, error) {
-	rows, err := q.db.Query(ctx, getPendingClaims)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []GetPendingClaimsRow{}
-	for rows.Next() {
-		var i GetPendingClaimsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.CharacterID,
-			&i.ClaimerID,
-			&i.VerificationCode,
-			&i.Status,
-			&i.LastCheckedAt,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.CharacterName,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getPendingClaimsToCheck = `-- name: GetPendingClaimsToCheck :many
 SELECT c.id, c.character_id, c.claimer_id, c.verification_code, c.status, c.last_checked_at, c.created_at, c.updated_at, ch.name as character_name
 FROM character_claims c

@@ -16,7 +16,6 @@ interface ListDetails {
   updated_at: string
   members: MemberStats[]
   soul_cores: SoulCore[]
-  total_cores: number
 }
 
 interface MemberStats {
@@ -62,6 +61,11 @@ const showCopiedMessage = ref(false)
 const unlockedCoresCount = computed(() => {
   if (!listDetails.value) return 0
   return listDetails.value.soul_cores.filter(core => core.status === 'unlocked').length
+})
+
+// Add computed property for total creatures count
+const totalCreaturesCount = computed(() => {
+  return creatures.value.length
 })
 
 const userStore = useUserStore()
@@ -306,13 +310,13 @@ onMounted(async () => {
             </div>
             <div class="flex justify-between text-sm text-gray-600">
               <span>{{ t('listDetail.totalProgress') }}</span>
-              <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / {{ listDetails.total_cores }}</span>
+              <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / {{ totalCreaturesCount }}</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
                 class="bg-green-600 h-2.5 rounded-full"
                 :style="{
-                  width: `${(listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length / listDetails.total_cores) * 100}%`
+                  width: `${(listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length / totalCreaturesCount) * 100}%`
                 }"
               ></div>
             </div>

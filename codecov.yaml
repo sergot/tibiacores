@@ -1,0 +1,19 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 1%
+    patch:
+      default:
+        target: 70%
+        threshold: 1%
+
+ignore:
+  - "backend/main.go"
+  - "backend/db/**/*"
+  
+comment:
+  layout: "reach,diff,flags,tree,files"
+  behavior: default
+  require_changes: false

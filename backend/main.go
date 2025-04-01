@@ -11,11 +11,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sergot/tibiacores/backend/auth"
+	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.EmailService) {
+func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Store) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -24,24 +25,20 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	})
 
 	// Handlers initialization
-	usersHandler := handlers.NewUsersHandler(connPool, emailService)
+	usersHandler := handlers.NewUsersHandler(store, emailService)
 
-	listsHandler := handlers.NewListsHandler(connPool)
-	creaturesHandler := handlers.NewCreaturesHandler(connPool)
-	oauthHandler := handlers.NewOAuthHandler(connPool)
-	claimsHandler := handlers.NewClaimsHandler(connPool)
+	listsHandler := handlers.NewListsHandler(store)
+	oauthHandler := handlers.NewOAuthHandler(store)
+	claimsHandler := handlers.NewClaimsHandler(store)
 
 	// Start background claim checker
 	go func() {
 		ticker := time.NewTicker(15 * time.Minute)
 		defer ticker.Stop()
 
-		for {
-			select {
-			case <-ticker.C:
-				if err := claimsHandler.ProcessPendingClaims(); err != nil {
-					log.Printf("Error processing pending claims: %v", err)
-				}
+		for range ticker.C {
+			if err := claimsHandler.ProcessPendingClaims(); err != nil {
+				log.Printf("Error processing pending claims: %v", err)
 			}
 		}
 	}()
@@ -64,7 +61,6 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 
 	// Protected routes with auth middleware
 	protected := api.Group("", auth.AuthMiddleware)
-	protected.GET("/creatures", creaturesHandler.GetCreatures)
 	protected.GET("/lists/:id", listsHandler.GetList)
 	protected.POST("/lists/:id/soulcores", listsHandler.AddSoulcore)
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
@@ -73,8 +69,8 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	// User endpoints
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
-	protected.GET("/users/:user_id", usersHandler.GetUser) // Add this line
-	protected.GET("/pending-suggestions", listsHandler.GetPendingSuggestions)
+	protected.GET("/users/:user_id", usersHandler.GetUser)
+	protected.GET("/pending-suggestions", usersHandler.GetPendingSuggestions)
 
 	// Character and suggestion endpoints
 	protected.GET("/characters/:id", usersHandler.GetCharacter)
@@ -87,6 +83,8 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	protected.POST("/claims", claimsHandler.StartClaim)
 	protected.GET("/claims/:id", claimsHandler.CheckClaim)
 
+	creaturesHandler := handlers.NewCreaturesHandler(store)
+	protected.GET("/creatures", creaturesHandler.GetCreatures)
 }
 
 func main() {
@@ -97,11 +95,6 @@ func main() {
 		if err := godotenv.Load(); err != nil {
 			log.Printf("Warning: .env file not found: %v", err)
 		}
-	}
-
-	// Set default redirect URI if not provided
-	if os.Getenv("DISCORD_REDIRECT_URI") == "" {
-		os.Setenv("DISCORD_REDIRECT_URI", "http://localhost:5173/oauth/discord/callback")
 	}
 
 	// Initialize OAuth providers
@@ -155,7 +148,9 @@ func main() {
 		log.Fatal("Error initializing email service: ", err)
 	}
 
-	setupRoutes(e, connPool, emailService)
+	store := db.NewStore(connPool)
+
+	setupRoutes(e, emailService, store)
 
 	port := os.Getenv("PORT")
 	if port == "" {
