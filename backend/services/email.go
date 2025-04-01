@@ -8,6 +8,10 @@ import (
 	"github.com/mailgun/mailgun-go/v5"
 )
 
+type EmailServiceInterface interface {
+	SendVerificationEmail(ctx context.Context, email string, verificationToken string, userID string) error
+}
+
 type EmailService struct {
 	mg          *mailgun.Client
 	domain      string

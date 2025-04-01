@@ -68,8 +68,8 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	// User endpoints
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
-	protected.GET("/users/:user_id", usersHandler.GetUser) // Add this line
-	protected.GET("/pending-suggestions", listsHandler.GetPendingSuggestions)
+	protected.GET("/users/:user_id", usersHandler.GetUser)
+	protected.GET("/pending-suggestions", usersHandler.GetPendingSuggestions)
 
 	// Character and suggestion endpoints
 	protected.GET("/characters/:id", usersHandler.GetCharacter)

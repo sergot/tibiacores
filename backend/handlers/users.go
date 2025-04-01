@@ -17,7 +17,7 @@ import (
 
 type UsersHandler struct {
 	store        db.Store
-	emailService *services.EmailService
+	emailService services.EmailServiceInterface
 }
 
 type SignupRequest struct {
@@ -31,7 +31,7 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func NewUsersHandler(store db.Store, emailService *services.EmailService) *UsersHandler {
+func NewUsersHandler(store db.Store, emailService services.EmailServiceInterface) *UsersHandler {
 	return &UsersHandler{store: store, emailService: emailService}
 }
 

@@ -825,22 +825,3 @@ func (h *ListsHandler) GetListPreview(c echo.Context) error {
 		MemberCount: len(members),
 	})
 }
-
-// GetPendingSuggestions returns all characters with pending soul core suggestions for the authenticated user
-func (h *ListsHandler) GetPendingSuggestions(c echo.Context) error {
-	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
-	}
-
-	ctx := c.Request().Context()
-
-	suggestions, err := h.store.GetPendingSuggestionsForUser(ctx, userID)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get pending suggestions")
-	}
-
-	return c.JSON(http.StatusOK, suggestions)
-}
