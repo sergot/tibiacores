@@ -8,6 +8,10 @@ import (
 	"github.com/mailgun/mailgun-go/v5"
 )
 
+type EmailServiceInterface interface {
+	SendVerificationEmail(ctx context.Context, email string, verificationToken string, userID string) error
+}
+
 type EmailService struct {
 	mg          *mailgun.Client
 	domain      string
@@ -34,7 +38,10 @@ func NewEmailService() (*EmailService, error) {
 	mg := mailgun.NewMailgun(apiKey)
 
 	// Set EU endpoint for non-production environments
-	mg.SetAPIBase(mailgun.APIBaseEU)
+	err := mg.SetAPIBase(mailgun.APIBaseEU)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set API base: %w", err)
+	}
 
 	return &EmailService{
 		mg:          mg,

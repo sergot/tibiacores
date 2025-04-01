@@ -9,16 +9,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
-	"github.com/sergot/tibiacores/backend/db"
+	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
 type UsersHandler struct {
-	connPool     *pgxpool.Pool
-	emailService *services.EmailService
+	store        db.Store
+	emailService services.EmailServiceInterface
 }
 
 type SignupRequest struct {
@@ -32,8 +31,8 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func NewUsersHandler(connPool *pgxpool.Pool, emailService *services.EmailService) *UsersHandler {
-	return &UsersHandler{connPool: connPool, emailService: emailService}
+func NewUsersHandler(store db.Store, emailService services.EmailServiceInterface) *UsersHandler {
+	return &UsersHandler{store: store, emailService: emailService}
 }
 
 // Login authenticates a user with email and password
@@ -47,14 +46,13 @@ func (h *UsersHandler) Login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	var email pgtype.Text
 	email.String = req.Email
 	email.Valid = true
 
-	user, err := queries.GetUserByEmail(ctx, email)
+	user, err := h.store.GetUserByEmail(ctx, email)
 	if err != nil {
 		log.Printf("Failed to get user by email: %v", err)
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid email or password")
@@ -91,7 +89,6 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Check if user exists with this email
@@ -99,7 +96,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 	email.String = req.Email
 	email.Valid = true
 
-	existingUser, getUserErr := queries.GetUserByEmail(ctx, email)
+	existingUser, getUserErr := h.store.GetUserByEmail(ctx, email)
 	if getUserErr == nil && !existingUser.IsAnonymous {
 		return echo.NewHTTPError(http.StatusConflict, "email already in use")
 	}
@@ -138,7 +135,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID format")
 		}
 
-		user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
 			Email:                      email,
 			Password:                   password,
 			EmailVerificationToken:     verificationToken,
@@ -151,7 +148,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		}
 	} else if getUserErr == nil && existingUser.IsAnonymous {
 		// Update existing anonymous user found by email
-		user, err = queries.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
 			Email:                      email,
 			Password:                   password,
 			EmailVerificationToken:     verificationToken,
@@ -164,7 +161,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		}
 	} else {
 		// Create new user
-		user, err = queries.CreateUser(ctx, db.CreateUserParams{
+		user, err = h.store.CreateUser(ctx, db.CreateUserParams{
 			Email:                      email,
 			Password:                   password,
 			EmailVerificationToken:     verificationToken,
@@ -199,7 +196,6 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 
 func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 	ctx := c.Request().Context()
-	queries := db.New(h.connPool)
 
 	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
@@ -222,7 +218,7 @@ func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' characters")
 	}
 
-	characters, err := queries.GetCharactersByUserID(ctx, requestedUserID)
+	characters, err := h.store.GetCharactersByUserID(ctx, requestedUserID)
 	if err != nil {
 		log.Printf("Error getting characters for user %s: %v", requestedUserID, err)
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get characters")
@@ -233,7 +229,6 @@ func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 
 // GetUserLists returns all lists where the user is either an author or a member
 func (h *UsersHandler) GetUserLists(c echo.Context) error {
-	queries := db.New(h.connPool)
 
 	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
@@ -257,7 +252,7 @@ func (h *UsersHandler) GetUserLists(c echo.Context) error {
 	}
 
 	ctx := c.Request().Context()
-	lists, err := queries.GetUserLists(ctx, requestedUserID)
+	lists, err := h.store.GetUserLists(ctx, requestedUserID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get lists")
 	}
@@ -279,11 +274,10 @@ func (h *UsersHandler) GetCharacter(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Get character details
-	character, err := queries.GetCharacter(ctx, characterID)
+	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
 	}
@@ -310,11 +304,10 @@ func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Verify character belongs to user
-	character, err := queries.GetCharacter(ctx, characterID)
+	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
 	}
@@ -323,7 +316,7 @@ func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 	}
 
 	// Get unlocked soulcores
-	soulcores, err := queries.GetCharacterSoulcores(ctx, characterID)
+	soulcores, err := h.store.GetCharacterSoulcores(ctx, characterID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character soulcores")
 	}
@@ -350,11 +343,10 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Verify character belongs to user
-	character, err := queries.GetCharacter(ctx, characterID)
+	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
 	}
@@ -363,7 +355,7 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 	}
 
 	// Remove the soulcore
-	err = queries.RemoveCharacterSoulcore(ctx, db.RemoveCharacterSoulcoreParams{
+	err = h.store.RemoveCharacterSoulcore(ctx, db.RemoveCharacterSoulcoreParams{
 		CharacterID: characterID,
 		CreatureID:  creatureID,
 	})
@@ -383,10 +375,9 @@ func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
-	suggestions, err := queries.GetPendingSuggestionsForUser(ctx, userID)
+	suggestions, err := h.store.GetPendingSuggestionsForUser(ctx, userID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get pending suggestions")
 	}
@@ -406,10 +397,9 @@ func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid verification token")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
-	err = queries.VerifyEmail(ctx, db.VerifyEmailParams{
+	err = h.store.VerifyEmail(ctx, db.VerifyEmailParams{
 		ID:                     userID,
 		EmailVerificationToken: token,
 	})
@@ -444,11 +434,10 @@ func (h *UsersHandler) GetUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' details")
 	}
 
-	queries := db.New(h.connPool)
 	ctx := c.Request().Context()
 
 	// Get user details using the queries object
-	user, err := queries.GetUserByID(ctx, requestedUserID)
+	user, err := h.store.GetUserByID(ctx, requestedUserID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get user details")
 	}

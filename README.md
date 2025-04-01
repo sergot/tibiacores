@@ -1,5 +1,7 @@
 # TibiaCores - a soulcore tracking webapp
 
+[![codecov](https://codecov.io/gh/sergot/tibiacores/graph/badge.svg?token=F29NYOLG42)](https://codecov.io/gh/sergot/tibiacores)
+
 
 ## TODO:
 
