@@ -55,6 +55,7 @@ func setupRoutes(e *echo.Echo, connPool *pgxpool.Pool, emailService *services.Em
 	// User management routes
 	api.POST("/signup", usersHandler.Signup)
 	api.POST("/login", usersHandler.Login)
+	api.GET("/verify-email", usersHandler.VerifyEmail)
 
 	// OAuth routes
 	authGroup := api.Group("/auth")

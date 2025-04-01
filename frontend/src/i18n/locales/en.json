@@ -7,7 +7,21 @@
     "signIn": "Sign in",
     "signUp": "Sign up",
     "signOut": "Sign out",
-    "language": "Language"
+    "language": "Language",
+    "suggestions": {
+      "title": "Pending Soul Core Suggestions",
+      "count": "{count} suggestion | {count} suggestions",
+      "none": "No pending suggestions"
+    },
+    "logout": {
+      "warning": {
+        "title": "Warning: You're using an anonymous account",
+        "message": "If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.",
+        "register": "Register now",
+        "signOut": "Sign out anyway",
+        "cancel": "Cancel"
+      }
+    }
   },
   "home": {
     "owner": "Owner",
@@ -57,5 +71,296 @@
       "discord": "Join our Discord: ",
       "ingame": "Message in-game: "
     }
+  },
+  "characterClaim": {
+    "title": "Claim Character",
+    "subtitle": "Verify ownership of your character to use it in your lists",
+    "characterName": "Character Name",
+    "characterNamePlaceholder": "Enter character name",
+    "startClaim": "Start Claim",
+    "starting": "Starting...",
+    "verifyTitle": "Verify Character",
+    "verifySubtitle": "Follow these steps to verify your character ownership",
+    "steps": {
+      "1": "Log in to Tibia.com",
+      "2": "Go to your character's page",
+      "3": "Edit your character's comment",
+      "4": "Add the following verification code to your comment:"
+    },
+    "waitNote": "Note: After adding the code, please wait a few minutes for the changes to propagate before checking the claim status.",
+    "checkStatus": "Check Claim Status",
+    "checking": "Checking...",
+    "waitTime": "Please wait {seconds} seconds before checking again",
+    "success": {
+      "title": "Claim Approved!",
+      "message": "You are now the verified owner of this character. Redirecting to your profile..."
+    },
+    "rejected": {
+      "title": "Claim Rejected",
+      "message": "Your claim has been rejected. This can happen if:",
+      "reasons": {
+        "1": "The verification code was not found in the character's comment",
+        "2": "The claim expired (24 hours limit)"
+      },
+      "tryAgain": "Try Again"
+    }
+  },
+  "profile": {
+    "title": "Your Profile",
+    "subtitle": "Manage your account and characters",
+    "email": {
+      "title": "Email Settings",
+      "status": {
+        "notVerified": "Not verified",
+        "verified": "Verified"
+      },
+      "verifyButton": "Verify Email",
+      "changeButton": "Change Email",
+      "addButton": "Add Email",
+      "placeholder": "Enter your email address"
+    },
+    "characters": {
+      "title": "Your Characters",
+      "empty": "You haven't claimed any characters yet",
+      "addButton": "Claim Character",
+      "level": "Level",
+      "vocation": "Vocation",
+      "world": "World",
+      "actions": {
+        "view": "View Details",
+        "remove": "Remove"
+      },
+      "confirmRemove": {
+        "title": "Remove Character",
+        "message": "Are you sure you want to remove this character? You can claim it again later.",
+        "confirm": "Remove",
+        "cancel": "Cancel"
+      }
+    },
+    "lists": {
+      "title": "Your Lists",
+      "owned": "Lists you own",
+      "member": "Lists you're a member of",
+      "empty": "You don't have any lists yet",
+      "createButton": "Create New List",
+      "actions": {
+        "view": "View List",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "deleteAccount": {
+      "button": "Delete Account",
+      "confirm": {
+        "title": "Delete Account",
+        "message": "Are you sure you want to delete your account? This action cannot be undone.",
+        "confirm": "Yes, delete my account",
+        "cancel": "No, keep my account"
+      }
+    }
+  },
+  "characterDetails": {
+    "title": "Character Details",
+    "information": {
+      "name": "Name",
+      "world": "World",
+      "level": "Level",
+      "vocation": "Vocation",
+      "residence": "Residence"
+    },
+    "soulcores": {
+      "title": "Soul Cores",
+      "total": "Total Soul Cores",
+      "loading": "Loading soul cores...",
+      "empty": "No soul cores unlocked yet",
+      "error": "Failed to load soul cores",
+      "addButton": "Add Soul Core",
+      "removeButton": "Remove",
+      "filters": {
+        "search": "Search creatures",
+        "sort": "Sort by",
+        "sortOptions": {
+          "name": "Name",
+          "level": "Level",
+          "dateAdded": "Date Added"
+        }
+      }
+    },
+    "actions": {
+      "refresh": "Refresh Data",
+      "refreshing": "Refreshing...",
+      "edit": "Edit Character",
+      "delete": "Delete Character"
+    },
+    "confirmDelete": {
+      "title": "Delete Character",
+      "message": "Are you sure you want to delete this character? This action cannot be undone.",
+      "confirm": "Yes, delete",
+      "cancel": "Cancel"
+    }
+  },
+  "createList": {
+    "title": "Create New List",
+    "subtitle": "Create a new list to track soul cores for your group",
+    "form": {
+      "characterNamePlaceholder": "Enter character name",
+      "characterNamePlaceholderAuth": "Enter new character or select existing",
+      "loadingCharacters": "Loading your characters...",
+      "submit": "Create",
+      "verifying": "Verifying...",
+      "errors": {
+        "verificationFailed": "Failed to verify character"
+      }
+    }
+  },
+  "joinList": {
+    "title": "Join List",
+    "subtitle": "Join an existing list using an invite code",
+    "form": {
+      "shareCode": "Share Code",
+      "shareCodePlaceholder": "Enter share code or paste URL",
+      "characterName": "Character Name",
+      "characterNamePlaceholder": "Enter your character name",
+      "submit": "Join List",
+      "joining": "Joining...",
+      "errors": {
+        "characterNotFound": "Character not found in Tibia. Please check the name and try again.",
+        "joinFailed": "Failed to join list"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to your account",
+      "subtitle": "Welcome back",
+      "withEmail": {
+        "title": "Sign in with email",
+        "email": "Email address",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "submit": "Sign in",
+        "signing": "Signing in..."
+      },
+      "withProvider": {
+        "title": "Or continue with",
+        "google": "Sign in with Google",
+        "discord": "Sign in with Discord"
+      },
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Join TibiaCores today",
+      "withEmail": {
+        "title": "Sign up with email",
+        "email": "Email address",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Create a password",
+        "confirmPassword": "Confirm password",
+        "confirmPasswordPlaceholder": "Enter password again",
+        "submit": "Create account",
+        "creating": "Creating account..."
+      },
+      "withProvider": {
+        "title": "Or continue with",
+        "google": "Sign up with Google",
+        "discord": "Sign up with Discord"
+      },
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "errors": {
+      "invalidEmail": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "passwordMismatch": "Passwords do not match",
+      "weakPassword": "Password must be at least 8 characters long",
+      "emailInUse": "Email address is already in use",
+      "invalidCredentials": "Invalid email or password",
+      "accountNotFound": "Account not found",
+      "unauthorized": "Please sign in to continue",
+      "verificationRequired": "Please verify your email address"
+    }
+  },
+  "emailVerification": {
+    "title": "Verify Your Email",
+    "subtitle": "Almost there! Just one more step to get started.",
+    "pending": {
+      "message": "We sent a verification email to {email}",
+      "instructions": "Click the link in the email to verify your account.",
+      "resend": "Didn't receive the email?",
+      "resendButton": "Resend verification email",
+      "resending": "Resending...",
+      "resent": "Verification email sent!",
+      "error": "Failed to send verification email"
+    },
+    "verifying": {
+      "message": "Verifying your email...",
+      "success": "Email verified successfully!",
+      "error": "Failed to verify email",
+      "invalidToken": "Invalid or expired verification token",
+      "redirect": "Redirecting to profile..."
+    },
+    "actions": {
+      "backToProfile": "Back to Profile",
+      "tryAgain": "Try Again"
+    }
+  },
+  "oauth": {
+    "initiate": {
+      "loading": "Redirecting to {provider}...",
+      "error": "Failed to start OAuth flow",
+      "tryAgain": "Try Again"
+    },
+    "callback": {
+      "loading": "Processing login...",
+      "error": {
+        "generic": "Failed to complete authentication",
+        "missingState": "Invalid OAuth state",
+        "missingCode": "Missing authorization code",
+        "invalidProvider": "Invalid OAuth provider"
+      },
+      "success": {
+        "message": "Successfully authenticated",
+        "redirect": "Redirecting to your profile..."
+      }
+    }
+  },
+  "footer": {
+    "copyright": "TibiaCores © 2025. All rights reserved.",
+    "trademark": "Tibia and TibiaME are trademarks of {company}."
+  },
+  "claimSuggestion": {
+    "title": "Character Name Already Registered",
+    "message": "The character \"{name}\" is already registered to another user.",
+    "isYours": {
+      "title": "Is this your character?",
+      "description": "If this is your character, you can claim ownership by verifying it with your Tibia.com character comment.",
+      "button": "Start Claim Process"
+    },
+    "notYours": {
+      "title": "Not your character?",
+      "description": "If this is not your character, please try with a different character name.",
+      "button": "Try Different Character"
+    }
+  },
+  "soulcoreSuggestions": {
+    "title": "Soul Core Suggestions",
+    "fromList": "from list \"{name}\"",
+    "accept": "Accept",
+    "dismiss": "Dismiss",
+    "unknownList": "Unknown List"
+  },
+  "registerSuggestion": {
+    "title": "Complete Your Registration",
+    "subtitle": "Great start with your first list! Here's why you should complete your registration:",
+    "features": {
+      "accessAnywhere": "Access your lists from any device",
+      "secureData": "Secure your data with email and password",
+      "collaborate": "Join and collaborate on other lists"
+    },
+    "completeButton": "Complete Registration"
   }
 }

@@ -2,18 +2,20 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 
 interface ClaimResponse {
   claim_id: string
   verification_code: string
   status: string
   token?: string
-  claimer_id?: string  // matches the backend's snake_case naming
+  claimer_id?: string
 }
 
 interface ApiError {
@@ -51,15 +53,15 @@ onMounted(() => {
 
 const startClaim = async () => {
   if (!characterName.value) return
-  
+
   loading.value = true
   error.value = ''
-  
+
   try {
     const response = await axios.post<ClaimResponse>('/claims', {
       character_name: characterName.value
     })
-    
+
     // handle anonymous users
     const authToken = response.headers['x-auth-token']
     if (authToken && response.data.claimer_id && !userStore.isAuthenticated) {
@@ -68,14 +70,14 @@ const startClaim = async () => {
         id: response.data.claimer_id, // Backend provides claimer_id
         has_email: false
       })
-      
+
       // Set the token for future requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
     }
-    
+
     claim.value = response.data
   } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message : 
+    error.value = err instanceof Error ? err.message :
       ((err as ApiError).response?.data?.message || 'Failed to start claim')
   } finally {
     loading.value = false
@@ -84,25 +86,25 @@ const startClaim = async () => {
 
 const checkClaim = async (id?: string) => {
   if (!id && !claim.value?.claim_id) return
-  
+
   loading.value = true
   error.value = ''
-  
+
   try {
     const response = await axios.get(`/claims/${id || claim.value?.claim_id}`)
     claim.value = response.data
     lastCheckTime.value = Date.now()
-    
+
     // Update URL with claim ID if not already there
     if (!route.query.claim_id) {
-      router.replace({ 
-        query: { 
-          ...route.query, 
-          claim_id: response.data.claim_id 
+      router.replace({
+        query: {
+          ...route.query,
+          claim_id: response.data.claim_id
         }
       })
     }
-    
+
     if (response.data.status === 'approved') {
       setTimeout(() => {
         router.push('/profile')
@@ -148,16 +150,16 @@ const resetClaim = () => {
       <!-- Start claim form -->
       <div v-if="!claim" class="bg-white rounded-lg shadow p-8">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">Claim Character</h1>
+          <h1 class="text-3xl font-bold text-gray-900">{{ t('characterClaim.title') }}</h1>
           <p class="mt-2 text-gray-600">
-            Verify ownership of your character to use it in your lists
+            {{ t('characterClaim.subtitle') }}
           </p>
         </div>
 
         <form @submit.prevent="startClaim" class="space-y-6">
           <div>
             <label for="characterName" class="block text-sm font-medium text-gray-700 mb-1">
-              Character Name
+              {{ t('characterClaim.characterName') }}
             </label>
             <input
               id="characterName"
@@ -165,7 +167,7 @@ const resetClaim = () => {
               type="text"
               required
               :disabled="loading"
-              placeholder="Enter character name"
+              :placeholder="t('characterClaim.characterNamePlaceholder')"
               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
             />
           </div>
@@ -175,7 +177,7 @@ const resetClaim = () => {
             :disabled="loading || !characterName"
             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {{ loading ? 'Starting...' : 'Start Claim' }}
+            {{ loading ? t('characterClaim.starting') : t('characterClaim.startClaim') }}
           </button>
         </form>
       </div>
@@ -183,18 +185,18 @@ const resetClaim = () => {
       <!-- Claim verification instructions -->
       <div v-else-if="claim.status === 'pending'" class="bg-white rounded-lg shadow p-8">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">Verify Character</h1>
+          <h1 class="text-3xl font-bold text-gray-900">{{ t('characterClaim.verifyTitle') }}</h1>
           <p class="mt-2 text-gray-600">
-            Follow these steps to verify your character ownership
+            {{ t('characterClaim.verifySubtitle') }}
           </p>
         </div>
 
         <div class="space-y-6">
           <ol class="list-decimal pl-5 space-y-4 text-gray-600">
-            <li>Log in to Tibia.com</li>
-            <li>Go to your character's page</li>
-            <li>Edit your character's comment</li>
-            <li>Add the following verification code to your comment:</li>
+            <li>{{ t('characterClaim.steps.1') }}</li>
+            <li>{{ t('characterClaim.steps.2') }}</li>
+            <li>{{ t('characterClaim.steps.3') }}</li>
+            <li>{{ t('characterClaim.steps.4') }}</li>
           </ol>
 
           <div class="bg-gray-50 p-4 rounded-md">
@@ -205,7 +207,7 @@ const resetClaim = () => {
 
           <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
             <p class="text-sm text-blue-700">
-              Note: After adding the code, please wait a few minutes for the changes to propagate before checking the claim status.
+              {{ t('characterClaim.waitNote') }}
             </p>
           </div>
 
@@ -214,14 +216,14 @@ const resetClaim = () => {
             :disabled="loading || lastCheckTime > Date.now() - 60000"
             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {{ loading ? 'Checking...' : 'Check Claim Status' }}
+            {{ loading ? t('characterClaim.checking') : t('characterClaim.checkStatus') }}
           </button>
 
           <p
             v-if="lastCheckTime > Date.now() - 60000"
             class="text-sm text-gray-500 text-center"
           >
-            Please wait {{ Math.ceil((60000 - (Date.now() - lastCheckTime)) / 1000) }} seconds before checking again
+            {{ t('characterClaim.waitTime', { seconds: Math.ceil((60000 - (Date.now() - lastCheckTime)) / 1000) }) }}
           </p>
         </div>
       </div>
@@ -234,10 +236,9 @@ const resetClaim = () => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Claim Approved!</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ t('characterClaim.success.title') }}</h2>
           <p class="text-gray-600 mb-6">
-            You are now the verified owner of this character.
-            Redirecting to your profile...
+            {{ t('characterClaim.success.message') }}
           </p>
         </div>
       </div>
@@ -250,19 +251,19 @@ const resetClaim = () => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Claim Rejected</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ t('characterClaim.rejected.title') }}</h2>
           <p class="text-gray-600 mb-6">
-            Your claim has been rejected. This can happen if:
+            {{ t('characterClaim.rejected.message') }}
           </p>
           <ul class="text-left text-gray-600 mb-6 list-disc pl-5">
-            <li>The verification code was not found in the character's comment</li>
-            <li>The claim expired (24 hours limit)</li>
+            <li>{{ t('characterClaim.rejected.reasons.1') }}</li>
+            <li>{{ t('characterClaim.rejected.reasons.2') }}</li>
           </ul>
           <button
             @click="resetClaim"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
           >
-            Try Again
+            {{ t('characterClaim.rejected.tryAgain') }}
           </button>
         </div>
       </div>

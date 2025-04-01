@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from 'vue-i18n'
 import RegisterSuggestion from '@/components/RegisterSuggestion.vue'
 import axios from 'axios'
 
@@ -12,6 +13,7 @@ interface Character {
 }
 
 const userStore = useUserStore()
+const { t } = useI18n()
 const characters = ref<Character[]>([])
 const loading = ref(false)
 const error = ref('')
@@ -35,7 +37,7 @@ const fetchCharacters = async () => {
     loading.value = true
     const response = await axios.get(`/users/${userStore.userId}/characters`)
     const chars = response.data
-    
+
     // Fetch soulcore counts for each character
     const charsWithCounts = await Promise.all(chars.map(async (char: Character) => {
       const soulcores = await axios.get(`/characters/${char.id}/soulcores`)
@@ -55,7 +57,7 @@ const fetchCharacters = async () => {
 
 const characterWithMostCores = computed(() => {
   if (characters.value.length === 0) return null
-  return characters.value.reduce((prev, current) => 
+  return characters.value.reduce((prev, current) =>
     (prev.soulcore_count || 0) > (current.soulcore_count || 0) ? prev : current
   )
 })
@@ -78,10 +80,10 @@ onMounted(() => {
 
     <div class="bg-white shadow sm:rounded-lg">
       <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <h3 class="text-2xl font-bold text-gray-900">Profile</h3>
-        <p class="mt-1 max-w-2xl text-sm text-gray-500">Your personal information and characters</p>
+        <h3 class="text-2xl font-bold text-gray-900">{{ t('profile.title') }}</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ t('profile.subtitle') }}</p>
       </div>
-      
+
       <div class="px-4 py-5 sm:p-6">
         <dl class="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div class="bg-gray-50 px-4 py-5 rounded-lg">
@@ -97,11 +99,11 @@ onMounted(() => {
           </div>
 
           <div v-if="!userStore.isAnonymous" class="bg-gray-50 px-4 py-5 rounded-lg">
-            <dt class="text-sm font-medium text-gray-500">Email</dt>
+            <dt class="text-sm font-medium text-gray-500">{{ t('profile.email.title') }}</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">{{ email }}</dd>
-            <dd class="mt-2 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full" 
+            <dd class="mt-2 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full"
                 :class="emailVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
-              {{ emailVerified ? 'Verified' : 'Not Verified' }}
+              {{ t(`profile.email.status.${emailVerified ? 'verified' : 'notVerified'}`) }}
             </dd>
           </div>
 
@@ -115,18 +117,18 @@ onMounted(() => {
         </dl>
 
         <div class="mt-8">
-          <h4 class="text-lg font-medium text-gray-900 mb-4">Your Characters</h4>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">{{ t('profile.characters.title') }}</h4>
           <div v-if="loading" class="text-gray-500 flex items-center space-x-2">
             <div class="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full"></div>
             <span>Loading characters...</span>
           </div>
           <div v-else-if="error" class="text-red-500 bg-red-50 p-4 rounded-lg">{{ error }}</div>
           <div v-else-if="characters.length === 0" class="text-gray-500 italic bg-gray-50 p-4 rounded-lg">
-            No characters added yet
+            {{ t('profile.characters.empty') }}
           </div>
           <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <router-link 
-              v-for="character in characters" 
+            <router-link
+              v-for="character in characters"
               :key="character.id"
               :to="{ name: 'character-details', params: { id: character.id }}"
               class="block group"

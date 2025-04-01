@@ -7,7 +7,21 @@
     "signIn": "Zaloguj się",
     "signUp": "Zarejestruj się",
     "signOut": "Wyloguj się",
-    "language": "Język"
+    "language": "Język",
+    "suggestions": {
+      "title": "Oczekujące Sugestie Dusz",
+      "count": "{count} sugestia | {count} sugestie | {count} sugestii",
+      "none": "Brak oczekujących sugestii"
+    },
+    "logout": {
+      "warning": {
+        "title": "Uwaga: Używasz anonimowego konta",
+        "message": "Jeśli się wylogujesz, stracisz dostęp do obecnej sesji i wszystkich swoich danych. Rozważ utworzenie konta, aby zachować swoje postępy.",
+        "register": "Zarejestruj się teraz",
+        "signOut": "Wyloguj się mimo to",
+        "cancel": "Anuluj"
+      }
+    }
   },
   "home": {
     "owner": "Właściciel",
@@ -57,5 +71,296 @@
       "discord": "Dołącz do naszego Discorda: ",
       "ingame": "Napisz w grze do: "
     }
+  },
+  "characterClaim": {
+    "title": "Przypisz postać",
+    "subtitle": "Zweryfikuj własność swojej postaci, aby używać jej na listach",
+    "characterName": "Nazwa postaci",
+    "characterNamePlaceholder": "Wpisz nazwę postaci",
+    "startClaim": "Rozpocznij weryfikację",
+    "starting": "Rozpoczynanie...",
+    "verifyTitle": "Zweryfikuj postać",
+    "verifySubtitle": "Wykonaj poniższe kroki, aby zweryfikować własność postaci",
+    "steps": {
+      "1": "Zaloguj się na Tibia.com",
+      "2": "Przejdź na stronę swojej postaci",
+      "3": "Edytuj komentarz postaci",
+      "4": "Dodaj następujący kod weryfikacyjny do komentarza:"
+    },
+    "waitNote": "Uwaga: Po dodaniu kodu poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu weryfikacji.",
+    "checkStatus": "Sprawdź status weryfikacji",
+    "checking": "Sprawdzanie...",
+    "waitTime": "Poczekaj {seconds} sekund przed ponownym sprawdzeniem",
+    "success": {
+      "title": "Weryfikacja zatwierdzona!",
+      "message": "Jesteś teraz zweryfikowanym właścicielem tej postaci. Przekierowywanie do profilu..."
+    },
+    "rejected": {
+      "title": "Weryfikacja odrzucona",
+      "message": "Twoja weryfikacja została odrzucona. Może to być spowodowane:",
+      "reasons": {
+        "1": "Kod weryfikacyjny nie został znaleziony w komentarzu postaci",
+        "2": "Weryfikacja wygasła (limit 24 godziny)"
+      },
+      "tryAgain": "Spróbuj ponownie"
+    }
+  },
+  "profile": {
+    "title": "Twój Profil",
+    "subtitle": "Zarządzaj swoim kontem i postaciami",
+    "email": {
+      "title": "Ustawienia Email",
+      "status": {
+        "notVerified": "Niezweryfikowany",
+        "verified": "Zweryfikowany"
+      },
+      "verifyButton": "Zweryfikuj Email",
+      "changeButton": "Zmień Email",
+      "addButton": "Dodaj Email",
+      "placeholder": "Wprowadź swój adres email"
+    },
+    "characters": {
+      "title": "Twoje Postacie",
+      "empty": "Nie masz jeszcze żadnych przypisanych postaci",
+      "addButton": "Przypisz Postać",
+      "level": "Poziom",
+      "vocation": "Profesja",
+      "world": "Świat",
+      "actions": {
+        "view": "Szczegóły",
+        "remove": "Usuń"
+      },
+      "confirmRemove": {
+        "title": "Usuń Postać",
+        "message": "Czy na pewno chcesz usunąć tę postać? Możesz ją później ponownie przypisać.",
+        "confirm": "Usuń",
+        "cancel": "Anuluj"
+      }
+    },
+    "lists": {
+      "title": "Twoje Listy",
+      "owned": "Listy, których jesteś właścicielem",
+      "member": "Listy, których jesteś członkiem",
+      "empty": "Nie masz jeszcze żadnych list",
+      "createButton": "Utwórz Nową Listę",
+      "actions": {
+        "view": "Zobacz Listę",
+        "edit": "Edytuj",
+        "delete": "Usuń"
+      }
+    },
+    "deleteAccount": {
+      "button": "Usuń Konto",
+      "confirm": {
+        "title": "Usuń Konto",
+        "message": "Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.",
+        "confirm": "Tak, usuń moje konto",
+        "cancel": "Nie, zachowaj moje konto"
+      }
+    }
+  },
+  "characterDetails": {
+    "title": "Szczegóły Postaci",
+    "information": {
+      "name": "Imię",
+      "world": "Świat",
+      "level": "Poziom",
+      "vocation": "Profesja",
+      "residence": "Miejsce zamieszkania"
+    },
+    "soulcores": {
+      "title": "Dusze Stworów",
+      "total": "Razem Dusz Stworów",
+      "loading": "Ładowanie dusz stworów...",
+      "empty": "Brak odblokowanych dusz stworów",
+      "error": "Nie udało się załadować dusz stworów",
+      "addButton": "Dodaj Duszę Stwora",
+      "removeButton": "Usuń",
+      "filters": {
+        "search": "Szukaj stworów",
+        "sort": "Sortuj według",
+        "sortOptions": {
+          "name": "Nazwy",
+          "level": "Poziomu",
+          "dateAdded": "Daty dodania"
+        }
+      }
+    },
+    "actions": {
+      "refresh": "Odśwież Dane",
+      "refreshing": "Odświeżanie...",
+      "edit": "Edytuj Postać",
+      "delete": "Usuń Postać"
+    },
+    "confirmDelete": {
+      "title": "Usuń Postać",
+      "message": "Czy na pewno chcesz usunąć tę postać? Tej operacji nie można cofnąć.",
+      "confirm": "Tak, usuń",
+      "cancel": "Anuluj"
+    }
+  },
+  "createList": {
+    "title": "Utwórz Nową Listę",
+    "subtitle": "Utwórz nową listę do śledzenia dusz stworów dla twojej grupy",
+    "form": {
+      "characterNamePlaceholder": "Wpisz nazwę postaci",
+      "characterNamePlaceholderAuth": "Wpisz nową postać lub wybierz istniejącą",
+      "loadingCharacters": "Wczytywanie twoich postaci...",
+      "submit": "Utwórz",
+      "verifying": "Weryfikacja...",
+      "errors": {
+        "verificationFailed": "Nie udało się zweryfikować postaci"
+      }
+    }
+  },
+  "joinList": {
+    "title": "Dołącz do Listy",
+    "subtitle": "Dołącz do istniejącej listy używając kodu zaproszenia",
+    "form": {
+      "shareCode": "Kod Udostępniania",
+      "shareCodePlaceholder": "Wpisz kod lub wklej URL",
+      "characterName": "Nazwa Postaci",
+      "characterNamePlaceholder": "Wpisz nazwę swojej postaci",
+      "submit": "Dołącz do Listy",
+      "joining": "Dołączanie...",
+      "errors": {
+        "characterNotFound": "Nie znaleziono postaci w Tibii. Sprawdź nazwę i spróbuj ponownie.",
+        "joinFailed": "Nie udało się dołączyć do listy"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Zaloguj się do swojego konta",
+      "subtitle": "Witaj z powrotem",
+      "withEmail": {
+        "title": "Zaloguj się przez email",
+        "email": "Adres email",
+        "emailPlaceholder": "Wpisz swój email",
+        "password": "Hasło",
+        "passwordPlaceholder": "Wpisz swoje hasło",
+        "submit": "Zaloguj się",
+        "signing": "Logowanie..."
+      },
+      "withProvider": {
+        "title": "lub kontynuuj przez",
+        "google": "Google",
+        "discord": "Discord"
+      },
+      "noAccount": "Nie masz jeszcze konta?",
+      "signUp": "Zarejestruj się"
+    },
+    "signUp": {
+      "title": "Utwórz konto",
+      "subtitle": "Dołącz do TibiaCores już dziś",
+      "withEmail": {
+        "title": "Zarejestruj się przez email",
+        "email": "Adres email",
+        "emailPlaceholder": "Wpisz swój email",
+        "password": "Hasło",
+        "passwordPlaceholder": "Utwórz hasło",
+        "confirmPassword": "Potwierdź hasło",
+        "confirmPasswordPlaceholder": "Wpisz hasło ponownie",
+        "submit": "Utwórz konto",
+        "creating": "Tworzenie konta..."
+      },
+      "withProvider": {
+        "title": "lub kontynuuj przez",
+        "google": "Google",
+        "discord": "Discord"
+      },
+      "hasAccount": "Masz już konto?",
+      "signIn": "Zaloguj się"
+    },
+    "errors": {
+      "invalidEmail": "Nieprawidłowy adres email",
+      "passwordRequired": "Hasło jest wymagane",
+      "passwordMismatch": "Hasła nie są takie same",
+      "weakPassword": "Hasło musi mieć co najmniej 8 znaków",
+      "emailInUse": "Ten adres email jest już używany",
+      "invalidCredentials": "Nieprawidłowy email lub hasło",
+      "accountNotFound": "Nie znaleziono konta",
+      "unauthorized": "Zaloguj się, aby kontynuować",
+      "verificationRequired": "Potwierdź swój adres email"
+    }
+  },
+  "emailVerification": {
+    "title": "Zweryfikuj Swój Email",
+    "subtitle": "Prawie gotowe! Jeszcze tylko jeden krok.",
+    "pending": {
+      "message": "Wysłaliśmy email weryfikacyjny na adres {email}",
+      "instructions": "Kliknij w link w wiadomości email, aby zweryfikować swoje konto.",
+      "resend": "Nie otrzymałeś emaila?",
+      "resendButton": "Wyślij ponownie email weryfikacyjny",
+      "resending": "Wysyłanie...",
+      "resent": "Email weryfikacyjny wysłany!",
+      "error": "Nie udało się wysłać emaila weryfikacyjnego"
+    },
+    "verifying": {
+      "message": "Weryfikacja twojego emaila...",
+      "success": "Email zweryfikowany pomyślnie!",
+      "error": "Nie udało się zweryfikować emaila",
+      "invalidToken": "Nieprawidłowy lub wygasły token weryfikacyjny",
+      "redirect": "Przekierowywanie do profilu..."
+    },
+    "actions": {
+      "backToProfile": "Powrót do Profilu",
+      "tryAgain": "Spróbuj Ponownie"
+    }
+  },
+  "oauth": {
+    "initiate": {
+      "loading": "Przekierowywanie do {provider}...",
+      "error": "Nie udało się rozpocząć procesu OAuth",
+      "tryAgain": "Spróbuj Ponownie"
+    },
+    "callback": {
+      "loading": "Przetwarzanie logowania...",
+      "error": {
+        "generic": "Nie udało się zakończyć uwierzytelniania",
+        "missingState": "Nieprawidłowy stan OAuth",
+        "missingCode": "Brak kodu autoryzacji",
+        "invalidProvider": "Nieprawidłowy dostawca OAuth"
+      },
+      "success": {
+        "message": "Pomyślnie uwierzytelniono",
+        "redirect": "Przekierowywanie do profilu..."
+      }
+    }
+  },
+  "footer": {
+    "copyright": "TibiaCores © 2025. Wszelkie prawa zastrzeżone.",
+    "trademark": "Tibia i TibiaME są znakami towarowymi {company}."
+  },
+  "claimSuggestion": {
+    "title": "Nazwa Postaci Już Zarejestrowana",
+    "message": "Postać \"{name}\" jest już zarejestrowana przez innego użytkownika.",
+    "isYours": {
+      "title": "Czy to Twoja postać?",
+      "description": "Jeśli to Twoja postać, możesz potwierdzić jej własność poprzez weryfikację komentarza postaci na Tibia.com.",
+      "button": "Rozpocznij Proces Weryfikacji"
+    },
+    "notYours": {
+      "title": "To nie Twoja postać?",
+      "description": "Jeśli to nie Twoja postać, spróbuj z inną nazwą postaci.",
+      "button": "Spróbuj z Inną Postacią"
+    }
+  },
+  "soulcoreSuggestions": {
+    "title": "Sugestie Dusz Stworów",
+    "fromList": "z listy \"{name}\"",
+    "accept": "Akceptuj",
+    "dismiss": "Odrzuć",
+    "unknownList": "Nieznana Lista"
+  },
+  "registerSuggestion": {
+    "title": "Dokończ Rejestrację",
+    "subtitle": "Świetny początek z Twoją pierwszą listą! Zobacz, dlaczego warto dokończyć rejestrację:",
+    "features": {
+      "accessAnywhere": "Dostęp do Twoich list z każdego urządzenia",
+      "secureData": "Zabezpiecz swoje dane hasłem i emailem",
+      "collaborate": "Dołącz i współpracuj przy innych listach"
+    },
+    "completeButton": "Dokończ Rejestrację"
   }
 }

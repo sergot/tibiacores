@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { tibiaDataService, type Character as TibiaCharacter } from '../services/tibiadata'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import ClaimSuggestion from './ClaimSuggestion.vue'
 
@@ -13,6 +14,8 @@ interface DBCharacter extends TibiaCharacter {
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
+
 const characterName = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -100,7 +103,7 @@ const verifyCharacter = async () => {
     if (axios.isAxiosError(e) && e.response?.status === 409) {
       showNameConflict.value = true
     } else {
-      error.value = e instanceof Error ? e.message : 'Failed to verify character'
+      error.value = e instanceof Error ? e.message : t('createList.form.errors.verificationFailed')
     }
   } finally {
     loading.value = false
@@ -115,8 +118,8 @@ const handleTryDifferent = () => {
 
 <template>
   <div class="p-6 rounded-lg">
-    <h2 class="mb-4 text-2xl">Create a list</h2>
-    <ClaimSuggestion 
+    <h2 class="mb-4 text-2xl">{{ t('createList.title') }}</h2>
+    <ClaimSuggestion
       v-if="showNameConflict"
       :character-name="characterName"
       @try-different="handleTryDifferent"
@@ -128,8 +131,8 @@ const handleTryDifferent = () => {
           type="text"
           :placeholder="
             userStore.isAuthenticated
-              ? 'Enter new character or select existing'
-              : 'Enter character name'
+              ? t('createList.form.characterNamePlaceholderAuth')
+              : t('createList.form.characterNamePlaceholder')
           "
           required
           :disabled="loading"
@@ -154,14 +157,16 @@ const handleTryDifferent = () => {
           </div>
         </div>
       </div>
-      <div v-if="isLoadingCharacters" class="text-sm text-gray-500">Loading your characters...</div>
+      <div v-if="isLoadingCharacters" class="text-sm text-gray-500">
+        {{ t('createList.form.loadingCharacters') }}
+      </div>
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
       <button
         type="submit"
         :disabled="loading"
         class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400"
       >
-        {{ loading ? 'Verifying...' : 'Create' }}
+        {{ loading ? t('createList.form.verifying') : t('createList.form.submit') }}
       </button>
     </form>
   </div>

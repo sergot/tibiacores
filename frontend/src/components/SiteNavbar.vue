@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
                   {{ suggestionsStore.totalPendingSuggestions }}
                 </span>
               </button>
-              
+
               <!-- Suggestions Dropdown Menu -->
               <div
                 v-if="showSuggestions"
@@ -131,7 +131,7 @@ onBeforeUnmount(() => {
                 @click.stop
               >
                 <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
-                  Pending Soul Core Suggestions
+                  {{ t('nav.suggestions.title') }}
                 </div>
                 <div class="max-h-96 overflow-y-auto">
                   <RouterLink
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
                     <div class="flex justify-between items-center">
                       <span>{{ char.character_name }}</span>
                       <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        {{ char.suggestion_count }} {{ char.suggestion_count === 1 ? 'suggestion' : 'suggestions' }}
+                        {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
                       </span>
                     </div>
                   </RouterLink>
@@ -185,8 +185,8 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Mobile menu -->
-    <div 
-      v-if="isMenuOpen" 
+    <div
+      v-if="isMenuOpen"
       class="md:hidden bg-white border-t border-gray-200"
     >
       <div class="px-2 pt-2 pb-3 space-y-1">
@@ -213,7 +213,7 @@ onBeforeUnmount(() => {
             class="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            <span>Suggestions</span>
+            <span>{{ t('nav.suggestions.title') }}</span>
             <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
               {{ suggestionsStore.totalPendingSuggestions }}
             </span>
@@ -251,10 +251,10 @@ onBeforeUnmount(() => {
           <ExclamationTriangleIcon class="h-6 w-6 text-yellow-400" />
         </div>
         <div class="ml-3">
-          <h3 class="text-lg font-medium text-gray-900">Warning: You're using an anonymous account</h3>
+          <h3 class="text-lg font-medium text-gray-900">{{ t('nav.logout.warning.title') }}</h3>
           <div class="mt-2">
             <p class="text-sm text-gray-500">
-              If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.
+              {{ t('nav.logout.warning.message') }}
             </p>
           </div>
           <div class="mt-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
@@ -263,21 +263,21 @@ onBeforeUnmount(() => {
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
               @click="showLogoutWarning = false"
             >
-              Register now
+              {{ t('nav.logout.warning.register') }}
             </RouterLink>
             <button
               type="button"
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
               @click="handleLogout"
             >
-              Sign out anyway
+              {{ t('nav.logout.warning.signOut') }}
             </button>
             <button
               type="button"
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
               @click="cancelLogout"
             >
-              Cancel
+              {{ t('nav.logout.warning.cancel') }}
             </button>
           </div>
         </div>
