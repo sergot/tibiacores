@@ -1,75 +1,276 @@
 {
   "_locale": "de",
-  "nav": {
-    "home": "Startseite",
-    "about": "Über",
-    "profile": "Profil",
-    "signIn": "Anmelden",
-    "signUp": "Registrieren",
-    "signOut": "Abmelden",
-    "language": "Sprache",
-    "suggestions": {
-      "title": "Ausstehende Seelenkern-Vorschläge",
-      "count": "{count} Vorschlag | {count} Vorschläge",
-      "none": "Keine ausstehenden Vorschläge"
-    },
-    "logout": {
-      "warning": {
-        "title": "Warnung: Sie verwenden ein anonymes Konto",
-        "message": "Wenn Sie sich jetzt abmelden, verlieren Sie den Zugriff auf Ihre aktuelle Sitzung und alle Ihre Daten. Erwägen Sie die Registrierung eines Kontos, um Ihren Fortschritt zu speichern.",
-        "register": "Jetzt registrieren",
-        "signOut": "Trotzdem abmelden",
-        "cancel": "Abbrechen"
-      }
-    }
-  },
-  "home": {
-    "owner": "Besitzer",
-    "member": "Mitglied"
-  },
   "about": {
-    "title": "Über TibiaCores",
-    "subtitle": "Ihr Begleiter für die Verwaltung von Kreaturen und Charakteren in der Welt von Tibia",
-    "whatIs": {
-      "title": "Was ist TibiaCores?",
-      "description": "TibiaCores ist ein leistungsstarkes Tool zur Organisation und Verwaltung der Seelenkern-Progression Ihrer Charaktere. Ob Sie 200 Animus-Meisterschaften oder alle freischalten möchten, TibiaCores macht es einfach, den Überblick über Ihre Sammlung zu behalten."
-    },
-    "features": {
-      "title": "Funktionen",
+    "comingSoon": {
       "list": {
-        "lists": "Seelenkern-Listen erstellen und verwalten",
-        "collaboration": "Mit anderen Benutzern zusammenarbeiten",
-        "tracking": "Charakterfortschritt verfolgen",
-        "organization": "Seelenkern-Sammlung organisieren"
-      }
+        "achievements": "Charakter-Erfolge",
+        "highscores": "Bestenlisten",
+        "market": "Seelenkern-Markt",
+        "more": "Und noch mehr"
+      },
+      "title": "Das kommt bald:"
+    },
+    "contact": {
+      "description": "Haben Sie Fragen oder Anregungen? Wir würden uns freuen, von Ihnen zu hören! Sie können:",
+      "discord": "Unserem Discord beitreten: ",
+      "ingame": "Nachricht im Spiel: ",
+      "title": "Kontakt"
     },
     "contribute": {
-      "title": "Mitmachen",
       "description": "TibiaCores ist ein Open-Source-Projekt und wir freuen uns über Beiträge aus der Community. Ob Sie Entwickler, Designer sind oder einfach nur Ideen teilen möchten, Sie können helfen, TibiaCores zu verbessern:",
       "list": {
         "bugs": "Fehlerberichte oder Funktionswünsche einreichen",
         "code": "Code über Pull Requests beitragen",
         "docs": "Dokumentation verbessern"
-      }
-    },
-    "comingSoon": {
-      "title": "Das kommt bald:",
-      "list": {
-        "market": "Seelenkern-Markt",
-        "achievements": "Charakter-Erfolge",
-        "highscores": "Bestenlisten",
-        "more": "Und noch mehr"
-      }
+      },
+      "title": "Mitmachen"
     },
     "donation": {
-      "title": "Spende",
-      "description": "Ihre Spenden helfen TibiaCores zu wachsen und sich zu verbessern, ermöglichen uns neue Funktionen hinzuzufügen, die Server zu warten und allen Benutzern ein besseres Erlebnis zu bieten. Wenn Sie unsere Entwicklung unterstützen möchten, können Sie Spenden im Spiel senden an:"
+      "description": "Ihre Spenden helfen TibiaCores zu wachsen und sich zu verbessern, ermöglichen uns neue Funktionen hinzuzufügen, die Server zu warten und allen Benutzern ein besseres Erlebnis zu bieten. Wenn Sie unsere Entwicklung unterstützen möchten, können Sie Spenden im Spiel senden an:",
+      "title": "Spende"
     },
-    "contact": {
-      "title": "Kontakt",
-      "description": "Haben Sie Fragen oder Anregungen? Wir würden uns freuen, von Ihnen zu hören! Sie können:",
-      "discord": "Unserem Discord beitreten: ",
-      "ingame": "Nachricht im Spiel: "
+    "features": {
+      "list": {
+        "collaboration": "Mit anderen Benutzern zusammenarbeiten",
+        "lists": "Seelenkern-Listen erstellen und verwalten",
+        "organization": "Seelenkern-Sammlung organisieren",
+        "tracking": "Charakterfortschritt verfolgen"
+      },
+      "title": "Funktionen"
+    },
+    "subtitle": "Ihr Begleiter für die Verwaltung von Kreaturen und Charakteren in der Welt von Tibia",
+    "title": "Über TibiaCores",
+    "whatIs": {
+      "description": "TibiaCores ist ein leistungsstarkes Tool zur Organisation und Verwaltung der Seelenkern-Progression Ihrer Charaktere. Ob Sie 200 Animus-Meisterschaften oder alle freischalten möchten, TibiaCores macht es einfach, den Überblick über Ihre Sammlung zu behalten.",
+      "title": "Was ist TibiaCores?"
     }
+  },
+  "auth": {
+    "errors": {
+      "accountNotFound": "Konto nicht gefunden",
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "unauthorized": "Bitte melde dich an, um fortzufahren"
+    },
+    "signIn": {
+      "noAccount": "Noch kein Konto?",
+      "signUp": "Registrieren",
+      "title": "In dein Konto einloggen",
+      "withEmail": {
+        "email": "E-Mail-Adresse",
+        "emailPlaceholder": "Deine E-Mail eingeben",
+        "password": "Passwort",
+        "passwordPlaceholder": "Dein Passwort eingeben",
+        "signing": "Anmeldung läuft...",
+        "submit": "Anmelden"
+      },
+      "withProvider": {
+        "discord": "Mit Discord anmelden",
+        "google": "Mit Google anmelden",
+        "title": "Oder fortfahren mit"
+      }
+    },
+    "signUp": {
+      "hasAccount": "Bereits ein Konto?",
+      "signIn": "Anmelden",
+      "title": "Konto erstellen",
+      "withEmail": {
+        "confirmPassword": "Passwort bestätigen",
+        "confirmPasswordPlaceholder": "Passwort erneut eingeben",
+        "creating": "Konto wird erstellt...",
+        "email": "E-Mail-Adresse",
+        "emailPlaceholder": "Deine E-Mail eingeben",
+        "password": "Passwort",
+        "passwordPlaceholder": "Passwort erstellen",
+        "submit": "Konto erstellen"
+      },
+      "withProvider": {
+        "discord": "Mit Discord registrieren",
+        "google": "Mit Google registrieren",
+        "title": "Oder fortfahren mit"
+      }
+    }
+  },
+  "characterClaim": {
+    "characterName": "Charaktername",
+    "characterNamePlaceholder": "Charakternamen eingeben",
+    "checkStatus": "Anspruchsstatus Prüfen",
+    "checking": "Überprüfe...",
+    "rejected": {
+      "message": "Dein Anspruch wurde abgelehnt. Dies kann passieren, wenn:",
+      "reasons": {
+        "1": "Der Verifizierungscode wurde nicht im Charakterkommentar gefunden",
+        "2": "Der Anspruch ist abgelaufen (24-Stunden-Limit)"
+      },
+      "title": "Anspruch Abgelehnt",
+      "tryAgain": "Erneut Versuchen"
+    },
+    "startClaim": "Anspruch Starten",
+    "starting": "Startet...",
+    "steps": {
+      "1": "Melde dich bei Tibia.com an",
+      "2": "Gehe zur Seite deines Charakters",
+      "3": "Bearbeite den Kommentar deines Charakters",
+      "4": "Füge den folgenden Verifizierungscode zu deinem Kommentar hinzu:"
+    },
+    "subtitle": "Verifiziere den Besitz deines Charakters, um ihn in deinen Listen zu verwenden",
+    "success": {
+      "message": "Du bist nun der verifizierte Besitzer dieses Charakters. Weiterleitung zu deinem Profil...",
+      "title": "Anspruch Genehmigt!"
+    },
+    "title": "Charakter Beanspruchen",
+    "verifySubtitle": "Folge diesen Schritten, um deinen Charakterbesitz zu verifizieren",
+    "verifyTitle": "Charakter Verifizieren",
+    "waitNote": "Hinweis: Nach dem Hinzufügen des Codes warte bitte einige Minuten, bis die Änderungen übernommen wurden, bevor du den Anspruchsstatus überprüfst."
+  },
+  "characterDetails": {
+    "confirmDelete": {
+      "cancel": "Abbrechen"
+    },
+    "information": {
+      "level": "Level",
+      "name": "Name",
+      "vocation": "Berufung",
+      "world": "Welt"
+    },
+    "soulcores": {
+      "addButton": "Seelenkern hinzufügen",
+      "empty": "Noch keine Seelenkerne freigeschaltet",
+      "filters": {
+        "search": "Kreaturen suchen"
+      },
+      "loading": "Lade Seelenkerne...",
+      "removeButton": "Entfernen",
+      "title": "Seelenkerne",
+      "total": "Gesamte Seelenkerne"
+    },
+    "title": "Charakterdetails"
+  },
+  "createList": {
+    "form": {
+      "characterNamePlaceholder": "Charakternamen eingeben",
+      "characterNamePlaceholderAuth": "Neuen Charakter eingeben oder vorhandenen auswählen",
+      "errors": {
+        "verificationFailed": "Fehler bei der Charakterverifizierung"
+      },
+      "loadingCharacters": "Lade deine Charaktere...",
+      "submit": "Erstellen",
+      "verifying": "Verifiziere..."
+    },
+    "title": "Neue Liste Erstellen"
+  },
+  "emailVerification": {
+    "actions": {
+      "backToProfile": "Zurück zum Profil",
+      "tryAgain": "Erneut Versuchen"
+    },
+    "subtitle": "Fast geschafft! Nur noch ein Schritt bis zum Start.",
+    "verifying": {
+      "error": "Fehler bei der E-Mail-Verifizierung",
+      "invalidToken": "Ungültiger oder abgelaufener Verifizierungstoken",
+      "message": "E-Mail wird verifiziert...",
+      "redirect": "Weiterleitung zum Profil...",
+      "success": "E-Mail erfolgreich verifiziert!"
+    }
+  },
+  "joinList": {
+    "form": {
+      "characterName": "Charaktername",
+      "characterNamePlaceholder": "Gib deinen Charakternamen ein",
+      "errors": {
+        "characterNotFound": "Charakter in Tibia nicht gefunden. Bitte überprüfe den Namen und versuche es erneut.",
+        "joinFailed": "Beitritt zur Liste fehlgeschlagen"
+      },
+      "joining": "Trete bei...",
+      "shareCode": "Teilungscode",
+      "shareCodePlaceholder": "Teilungscode oder URL eingeben",
+      "submit": "Liste Beitreten"
+    },
+    "title": "Liste Beitreten"
+  },
+  "listDetail": {
+    "actions": "Aktionen",
+    "addedBy": "Hinzugefügt von",
+    "copied": "Kopiert!",
+    "copyLink": "Link Kopieren",
+    "created": "Erstellt",
+    "creatureName": "Kreaturname",
+    "inactiveCharacterTooltip": "Dieser Charakter ist aufgrund eines Anspruchsprozesses inaktiv",
+    "markAsObtained": "Als Erhalten markieren",
+    "markAsUnlocked": "Als Freigeschaltet markieren",
+    "memberContributions": "Mitgliederbeiträge",
+    "obtained": "erhalten",
+    "shareList": "Liste Teilen",
+    "shareListDescription": "Teile diesen Link mit anderen, damit sie deiner Liste beitreten können:",
+    "status": "Status",
+    "totalProgress": "Gesamtfortschritt",
+    "xpBoostProgress": "EP-Boost-Fortschritt (200)"
+  },
+  "lists": {
+    "title": "Listen"
+  },
+  "nav": {
+    "about": "Über",
+    "logout": {
+      "warning": {
+        "cancel": "Abbrechen",
+        "message": "Wenn Sie sich jetzt abmelden, verlieren Sie den Zugriff auf Ihre aktuelle Sitzung und alle Ihre Daten. Erwägen Sie die Registrierung eines Kontos, um Ihren Fortschritt zu speichern.",
+        "register": "Jetzt registrieren",
+        "signOut": "Trotzdem abmelden",
+        "title": "Warnung: Sie verwenden ein anonymes Konto"
+      }
+    },
+    "profile": "Profil",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "signUp": "Registrieren",
+    "suggestions": {
+      "title": "Ausstehende Seelenkern-Vorschläge"
+    }
+  },
+  "oauth": {
+    "callback": {
+      "error": {
+        "generic": "Fehler bei der Authentifizierung",
+        "invalidProvider": "Ungültiger OAuth-Anbieter",
+        "missingCode": "Fehlender Autorisierungscode",
+        "missingState": "Ungültiger OAuth-Status"
+      },
+      "loading": "Anmeldung wird verarbeitet..."
+    },
+    "initiate": {
+      "error": "Fehler beim Starten des OAuth-Prozesses",
+      "tryAgain": "Erneut Versuchen"
+    }
+  },
+  "profile": {
+    "characters": {
+      "empty": "Du hast noch keine Charaktere beansprucht",
+      "title": "Deine Charaktere"
+    },
+    "email": {
+      "title": "E-Mail-Einstellungen"
+    },
+    "lists": {
+      "empty": "Du hast noch keine Listen"
+    },
+    "subtitle": "Verwalte dein Konto und deine Charaktere",
+    "title": "Dein Profil"
+  },
+  "registerSuggestion": {
+    "completeButton": "Registrierung Abschließen",
+    "features": {
+      "accessAnywhere": "Greife von jedem Gerät auf deine Listen zu",
+      "collaborate": "Tritt anderen Listen bei und arbeite zusammen",
+      "secureData": "Sichere deine Daten mit E-Mail und Passwort"
+    },
+    "subtitle": "Toller Start mit deiner ersten Liste! Hier erfährst du, warum du deine Registrierung abschließen solltest:",
+    "title": "Registrierung Abschließen"
+  },
+  "soulcoreSuggestions": {
+    "accept": "Akzeptieren",
+    "dismiss": "Ablehnen",
+    "title": "Seelenkern-Vorschläge",
+    "unknownList": "Unbekannte Liste"
   }
 }
