@@ -5,9 +5,12 @@
     <div class="options">
       <div class="option">
         <h4>Is this your character?</h4>
-        <p>If this is your character, you can claim ownership by verifying it with your Tibia.com character comment.</p>
-        <router-link 
-          :to="{ name: 'claim-character', query: { character: characterName }}" 
+        <p>
+          If this is your character, you can claim ownership by verifying it with your Tibia.com
+          character comment.
+        </p>
+        <router-link
+          :to="{ name: 'claim-character', query: { character: characterName } }"
           class="button primary"
         >
           Start Claim Process
@@ -32,10 +35,10 @@ export default defineComponent({
   props: {
     characterName: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits: ['try-different']
+  emits: ['try-different'],
 })
 </script>
 
@@ -88,7 +91,7 @@ export default defineComponent({
 }
 
 .button.primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 

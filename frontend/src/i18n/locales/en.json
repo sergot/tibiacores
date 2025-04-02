@@ -1,0 +1,276 @@
+{
+  "_locale": "en",
+  "about": {
+    "comingSoon": {
+      "list": {
+        "achievements": "Character achievements",
+        "highscores": "Highscores",
+        "market": "Soul cores market",
+        "more": "And even more"
+      },
+      "title": "Things that are coming:"
+    },
+    "contact": {
+      "description": "Have questions or suggestions? We'd love to hear from you! You can:",
+      "discord": "Join our Discord: ",
+      "ingame": "Message in-game: ",
+      "title": "Contact"
+    },
+    "contribute": {
+      "description": "TibiaCores is an open-source project, and we welcome contributions from the community. Whether you're a developer, designer, or just have ideas to share, you can help make TibiaCores better:",
+      "list": {
+        "bugs": "Submit bug reports or feature requests",
+        "code": "Contribute code via pull requests",
+        "docs": "Help improve documentation"
+      },
+      "title": "Contribute"
+    },
+    "donation": {
+      "description": "Your donations help TibiaCores grow and improve, allowing us to add new features, maintain the servers, and provide a better experience for all users. If you'd like to support our development, you can send in-game donations to:",
+      "title": "Donation"
+    },
+    "features": {
+      "list": {
+        "collaboration": "Collaborate with other users",
+        "lists": "Create and manage soulcore lists",
+        "organization": "Organize soul cores collection",
+        "tracking": "Track your character progression"
+      },
+      "title": "Features"
+    },
+    "subtitle": "Your companion for managing creatures and characters in the world of Tibia",
+    "title": "About TibiaCores",
+    "whatIs": {
+      "description": "TibiaCores is a powerful tool designed to help you organize and manage your characters' soul cores progression. Whether you're looking to unlock 200 animus masteries or all of them, TibiaCores makes it easy to keep track of your collection.",
+      "title": "What is TibiaCores?"
+    }
+  },
+  "auth": {
+    "errors": {
+      "accountNotFound": "Account not found",
+      "invalidCredentials": "Invalid email or password",
+      "passwordMismatch": "Passwords do not match",
+      "unauthorized": "Please sign in to continue"
+    },
+    "signIn": {
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "title": "Sign in to your account",
+      "withEmail": {
+        "email": "Email address",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "signing": "Signing in...",
+        "submit": "Sign in"
+      },
+      "withProvider": {
+        "discord": "Sign in with Discord",
+        "google": "Sign in with Google",
+        "title": "Or continue with"
+      }
+    },
+    "signUp": {
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "title": "Create your account",
+      "withEmail": {
+        "confirmPassword": "Confirm password",
+        "confirmPasswordPlaceholder": "Enter password again",
+        "creating": "Creating account...",
+        "email": "Email address",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Create a password",
+        "submit": "Create account"
+      },
+      "withProvider": {
+        "discord": "Sign up with Discord",
+        "google": "Sign up with Google",
+        "title": "Or continue with"
+      }
+    }
+  },
+  "characterClaim": {
+    "characterName": "Character Name",
+    "characterNamePlaceholder": "Enter character name",
+    "checkStatus": "Check Claim Status",
+    "checking": "Checking...",
+    "rejected": {
+      "message": "Your claim has been rejected. This can happen if:",
+      "reasons": {
+        "1": "The verification code was not found in the character's comment",
+        "2": "The claim expired (24 hours limit)"
+      },
+      "title": "Claim Rejected",
+      "tryAgain": "Try Again"
+    },
+    "startClaim": "Start Claim",
+    "starting": "Starting...",
+    "steps": {
+      "1": "Log in to Tibia.com",
+      "2": "Go to your character's page",
+      "3": "Edit your character's comment",
+      "4": "Add the following verification code to your comment:"
+    },
+    "subtitle": "Verify ownership of your character to use it in your lists",
+    "success": {
+      "message": "You are now the verified owner of this character. Redirecting to your profile...",
+      "title": "Claim Approved!"
+    },
+    "title": "Claim Character",
+    "verifySubtitle": "Follow these steps to verify your character ownership",
+    "verifyTitle": "Verify Character",
+    "waitNote": "Note: After adding the code, please wait a few minutes for the changes to propagate before checking the claim status."
+  },
+  "characterDetails": {
+    "confirmDelete": {
+      "cancel": "Cancel"
+    },
+    "information": {
+      "level": "Level",
+      "name": "Name",
+      "vocation": "Vocation",
+      "world": "World"
+    },
+    "soulcores": {
+      "addButton": "Add Soul Core",
+      "empty": "No soul cores unlocked yet",
+      "filters": {
+        "search": "Search creatures"
+      },
+      "loading": "Loading soul cores...",
+      "removeButton": "Remove",
+      "title": "Soul Cores",
+      "total": "Total Soul Cores"
+    },
+    "title": "Character Details"
+  },
+  "createList": {
+    "form": {
+      "characterNamePlaceholder": "Enter character name",
+      "characterNamePlaceholderAuth": "Enter new character or select existing",
+      "errors": {
+        "verificationFailed": "Failed to verify character"
+      },
+      "loadingCharacters": "Loading your characters...",
+      "submit": "Create",
+      "verifying": "Verifying..."
+    },
+    "title": "Create New List"
+  },
+  "emailVerification": {
+    "actions": {
+      "backToProfile": "Back to Profile",
+      "tryAgain": "Try Again"
+    },
+    "subtitle": "Almost there! Just one more step to get started.",
+    "verifying": {
+      "error": "Failed to verify email",
+      "invalidToken": "Invalid or expired verification token",
+      "message": "Verifying your email...",
+      "redirect": "Redirecting to profile...",
+      "success": "Email verified successfully!"
+    }
+  },
+  "joinList": {
+    "form": {
+      "characterName": "Character Name",
+      "characterNamePlaceholder": "Enter your character name",
+      "errors": {
+        "characterNotFound": "Character not found in Tibia. Please check the name and try again.",
+        "joinFailed": "Failed to join list"
+      },
+      "joining": "Joining...",
+      "shareCode": "Share Code",
+      "shareCodePlaceholder": "Enter share code or paste URL",
+      "submit": "Join List"
+    },
+    "title": "Join List"
+  },
+  "listDetail": {
+    "actions": "Actions",
+    "addedBy": "Added By",
+    "copied": "Copied!",
+    "copyLink": "Copy Link",
+    "created": "Created",
+    "creatureName": "Creature Name",
+    "inactiveCharacterTooltip": "This character is inactive due to a claim process",
+    "markAsObtained": "Mark as Obtained",
+    "markAsUnlocked": "Mark as Unlocked",
+    "memberContributions": "Member Contributions",
+    "obtained": "obtained",
+    "shareList": "Share List",
+    "shareListDescription": "Share this link with others to let them join your list:",
+    "status": "Status",
+    "totalProgress": "Total Progress",
+    "xpBoostProgress": "XP Boost Progress (200)"
+  },
+  "lists": {
+    "title": "Lists"
+  },
+  "nav": {
+    "about": "About",
+    "logout": {
+      "warning": {
+        "cancel": "Cancel",
+        "message": "If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.",
+        "register": "Register now",
+        "signOut": "Sign out anyway",
+        "title": "Warning: You're using an anonymous account"
+      }
+    },
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signUp": "Sign up",
+    "suggestions": {
+      "title": "Pending Soul Core Suggestions"
+    }
+  },
+  "oauth": {
+    "callback": {
+      "error": {
+        "generic": "Failed to complete authentication",
+        "invalidProvider": "Invalid OAuth provider",
+        "missingCode": "Missing authorization code",
+        "missingState": "Invalid OAuth state"
+      },
+      "loading": "Processing login..."
+    },
+    "initiate": {
+      "error": "Failed to start OAuth flow",
+      "tryAgain": "Try Again"
+    }
+  },
+  "profile": {
+    "characters": {
+      "empty": "You haven't claimed any characters yet",
+      "title": "Your Characters"
+    },
+    "email": {
+      "title": "Email Settings"
+    },
+    "lists": {
+      "empty": "You don't have any lists yet"
+    },
+    "subtitle": "Manage your account and characters",
+    "title": "Your Profile"
+  },
+  "registerSuggestion": {
+    "completeButton": "Complete Registration",
+    "features": {
+      "accessAnywhere": "Access your lists from any device",
+      "collaborate": "Join and collaborate on other lists",
+      "secureData": "Secure your data with email and password"
+    },
+    "subtitle": "Great start with your first list! Here's why you should complete your registration:",
+    "title": "Complete Your Registration"
+  },
+  "soulcoreSuggestions": {
+    "accept": "Accept",
+    "dismiss": "Dismiss",
+    "title": "Soul Core Suggestions",
+    "unknownList": "Unknown List"
+  }
+}

@@ -41,7 +41,7 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
 
   // Start polling when store is initialized
   let pollInterval: number | undefined
-  
+
   const startPolling = () => {
     if (pollInterval) return
     fetchPendingSuggestions()
@@ -69,6 +69,6 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
     fetchPendingSuggestions,
     startPolling,
     stopPolling,
-    $dispose
+    $dispose,
   }
 })

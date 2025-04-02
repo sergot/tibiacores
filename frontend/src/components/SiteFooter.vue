@@ -8,13 +8,16 @@
             target="_blank"
             rel="noopener noreferrer"
             class="hover:text-gray-300"
-          >TibiaCores</a> © 2025. All rights reserved. Tibia and TibiaME are trademarks of
+            >TibiaCores</a
+          >
+          © 2025. All rights reserved. Tibia and TibiaME are trademarks of
           <a
             href="https://www.cipsoft.com"
             target="_blank"
             rel="noopener noreferrer"
             class="hover:text-gray-300"
-          >CipSoft GmbH</a>.
+            >CipSoft GmbH</a
+          >.
         </p>
       </div>
     </div>

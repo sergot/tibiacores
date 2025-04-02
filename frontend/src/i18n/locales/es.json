@@ -1,0 +1,276 @@
+{
+  "_locale": "es",
+  "about": {
+    "comingSoon": {
+      "list": {
+        "achievements": "Logros de personajes",
+        "highscores": "Tabla de clasificación",
+        "market": "Mercado de núcleos de alma",
+        "more": "Y mucho más"
+      },
+      "title": "Próximamente:"
+    },
+    "contact": {
+      "description": "¿Tienes preguntas o sugerencias? ¡Nos encantaría saber de ti! Puedes:",
+      "discord": "Unirte a nuestro Discord: ",
+      "ingame": "Mensaje en el juego: ",
+      "title": "Contacto"
+    },
+    "contribute": {
+      "description": "TibiaCores es un proyecto de código abierto y damos la bienvenida a contribuciones de la comunidad. Ya seas desarrollador, diseñador o simplemente tengas ideas para compartir, puedes ayudar a mejorar TibiaCores:",
+      "list": {
+        "bugs": "Enviar informes de errores o solicitudes de funciones",
+        "code": "Contribuir código mediante pull requests",
+        "docs": "Ayudar a mejorar la documentación"
+      },
+      "title": "Contribuir"
+    },
+    "donation": {
+      "description": "Tus donaciones ayudan a que TibiaCores crezca y mejore, permitiéndonos agregar nuevas funciones, mantener los servidores y proporcionar una mejor experiencia para todos los usuarios. Si deseas apoyar nuestro desarrollo, puedes enviar donaciones en el juego a:",
+      "title": "Donación"
+    },
+    "features": {
+      "list": {
+        "collaboration": "Colaborar con otros usuarios",
+        "lists": "Crear y gestionar listas de núcleos de alma",
+        "organization": "Organizar colección de núcleos de alma",
+        "tracking": "Seguimiento de progresión de personajes"
+      },
+      "title": "Características"
+    },
+    "subtitle": "Tu compañero para gestionar criaturas y personajes en el mundo de Tibia",
+    "title": "Acerca de TibiaCores",
+    "whatIs": {
+      "description": "TibiaCores es una herramienta potente diseñada para ayudarte a organizar y gestionar la progresión de núcleos de alma de tus personajes. Ya sea que busques desbloquear 200 maestrías de ánima o todas ellas, TibiaCores facilita el seguimiento de tu colección.",
+      "title": "¿Qué es TibiaCores?"
+    }
+  },
+  "auth": {
+    "errors": {
+      "accountNotFound": "Cuenta no encontrada",
+      "invalidCredentials": "Email o contraseña inválidos",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "unauthorized": "Por favor inicia sesión para continuar"
+    },
+    "signIn": {
+      "noAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate",
+      "title": "Iniciar sesión en tu cuenta",
+      "withEmail": {
+        "email": "Dirección de email",
+        "emailPlaceholder": "Ingresa tu email",
+        "password": "Contraseña",
+        "passwordPlaceholder": "Ingresa tu contraseña",
+        "signing": "Iniciando sesión...",
+        "submit": "Iniciar sesión"
+      },
+      "withProvider": {
+        "discord": "Iniciar sesión con Discord",
+        "google": "Iniciar sesión con Google",
+        "title": "O continuar con"
+      }
+    },
+    "signUp": {
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión",
+      "title": "Crear tu cuenta",
+      "withEmail": {
+        "confirmPassword": "Confirmar contraseña",
+        "confirmPasswordPlaceholder": "Ingresa la contraseña nuevamente",
+        "creating": "Creando cuenta...",
+        "email": "Dirección de email",
+        "emailPlaceholder": "Ingresa tu email",
+        "password": "Contraseña",
+        "passwordPlaceholder": "Crea una contraseña",
+        "submit": "Crear cuenta"
+      },
+      "withProvider": {
+        "discord": "Registrarse con Discord",
+        "google": "Registrarse con Google",
+        "title": "O continuar con"
+      }
+    }
+  },
+  "characterClaim": {
+    "characterName": "Nombre del Personaje",
+    "characterNamePlaceholder": "Ingresa el nombre del personaje",
+    "checkStatus": "Verificar Estado del Reclamo",
+    "checking": "Verificando...",
+    "rejected": {
+      "message": "Tu reclamo ha sido rechazado. Esto puede suceder si:",
+      "reasons": {
+        "1": "El código de verificación no se encontró en el comentario del personaje",
+        "2": "El reclamo expiró (límite de 24 horas)"
+      },
+      "title": "Reclamo Rechazado",
+      "tryAgain": "Intentar Nuevamente"
+    },
+    "startClaim": "Comenzar Reclamo",
+    "starting": "Iniciando...",
+    "steps": {
+      "1": "Inicia sesión en Tibia.com",
+      "2": "Ve a la página de tu personaje",
+      "3": "Edita el comentario de tu personaje",
+      "4": "Agrega el siguiente código de verificación a tu comentario:"
+    },
+    "subtitle": "Verifica la propiedad de tu personaje para usarlo en tus listas",
+    "success": {
+      "message": "Ahora eres el propietario verificado de este personaje. Redirigiendo a tu perfil...",
+      "title": "¡Reclamo Aprobado!"
+    },
+    "title": "Reclamar Personaje",
+    "verifySubtitle": "Sigue estos pasos para verificar la propiedad de tu personaje",
+    "verifyTitle": "Verificar Personaje",
+    "waitNote": "Nota: Después de agregar el código, espera unos minutos para que los cambios se propaguen antes de verificar el estado del reclamo."
+  },
+  "characterDetails": {
+    "confirmDelete": {
+      "cancel": "Cancelar"
+    },
+    "information": {
+      "level": "Nivel",
+      "name": "Nombre",
+      "vocation": "Vocación",
+      "world": "Mundo"
+    },
+    "soulcores": {
+      "addButton": "Agregar Núcleo de Alma",
+      "empty": "Aún no hay núcleos de alma desbloqueados",
+      "filters": {
+        "search": "Buscar criaturas"
+      },
+      "loading": "Cargando núcleos de alma...",
+      "removeButton": "Eliminar",
+      "title": "Núcleos de Alma",
+      "total": "Total de Núcleos de Alma"
+    },
+    "title": "Detalles del Personaje"
+  },
+  "createList": {
+    "form": {
+      "characterNamePlaceholder": "Ingresa el nombre del personaje",
+      "characterNamePlaceholderAuth": "Ingresa nuevo personaje o selecciona uno existente",
+      "errors": {
+        "verificationFailed": "Error al verificar el personaje"
+      },
+      "loadingCharacters": "Cargando tus personajes...",
+      "submit": "Crear",
+      "verifying": "Verificando..."
+    },
+    "title": "Crear Nueva Lista"
+  },
+  "emailVerification": {
+    "actions": {
+      "backToProfile": "Volver al Perfil",
+      "tryAgain": "Intentar Nuevamente"
+    },
+    "subtitle": "¡Casi listo! Solo un paso más para empezar.",
+    "verifying": {
+      "error": "Error al verificar email",
+      "invalidToken": "Token de verificación inválido o expirado",
+      "message": "Verificando tu email...",
+      "redirect": "Redirigiendo al perfil...",
+      "success": "¡Email verificado exitosamente!"
+    }
+  },
+  "joinList": {
+    "form": {
+      "characterName": "Nombre del Personaje",
+      "characterNamePlaceholder": "Ingresa el nombre de tu personaje",
+      "errors": {
+        "characterNotFound": "Personaje no encontrado en Tibia. Por favor verifica el nombre e intenta nuevamente.",
+        "joinFailed": "Error al unirse a la lista"
+      },
+      "joining": "Uniéndose...",
+      "shareCode": "Código de Compartir",
+      "shareCodePlaceholder": "Ingresa el código de compartir o pega la URL",
+      "submit": "Unirse a la Lista"
+    },
+    "title": "Unirse a Lista"
+  },
+  "listDetail": {
+    "actions": "Acciones",
+    "addedBy": "Agregado Por",
+    "copied": "¡Copiado!",
+    "copyLink": "Copiar Enlace",
+    "created": "Creada",
+    "creatureName": "Nombre de Criatura",
+    "inactiveCharacterTooltip": "Este personaje está inactivo debido a un proceso de reclamo",
+    "markAsObtained": "Marcar como Obtenido",
+    "markAsUnlocked": "Marcar como Desbloqueado",
+    "memberContributions": "Contribuciones de Miembros",
+    "obtained": "obtenido",
+    "shareList": "Compartir Lista",
+    "shareListDescription": "Comparte este enlace con otros para permitirles unirse a tu lista:",
+    "status": "Estado",
+    "totalProgress": "Progreso Total",
+    "xpBoostProgress": "Progreso de Impulso de XP (200)"
+  },
+  "lists": {
+    "title": "Listas"
+  },
+  "nav": {
+    "about": "Acerca de",
+    "logout": {
+      "warning": {
+        "cancel": "Cancelar",
+        "message": "Si cierras sesión ahora, perderás acceso a tu sesión actual y todos tus datos. Considera registrar una cuenta para guardar tu progreso.",
+        "register": "Registrarse ahora",
+        "signOut": "Cerrar sesión de todos modos",
+        "title": "Advertencia: Estás usando una cuenta anónima"
+      }
+    },
+    "profile": "Perfil",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "signUp": "Registrarse",
+    "suggestions": {
+      "title": "Sugerencias de Núcleos de Alma pendientes"
+    }
+  },
+  "oauth": {
+    "callback": {
+      "error": {
+        "generic": "Error al completar la autenticación",
+        "invalidProvider": "Proveedor OAuth inválido",
+        "missingCode": "Código de autorización faltante",
+        "missingState": "Estado OAuth inválido"
+      },
+      "loading": "Procesando inicio de sesión..."
+    },
+    "initiate": {
+      "error": "Error al iniciar el flujo de OAuth",
+      "tryAgain": "Intentar Nuevamente"
+    }
+  },
+  "profile": {
+    "characters": {
+      "empty": "Aún no has reclamado ningún personaje",
+      "title": "Tus Personajes"
+    },
+    "email": {
+      "title": "Configuración de Email"
+    },
+    "lists": {
+      "empty": "Aún no tienes ninguna lista"
+    },
+    "subtitle": "Gestiona tu cuenta y personajes",
+    "title": "Tu Perfil"
+  },
+  "registerSuggestion": {
+    "completeButton": "Completar Registro",
+    "features": {
+      "accessAnywhere": "Accede a tus listas desde cualquier dispositivo",
+      "collaborate": "Únete y colabora en otras listas",
+      "secureData": "Asegura tus datos con email y contraseña"
+    },
+    "subtitle": "¡Gran comienzo con tu primera lista! Aquí te explicamos por qué deberías completar tu registro:",
+    "title": "Completa Tu Registro"
+  },
+  "soulcoreSuggestions": {
+    "accept": "Aceptar",
+    "dismiss": "Descartar",
+    "title": "Sugerencias de Núcleos de Alma",
+    "unknownList": "Lista Desconocida"
+  }
+}

@@ -1,0 +1,276 @@
+{
+  "_locale": "pl",
+  "about": {
+    "comingSoon": {
+      "list": {
+        "achievements": "Osiągnięcia postaci",
+        "highscores": "Rankingi",
+        "market": "Rynek soul corów",
+        "more": "I wiele więcej"
+      },
+      "title": "Co nas czeka:"
+    },
+    "contact": {
+      "description": "Masz pytania lub sugestie? Chętnie je usłyszymy! Możesz:",
+      "discord": "Dołącz do naszego Discorda: ",
+      "ingame": "Napisz w grze do: ",
+      "title": "Kontakt"
+    },
+    "contribute": {
+      "description": "TibiaCores to projekt open-source i z chęcią przyjmujemy wkład od społeczności. Niezależnie od tego, czy jesteś programistą, projektantem, czy po prostu masz pomysły do podzielenia się, możesz pomóc ulepszyć TibiaCores:",
+      "list": {
+        "bugs": "Zgłaszaj błędy lub propozycje funkcji",
+        "code": "Współtwórz kod poprzez pull requesty",
+        "docs": "Pomóż ulepszyć dokumentację"
+      },
+      "title": "Współtwórz"
+    },
+    "donation": {
+      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores, umożliwiając nam dodawanie nowych funkcji, utrzymanie serwerów i zapewnienie lepszych wrażeń wszystkim użytkownikom. Jeśli chcesz wesprzeć nasz rozwój, możesz wysłać dotacje w grze do:",
+      "title": "Wsparcie"
+    },
+    "features": {
+      "list": {
+        "collaboration": "Współpracuj z innymi użytkownikami",
+        "lists": "Twórz i zarządzaj listami soul corami",
+        "organization": "Organizuj kolekcję soul corów",
+        "tracking": "Śledź postępy swojej postaci"
+      },
+      "title": "Funkcje"
+    },
+    "subtitle": "Twój towarzysz w zarządzaniu soulcorami w świecie Tibii",
+    "title": "O TibiaCores",
+    "whatIs": {
+      "description": "TibiaCores to narzędzie stworzone, aby pomóc Ci organizować i zarządzać postępami w zbieraniu soulcorów. Niezależnie od tego, czy chcesz odblokować 200 czy wszystkie, TibiaCores ułatwia zarządzanie Twoją kolekcją.",
+      "title": "Czym jest TibiaCores?"
+    }
+  },
+  "auth": {
+    "errors": {
+      "accountNotFound": "Nie znaleziono konta",
+      "invalidCredentials": "Nieprawidłowy email lub hasło",
+      "passwordMismatch": "Hasła nie są takie same",
+      "unauthorized": "Zaloguj się, aby kontynuować"
+    },
+    "signIn": {
+      "noAccount": "Nie masz jeszcze konta?",
+      "signUp": "Zarejestruj się",
+      "title": "Zaloguj się do swojego konta",
+      "withEmail": {
+        "email": "Adres email",
+        "emailPlaceholder": "Wpisz swój email",
+        "password": "Hasło",
+        "passwordPlaceholder": "Wpisz swoje hasło",
+        "signing": "Logowanie...",
+        "submit": "Zaloguj się"
+      },
+      "withProvider": {
+        "discord": "Discord",
+        "google": "Google",
+        "title": "lub kontynuuj przez"
+      }
+    },
+    "signUp": {
+      "hasAccount": "Masz już konto?",
+      "signIn": "Zaloguj się",
+      "title": "Utwórz konto",
+      "withEmail": {
+        "confirmPassword": "Potwierdź hasło",
+        "confirmPasswordPlaceholder": "Wpisz hasło ponownie",
+        "creating": "Tworzenie konta...",
+        "email": "Adres email",
+        "emailPlaceholder": "Wpisz swój email",
+        "password": "Hasło",
+        "passwordPlaceholder": "Utwórz hasło",
+        "submit": "Utwórz konto"
+      },
+      "withProvider": {
+        "discord": "Discord",
+        "google": "Google",
+        "title": "lub kontynuuj przez"
+      }
+    }
+  },
+  "characterClaim": {
+    "characterName": "Nazwa postaci",
+    "characterNamePlaceholder": "Wpisz nazwę postaci",
+    "checkStatus": "Sprawdź status weryfikacji",
+    "checking": "Sprawdzanie...",
+    "rejected": {
+      "message": "Twoja weryfikacja została odrzucona. Może to być spowodowane:",
+      "reasons": {
+        "1": "Kod weryfikacyjny nie został znaleziony w komentarzu postaci",
+        "2": "Weryfikacja wygasła (limit 24 godziny)"
+      },
+      "title": "Weryfikacja odrzucona",
+      "tryAgain": "Spróbuj ponownie"
+    },
+    "startClaim": "Rozpocznij weryfikację",
+    "starting": "Rozpoczynanie...",
+    "steps": {
+      "1": "Zaloguj się na Tibia.com",
+      "2": "Przejdź na stronę swojej postaci",
+      "3": "Edytuj komentarz postaci",
+      "4": "Dodaj następujący kod weryfikacyjny do komentarza:"
+    },
+    "subtitle": "Zweryfikuj własność swojej postaci, aby używać jej na listach",
+    "success": {
+      "message": "Jesteś teraz zweryfikowanym właścicielem tej postaci. Przekierowywanie do profilu...",
+      "title": "Weryfikacja zatwierdzona!"
+    },
+    "title": "Przypisz postać",
+    "verifySubtitle": "Wykonaj poniższe kroki, aby zweryfikować własność postaci",
+    "verifyTitle": "Zweryfikuj postać",
+    "waitNote": "Uwaga: Po dodaniu kodu poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu weryfikacji."
+  },
+  "characterDetails": {
+    "confirmDelete": {
+      "cancel": "Anuluj"
+    },
+    "information": {
+      "level": "Poziom",
+      "name": "Imię",
+      "vocation": "Profesja",
+      "world": "Świat"
+    },
+    "soulcores": {
+      "addButton": "Dodaj soul core",
+      "empty": "Brak odblokowanych soul corów",
+      "filters": {
+        "search": "Szukaj stworów"
+      },
+      "loading": "Ładowanie soul corów...",
+      "removeButton": "Usuń",
+      "title": "Soulcory",
+      "total": "Razem soulcorów"
+    },
+    "title": "Szczegóły Postaci"
+  },
+  "createList": {
+    "form": {
+      "characterNamePlaceholder": "Wpisz nazwę postaci",
+      "characterNamePlaceholderAuth": "Wpisz nową postać lub wybierz istniejącą",
+      "errors": {
+        "verificationFailed": "Nie udało się zweryfikować postaci"
+      },
+      "loadingCharacters": "Wczytywanie twoich postaci...",
+      "submit": "Utwórz",
+      "verifying": "Weryfikacja..."
+    },
+    "title": "Utwórz Nową Listę"
+  },
+  "emailVerification": {
+    "actions": {
+      "backToProfile": "Powrót do Profilu",
+      "tryAgain": "Spróbuj Ponownie"
+    },
+    "subtitle": "Prawie gotowe! Jeszcze tylko jeden krok.",
+    "verifying": {
+      "error": "Nie udało się zweryfikować emaila",
+      "invalidToken": "Nieprawidłowy lub wygasły token weryfikacyjny",
+      "message": "Weryfikacja twojego emaila...",
+      "redirect": "Przekierowywanie do profilu...",
+      "success": "Email zweryfikowany pomyślnie!"
+    }
+  },
+  "joinList": {
+    "form": {
+      "characterName": "Nazwa Postaci",
+      "characterNamePlaceholder": "Wpisz nazwę swojej postaci",
+      "errors": {
+        "characterNotFound": "Nie znaleziono postaci w Tibii. Sprawdź nazwę i spróbuj ponownie.",
+        "joinFailed": "Nie udało się dołączyć do listy"
+      },
+      "joining": "Dołączanie...",
+      "shareCode": "Kod Udostępniania",
+      "shareCodePlaceholder": "Wpisz kod lub wklej URL",
+      "submit": "Dołącz do Listy"
+    },
+    "title": "Dołącz do Listy"
+  },
+  "listDetail": {
+    "actions": "Akcje",
+    "addedBy": "Dodane Przez",
+    "copied": "Skopiowano!",
+    "copyLink": "Kopiuj Link",
+    "created": "Utworzono",
+    "creatureName": "Nazwa Stwora",
+    "inactiveCharacterTooltip": "Ta postać jest nieaktywna z powodu procesu weryfikacji",
+    "markAsObtained": "Oznacz jako Zdobyte",
+    "markAsUnlocked": "Oznacz jako Odblokowane",
+    "memberContributions": "Wkład Członków",
+    "obtained": "zdobyte",
+    "shareList": "Udostępnij Listę",
+    "shareListDescription": "Udostępnij ten link innym, aby mogli dołączyć do twojej listy:",
+    "status": "Status",
+    "totalProgress": "Całkowity Postęp",
+    "xpBoostProgress": "Postęp do maks. boost XP (200)"
+  },
+  "lists": {
+    "title": "Listy"
+  },
+  "nav": {
+    "about": "O nas",
+    "logout": {
+      "warning": {
+        "cancel": "Anuluj",
+        "message": "Jeśli się wylogujesz, stracisz dostęp do obecnej sesji i wszystkich swoich danych. Rozważ utworzenie konta, aby zachować swoje postępy.",
+        "register": "Zarejestruj się teraz",
+        "signOut": "Wyloguj się mimo to",
+        "title": "Uwaga: używasz anonimowego konta"
+      }
+    },
+    "profile": "Profil",
+    "signIn": "Zaloguj się",
+    "signOut": "Wyloguj się",
+    "signUp": "Zarejestruj się",
+    "suggestions": {
+      "title": "Oczekujące sugestie corów"
+    }
+  },
+  "oauth": {
+    "callback": {
+      "error": {
+        "generic": "Nie udało się zakończyć uwierzytelniania",
+        "invalidProvider": "Nieprawidłowy dostawca OAuth",
+        "missingCode": "Brak kodu autoryzacji",
+        "missingState": "Nieprawidłowy stan OAuth"
+      },
+      "loading": "Przetwarzanie logowania..."
+    },
+    "initiate": {
+      "error": "Nie udało się rozpocząć procesu OAuth",
+      "tryAgain": "Spróbuj Ponownie"
+    }
+  },
+  "profile": {
+    "characters": {
+      "empty": "Nie masz jeszcze żadnych przypisanych postaci",
+      "title": "Twoje Postacie"
+    },
+    "email": {
+      "title": "Ustawienia Email"
+    },
+    "lists": {
+      "empty": "Nie masz jeszcze żadnych list"
+    },
+    "subtitle": "Zarządzaj swoim kontem i postaciami",
+    "title": "Twój Profil"
+  },
+  "registerSuggestion": {
+    "completeButton": "Dokończ rejestrację",
+    "features": {
+      "accessAnywhere": "Dostęp do Twoich list z każdego urządzenia",
+      "collaborate": "Dołącz i współpracuj przy innych listach",
+      "secureData": "Zabezpiecz swoje dane hasłem i emailem"
+    },
+    "subtitle": "Świetny początek z Twoją pierwszą listą! Zobacz, dlaczego warto dokończyć rejestrację:",
+    "title": "Dokończ rejestrację"
+  },
+  "soulcoreSuggestions": {
+    "accept": "Akceptuj",
+    "dismiss": "Odrzuć",
+    "title": "Sugestie soul corów",
+    "unknownList": "Nieznana Lista"
+  }
+}

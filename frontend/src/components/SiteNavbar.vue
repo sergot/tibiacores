@@ -3,6 +3,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useSuggestionsStore } from '@/stores/suggestions'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import {
   Bars3Icon,
   XMarkIcon,
@@ -11,6 +13,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const router = useRouter()
 const suggestionsStore = useSuggestionsStore()
@@ -82,24 +85,25 @@ onBeforeUnmount(() => {
             to="/about"
             class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
           >
-            About
+            {{ t('nav.about') }}
           </RouterLink>
         </div>
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex md:items-center md:space-x-4">
+          <LanguageSwitcher />
           <div v-if="!userStore.isAuthenticated" class="flex space-x-4">
             <RouterLink
               to="/signin"
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
-              Sign in
+              {{ t('nav.signIn') }}
             </RouterLink>
             <RouterLink
               to="/signup"
               class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Sign up
+              {{ t('nav.signUp') }}
             </RouterLink>
           </div>
           <div v-else class="flex items-center space-x-4">
@@ -109,8 +113,19 @@ onBeforeUnmount(() => {
                 @click="showSuggestions = !showSuggestions"
                 class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
                 </svg>
                 <span
                   v-if="suggestionsStore.totalPendingSuggestions > 0"
@@ -119,7 +134,7 @@ onBeforeUnmount(() => {
                   {{ suggestionsStore.totalPendingSuggestions }}
                 </span>
               </button>
-              
+
               <!-- Suggestions Dropdown Menu -->
               <div
                 v-if="showSuggestions"
@@ -127,20 +142,22 @@ onBeforeUnmount(() => {
                 @click.stop
               >
                 <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
-                  Pending Soul Core Suggestions
+                  {{ t('nav.suggestions.title') }}
                 </div>
                 <div class="max-h-96 overflow-y-auto">
                   <RouterLink
                     v-for="char in suggestionsStore.pendingSuggestions"
                     :key="char.character_id"
-                    :to="{ name: 'character-details', params: { id: char.character_id }}"
+                    :to="{ name: 'character-details', params: { id: char.character_id } }"
                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="handleSuggestionClick"
                   >
                     <div class="flex justify-between items-center">
                       <span>{{ char.character_name }}</span>
-                      <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        {{ char.suggestion_count }} {{ char.suggestion_count === 1 ? 'suggestion' : 'suggestions' }}
+                      <span
+                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                      >
+                        {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
                       </span>
                     </div>
                   </RouterLink>
@@ -153,20 +170,21 @@ onBeforeUnmount(() => {
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
               <UserIcon class="h-5 w-5" />
-              <span>Profile</span>
+              <span>{{ t('nav.profile') }}</span>
             </RouterLink>
             <button
               @click="initiateLogout"
               class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
             >
               <ArrowRightStartOnRectangleIcon class="h-5 w-5" />
-              <span>Sign out</span>
+              <span>{{ t('nav.signOut') }}</span>
             </button>
           </div>
         </div>
 
         <!-- Mobile menu button -->
-        <div class="flex items-center md:hidden">
+        <div class="flex items-center space-x-2 md:hidden">
+          <LanguageSwitcher />
           <button
             @click="toggleMenu"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -180,10 +198,7 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Mobile menu -->
-    <div 
-      v-if="isMenuOpen" 
-      class="md:hidden bg-white border-t border-gray-200"
-    >
+    <div v-if="isMenuOpen" class="md:hidden bg-white border-t border-gray-200">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <div v-if="!userStore.isAuthenticated" class="space-y-2">
           <RouterLink
@@ -191,24 +206,27 @@ onBeforeUnmount(() => {
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            Sign in
+            {{ t('nav.signIn') }}
           </RouterLink>
           <RouterLink
             to="/signup"
             class="block px-3 py-2 rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700"
             @click="isMenuOpen = false"
           >
-            Sign up
+            {{ t('nav.signUp') }}
           </RouterLink>
         </div>
         <div v-else class="space-y-2">
           <RouterLink
             v-if="suggestionsStore.hasPendingSuggestions"
-            :to="{ name: 'character-details', params: { id: suggestionsStore.pendingSuggestions[0]?.character_id }}"
+            :to="{
+              name: 'character-details',
+              params: { id: suggestionsStore.pendingSuggestions[0]?.character_id },
+            }"
             class="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            <span>Suggestions</span>
+            <span>{{ t('nav.suggestions.title') }}</span>
             <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
               {{ suggestionsStore.totalPendingSuggestions }}
             </span>
@@ -218,20 +236,20 @@ onBeforeUnmount(() => {
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            Profile
+            {{ t('nav.profile') }}
           </RouterLink>
           <RouterLink
             to="/about"
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
           >
-            About
+            {{ t('nav.about') }}
           </RouterLink>
           <button
             @click="initiateLogout"
             class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            Sign out
+            {{ t('nav.signOut') }}
           </button>
         </div>
       </div>
@@ -239,17 +257,20 @@ onBeforeUnmount(() => {
   </nav>
 
   <!-- Logout warning modal -->
-  <div v-if="showLogoutWarning" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div
+    v-if="showLogoutWarning"
+    class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  >
     <div class="bg-white rounded-lg max-w-md w-full p-6">
       <div class="flex items-start">
         <div class="flex-shrink-0">
           <ExclamationTriangleIcon class="h-6 w-6 text-yellow-400" />
         </div>
         <div class="ml-3">
-          <h3 class="text-lg font-medium text-gray-900">Warning: You're using an anonymous account</h3>
+          <h3 class="text-lg font-medium text-gray-900">{{ t('nav.logout.warning.title') }}</h3>
           <div class="mt-2">
             <p class="text-sm text-gray-500">
-              If you sign out now, you'll lose access to your current session and all your data. Consider registering an account to save your progress.
+              {{ t('nav.logout.warning.message') }}
             </p>
           </div>
           <div class="mt-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
@@ -258,21 +279,21 @@ onBeforeUnmount(() => {
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
               @click="showLogoutWarning = false"
             >
-              Register now
+              {{ t('nav.logout.warning.register') }}
             </RouterLink>
             <button
               type="button"
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
               @click="handleLogout"
             >
-              Sign out anyway
+              {{ t('nav.logout.warning.signOut') }}
             </button>
             <button
               type="button"
               class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
               @click="cancelLogout"
             >
-              Cancel
+              {{ t('nav.logout.warning.cancel') }}
             </button>
           </div>
         </div>

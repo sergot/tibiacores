@@ -61,30 +61,30 @@ const router = createRouter({
       path: '/claim-character',
       name: 'claim-character',
       component: CharacterClaimView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/characters/:id',
       name: 'character-details',
       component: CharacterDetailsView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/verify-email',
       name: 'verify-email',
-      component: () => import('../views/EmailVerificationView.vue')
+      component: () => import('../views/EmailVerificationView.vue'),
     },
     {
       path: '/oauth/:provider/callback',
       name: 'oauth-callback',
-      component: () => import('../views/OAuthCallbackView.vue')
+      component: () => import('../views/OAuthCallbackView.vue'),
     },
     {
       path: '/oauth/:provider',
       name: 'oauth-initiate',
-      component: () => import('../views/OAuthInitiateView.vue')
-    }
-  ]
+      component: () => import('../views/OAuthInitiateView.vue'),
+    },
+  ],
 })
 
 export default router

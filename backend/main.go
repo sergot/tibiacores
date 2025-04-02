@@ -52,6 +52,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	// User management routes
 	api.POST("/signup", usersHandler.Signup)
 	api.POST("/login", usersHandler.Login)
+	api.GET("/verify-email", usersHandler.VerifyEmail)
 
 	// OAuth routes
 	authGroup := api.Group("/auth")
