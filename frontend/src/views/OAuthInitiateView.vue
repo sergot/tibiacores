@@ -20,7 +20,8 @@ onMounted(async () => {
   try {
     // Get the OAuth URL from our backend which will include the proper state
     const response = await axios.get(`/auth/oauth/${provider}`)
-    window.location.href = response.data
+    // Use window with proper type checking
+    ;(window as Window).location.href = response.data
   } catch (err) {
     console.error('Failed to initiate OAuth:', err)
     error.value = t('oauth.initiate.error')
@@ -51,7 +52,7 @@ onMounted(async () => {
           {{ error }}
         </h2>
         <button
-          @click="window.location.reload()"
+          @click="router.go(0)"
           class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
         >
           {{ t('oauth.initiate.tryAgain') }}

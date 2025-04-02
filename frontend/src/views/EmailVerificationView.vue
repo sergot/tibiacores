@@ -52,7 +52,7 @@
             {{ t('emailVerification.actions.backToProfile') }}
           </router-link>
           <button
-            @click="window.location.reload()"
+            @click="router.go(0)"
             class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
           >
             {{ t('emailVerification.actions.tryAgain') }}
