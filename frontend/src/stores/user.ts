@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem('session_token', data.session_token)
       localStorage.setItem('user_id', data.id)
       localStorage.setItem('has_email', String(data.has_email))
-      
+
       axios.defaults.headers.common['Authorization'] = `Bearer ${data.session_token}`
     },
 
@@ -35,8 +35,8 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('session_token')
       localStorage.removeItem('user_id')
       localStorage.removeItem('has_email')
-      
+
       delete axios.defaults.headers.common['Authorization']
-    }
-  }
+    },
+  },
 })

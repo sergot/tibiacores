@@ -54,7 +54,9 @@ onMounted(async () => {
     // If user is authenticated, fetch their characters from the same world
     if (userStore.isAuthenticated) {
       const charResponse = await axios.get<DBCharacter[]>(`/users/${userStore.userId}/characters`)
-      existingCharacters.value = charResponse.data.filter(char => char.world === listPreview.value?.world)
+      existingCharacters.value = charResponse.data.filter(
+        (char) => char.world === listPreview.value?.world,
+      )
     }
 
     // If character name was provided in query, set it
@@ -115,7 +117,10 @@ const handleJoin = async () => {
       return
     }
 
-    const response = await axios.post<{ id: string, members: ListMember[] }>(`/lists/join/${props.share_code}`, requestData)
+    const response = await axios.post<{ id: string; members: ListMember[] }>(
+      `/lists/join/${props.share_code}`,
+      requestData,
+    )
 
     // For anonymous users, get the token from response header and find our user ID
     // from the members list (we'll be the only member with the character we just added)
@@ -123,7 +128,9 @@ const handleJoin = async () => {
     if (authToken && !userStore.isAuthenticated) {
       // Find our user ID from the response - we'll be the member with the character we just joined with
       const ourCharacterName = selectedCharacter.value?.name || characterName.value
-      const ourMember = response.data.members.find((m: ListMember) => m.character_name === ourCharacterName)
+      const ourMember = response.data.members.find(
+        (m: ListMember) => m.character_name === ourCharacterName,
+      )
 
       if (!ourMember) {
         throw new Error('Failed to identify user after joining')
@@ -189,7 +196,9 @@ const selectExistingCharacter = (char: DBCharacter) => {
 </script>
 
 <template>
-  <div class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-100">
+  <div
+    class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-100"
+  >
     <main class="max-w-xl w-full space-y-8">
       <div v-if="loading && !error" class="text-center py-12">
         <div
@@ -209,7 +218,8 @@ const selectExistingCharacter = (char: DBCharacter) => {
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-gray-900">Join List</h1>
           <p class="mt-2 text-gray-600">
-            You've been invited to join <span class="font-medium text-gray-800">{{ listPreview.name }}</span>
+            You've been invited to join
+            <span class="font-medium text-gray-800">{{ listPreview.name }}</span>
           </p>
         </div>
 
@@ -242,16 +252,13 @@ const selectExistingCharacter = (char: DBCharacter) => {
                 :class="{
                   'w-full p-3 border rounded-lg focus:outline-none focus:ring-2': true,
                   'border-red-300 focus:ring-red-500': characterError,
-                  'border-gray-300 focus:ring-indigo-500': !characterError
+                  'border-gray-300 focus:ring-indigo-500': !characterError,
                 }"
                 @input="handleInput"
                 @focus="handleFocus"
                 @blur="handleBlur"
               />
-              <div
-                v-if="characterError"
-                class="mt-1 text-sm text-red-600"
-              >
+              <div v-if="characterError" class="mt-1 text-sm text-red-600">
                 {{ characterError }}
               </div>
               <div

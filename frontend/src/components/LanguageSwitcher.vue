@@ -8,12 +8,12 @@ const { t } = useI18n()
 const isOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 
-const languages: Array<{ code: 'en' | 'pl' | 'de' | 'es' | 'pt', name: string }> = [
+const languages: Array<{ code: 'en' | 'pl' | 'de' | 'es' | 'pt'; name: string }> = [
   { code: 'en', name: 'English' },
   { code: 'de', name: 'Deutsch' },
   { code: 'es', name: 'Español' },
   { code: 'pl', name: 'Polski' },
-  { code: 'pt', name: 'Português' }
+  { code: 'pt', name: 'Português' },
 ]
 
 const switchLanguage = (locale: 'en' | 'pl' | 'de' | 'es' | 'pt') => {
@@ -64,8 +64,17 @@ onBeforeUnmount(() => {
         >
           <span>{{ lang.name }}</span>
           <span v-if="t('_locale') === lang.code" class="text-indigo-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
             </svg>
           </span>
         </button>

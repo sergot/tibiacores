@@ -37,7 +37,7 @@ const handleSubmit = async () => {
     })
     router.push({
       name: 'list-detail',
-      params: { id: response.data.id }
+      params: { id: response.data.id },
     })
   } catch (err: unknown) {
     if (axios.isAxiosError(err) && err.response?.status === 409) {
@@ -45,7 +45,9 @@ const handleSubmit = async () => {
     } else if (err instanceof Error && err.message === 'Character not found') {
       error.value = t('joinList.form.errors.characterNotFound')
     } else {
-      error.value = axios.isAxiosError(err) ? err.response?.data?.message || t('joinList.form.errors.joinFailed') : t('joinList.form.errors.joinFailed')
+      error.value = axios.isAxiosError(err)
+        ? err.response?.data?.message || t('joinList.form.errors.joinFailed')
+        : t('joinList.form.errors.joinFailed')
     }
   } finally {
     loading.value = false

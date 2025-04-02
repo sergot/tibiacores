@@ -53,7 +53,7 @@ axios.interceptors.response.use(
       }
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 app.mount('#app')

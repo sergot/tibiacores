@@ -28,9 +28,12 @@ const isOpen = ref(false)
 const searchInput = ref(props.modelValue)
 
 // Keep searchInput in sync with modelValue
-watch(() => props.modelValue, (newValue) => {
-  searchInput.value = newValue
-})
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    searchInput.value = newValue
+  },
+)
 
 const selectedIndex = ref(-1)
 const dropdownRef = ref<HTMLDivElement | null>(null)
@@ -38,13 +41,13 @@ const dropdownRef = ref<HTMLDivElement | null>(null)
 const filteredCreatures = computed(() => {
   const query = searchInput.value.toLowerCase()
   return props.creatures
-    .filter(creature => creature.name.toLowerCase().includes(query))
-    .map(creature => ({
+    .filter((creature) => creature.name.toLowerCase().includes(query))
+    .map((creature) => ({
       ...creature,
-      isObtained: props.existingSoulCores.some(sc => 
-        sc.creature_id === creature.id && 
-        (sc.status === 'obtained' || sc.status === 'unlocked')
-      )
+      isObtained: props.existingSoulCores.some(
+        (sc) =>
+          sc.creature_id === creature.id && (sc.status === 'obtained' || sc.status === 'unlocked'),
+      ),
     }))
     .sort((a, b) => {
       // Sort obtained creatures to the bottom
@@ -58,10 +61,12 @@ const filteredCreatures = computed(() => {
 
 const selectCreature = (creature: Creature) => {
   // Don't select if already obtained
-  if (props.existingSoulCores.some(sc => 
-    sc.creature_id === creature.id && 
-    (sc.status === 'obtained' || sc.status === 'unlocked')
-  )) {
+  if (
+    props.existingSoulCores.some(
+      (sc) =>
+        sc.creature_id === creature.id && (sc.status === 'obtained' || sc.status === 'unlocked'),
+    )
+  ) {
     return
   }
 
@@ -128,7 +133,7 @@ onBeforeUnmount(() => {
     <div
       v-if="isOpen && filteredCreatures.length > 0"
       class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-y-auto"
-      style="max-height: 16rem;"
+      style="max-height: 16rem"
     >
       <div
         v-for="(creature, index) in filteredCreatures"
@@ -138,7 +143,7 @@ onBeforeUnmount(() => {
           'p-2 cursor-pointer text-sm': true,
           'text-gray-700 hover:bg-gray-50': !creature.isObtained,
           'text-gray-400 cursor-not-allowed': creature.isObtained,
-          'bg-indigo-50': index === selectedIndex && !creature.isObtained
+          'bg-indigo-50': index === selectedIndex && !creature.isObtained,
         }"
       >
         {{ creature.name }}

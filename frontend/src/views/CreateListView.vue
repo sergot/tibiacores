@@ -50,9 +50,10 @@ const handleSubmit = async () => {
   try {
     const requestData = {
       name: listName.value,
-      ...(useExisting.value && 'id' in character.value && {
-        character_id: character.value.id,
-      }),
+      ...(useExisting.value &&
+        'id' in character.value && {
+          character_id: character.value.id,
+        }),
       ...(!useExisting.value && {
         character_name: character.value.name,
         world: character.value.world,

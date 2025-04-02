@@ -39,13 +39,15 @@ const fetchCharacters = async () => {
     const chars = response.data
 
     // Fetch soulcore counts for each character
-    const charsWithCounts = await Promise.all(chars.map(async (char: Character) => {
-      const soulcores = await axios.get(`/characters/${char.id}/soulcores`)
-      return {
-        ...char,
-        soulcore_count: soulcores.data.length
-      }
-    }))
+    const charsWithCounts = await Promise.all(
+      chars.map(async (char: Character) => {
+        const soulcores = await axios.get(`/characters/${char.id}/soulcores`)
+        return {
+          ...char,
+          soulcore_count: soulcores.data.length,
+        }
+      }),
+    )
     characters.value = charsWithCounts
   } catch (err) {
     error.value = 'Failed to load characters'
@@ -58,7 +60,7 @@ const fetchCharacters = async () => {
 const characterWithMostCores = computed(() => {
   if (characters.value.length === 0) return null
   return characters.value.reduce((prev, current) =>
-    (prev.soulcore_count || 0) > (current.soulcore_count || 0) ? prev : current
+    (prev.soulcore_count || 0) > (current.soulcore_count || 0) ? prev : current,
   )
 })
 
@@ -101,8 +103,12 @@ onMounted(() => {
           <div v-if="!userStore.isAnonymous" class="bg-gray-50 px-4 py-5 rounded-lg">
             <dt class="text-sm font-medium text-gray-500">{{ t('profile.email.title') }}</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">{{ email }}</dd>
-            <dd class="mt-2 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full"
-                :class="emailVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
+            <dd
+              class="mt-2 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full"
+              :class="
+                emailVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+              "
+            >
               {{ t(`profile.email.status.${emailVerified ? 'verified' : 'notVerified'}`) }}
             </dd>
           </div>
@@ -111,32 +117,47 @@ onMounted(() => {
             <dt class="text-sm font-medium text-gray-500">Most Advanced Character</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
               {{ characterWithMostCores.name }}
-              <span class="text-sm text-gray-600">({{ characterWithMostCores.soulcore_count }} cores)</span>
+              <span class="text-sm text-gray-600"
+                >({{ characterWithMostCores.soulcore_count }} cores)</span
+              >
             </dd>
           </div>
         </dl>
 
         <div class="mt-8">
-          <h4 class="text-lg font-medium text-gray-900 mb-4">{{ t('profile.characters.title') }}</h4>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">
+            {{ t('profile.characters.title') }}
+          </h4>
           <div v-if="loading" class="text-gray-500 flex items-center space-x-2">
-            <div class="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full"></div>
+            <div
+              class="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full"
+            ></div>
             <span>Loading characters...</span>
           </div>
           <div v-else-if="error" class="text-red-500 bg-red-50 p-4 rounded-lg">{{ error }}</div>
-          <div v-else-if="characters.length === 0" class="text-gray-500 italic bg-gray-50 p-4 rounded-lg">
+          <div
+            v-else-if="characters.length === 0"
+            class="text-gray-500 italic bg-gray-50 p-4 rounded-lg"
+          >
             {{ t('profile.characters.empty') }}
           </div>
           <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <router-link
               v-for="character in characters"
               :key="character.id"
-              :to="{ name: 'character-details', params: { id: character.id }}"
+              :to="{ name: 'character-details', params: { id: character.id } }"
               class="block group"
             >
-              <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-indigo-500 hover:shadow-md transition-all duration-200">
-                <h5 class="font-medium text-gray-900 group-hover:text-indigo-600">{{ character.name }}</h5>
+              <div
+                class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-indigo-500 hover:shadow-md transition-all duration-200"
+              >
+                <h5 class="font-medium text-gray-900 group-hover:text-indigo-600">
+                  {{ character.name }}
+                </h5>
                 <p class="text-sm text-gray-500">{{ character.world }}</p>
-                <p class="text-sm text-gray-500 mt-1">{{ character.soulcore_count || 0 }} soul cores</p>
+                <p class="text-sm text-gray-500 mt-1">
+                  {{ character.soulcore_count || 0 }} soul cores
+                </p>
               </div>
             </router-link>
           </div>

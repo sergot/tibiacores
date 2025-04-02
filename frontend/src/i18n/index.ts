@@ -17,8 +17,8 @@ export const i18n = createI18n({
     pl,
     de,
     es,
-    pt
-  }
+    pt,
+  },
 })
 
 function isValidLocale(locale: string): locale is Locale {
@@ -32,9 +32,7 @@ export function getBrowserLocale(): Locale {
   }
 
   const navigatorLocale =
-    navigator.languages !== undefined
-      ? navigator.languages[0]
-      : navigator.language
+    navigator.languages !== undefined ? navigator.languages[0] : navigator.language
 
   if (!navigatorLocale) {
     return 'en'

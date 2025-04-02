@@ -53,14 +53,14 @@ const selectedCreatureName = ref('')
 const sortField = ref<'creature_name' | 'status'>('creature_name')
 const sortDirection = ref<'asc' | 'desc'>('asc')
 const searchQuery = ref('')
-const hideUnlocked = ref(true)  // New state for hiding unlocked cores
+const hideUnlocked = ref(true) // New state for hiding unlocked cores
 
 const showCopiedMessage = ref(false)
 
 // Add computed property for unlocked cores count
 const unlockedCoresCount = computed(() => {
   if (!listDetails.value) return 0
-  return listDetails.value.soul_cores.filter(core => core.status === 'unlocked').length
+  return listDetails.value.soul_cores.filter((core) => core.status === 'unlocked').length
 })
 
 // Add computed property for total creatures count
@@ -71,7 +71,7 @@ const totalCreaturesCount = computed(() => {
 const userStore = useUserStore()
 
 const getSelectedCreature = computed(() => {
-  return creatures.value.find(c => c.name === selectedCreatureName.value)
+  return creatures.value.find((c) => c.name === selectedCreatureName.value)
 })
 
 const availableCreatures = computed(() => {
@@ -188,14 +188,12 @@ const sortedAndFilteredSoulCores = computed(() => {
   // Apply search filter
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(core =>
-      core.creature_name.toLowerCase().includes(query)
-    )
+    filtered = filtered.filter((core) => core.creature_name.toLowerCase().includes(query))
   }
 
   // Hide unlocked cores if enabled
   if (hideUnlocked.value) {
-    filtered = filtered.filter(core => core.status !== 'unlocked')
+    filtered = filtered.filter((core) => core.status !== 'unlocked')
   }
 
   // Apply sorting
@@ -217,7 +215,7 @@ const { t } = useI18n()
 onMounted(async () => {
   try {
     await Promise.all([fetchListDetails(), fetchCreatures()])
-} catch (err) {
+  } catch (err) {
     console.error('Error loading data:', err)
   } finally {
     loading.value = false
@@ -263,7 +261,10 @@ onMounted(async () => {
             </button>
             <h1 class="text-2xl sm:text-3xl font-semibold">{{ listDetails.name }}</h1>
           </div>
-          <p class="text-gray-600">{{ t('listDetail.created') }} {{ new Date(listDetails.created_at).toLocaleDateString() }}</p>
+          <p class="text-gray-600">
+            {{ t('listDetail.created') }}
+            {{ new Date(listDetails.created_at).toLocaleDateString() }}
+          </p>
         </div>
         <button
           @click="showShareDialog = true"
@@ -295,28 +296,46 @@ onMounted(async () => {
           <div class="space-y-4">
             <div class="flex justify-between text-sm text-gray-600">
               <span>{{ t('listDetail.xpBoostProgress') }}</span>
-              <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / 200</span>
+              <span
+                >{{
+                  listDetails.soul_cores.filter(
+                    (sc) => sc.status === 'obtained' || sc.status === 'unlocked',
+                  ).length
+                }}
+                / 200</span
+              >
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
                 class="bg-blue-600 h-2.5 rounded-full"
                 :style="{
                   width: `${Math.min(
-                    (listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length / 200) * 100,
-                    100
-                  )}%`
+                    (listDetails.soul_cores.filter(
+                      (sc) => sc.status === 'obtained' || sc.status === 'unlocked',
+                    ).length /
+                      200) *
+                      100,
+                    100,
+                  )}%`,
                 }"
               ></div>
             </div>
             <div class="flex justify-between text-sm text-gray-600">
               <span>{{ t('listDetail.totalProgress') }}</span>
-              <span>{{ listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length }} / {{ totalCreaturesCount }}</span>
+              <span
+                >{{
+                  listDetails.soul_cores.filter(
+                    (sc) => sc.status === 'obtained' || sc.status === 'unlocked',
+                  ).length
+                }}
+                / {{ totalCreaturesCount }}</span
+              >
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
                 class="bg-green-600 h-2.5 rounded-full"
                 :style="{
-                  width: `${(listDetails.soul_cores.filter(sc => sc.status === 'obtained' || sc.status === 'unlocked').length / totalCreaturesCount) * 100}%`
+                  width: `${(listDetails.soul_cores.filter((sc) => sc.status === 'obtained' || sc.status === 'unlocked').length / totalCreaturesCount) * 100}%`,
                 }"
               ></div>
             </div>
@@ -334,16 +353,10 @@ onMounted(async () => {
             >
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-1">
-                  <span
-                    class="font-medium"
-                    :class="{ 'text-gray-400': !member.is_active }"
-                  >
+                  <span class="font-medium" :class="{ 'text-gray-400': !member.is_active }">
                     {{ member.character_name }}
                   </span>
-                  <div
-                    v-if="!member.is_active"
-                    class="group relative"
-                  >
+                  <div v-if="!member.is_active" class="group relative">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-4 w-4 text-gray-400"
@@ -358,15 +371,20 @@ onMounted(async () => {
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity absolute left-1/2 -translate-x-1/2 -top-2 transform -translate-y-full bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                    <div
+                      class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity absolute left-1/2 -translate-x-1/2 -top-2 transform -translate-y-full bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap"
+                    >
                       {{ t('listDetail.inactiveCharacterTooltip') }}
                     </div>
                   </div>
                 </div>
-                <span class="px-2 py-1 text-xs font-medium rounded-full" :class="{
-                  'bg-blue-100 text-blue-800': member.is_active,
-                  'bg-gray-100 text-gray-600': !member.is_active
-                }">
+                <span
+                  class="px-2 py-1 text-xs font-medium rounded-full"
+                  :class="{
+                    'bg-blue-100 text-blue-800': member.is_active,
+                    'bg-gray-100 text-gray-600': !member.is_active,
+                  }"
+                >
                   {{ member.obtained_count }} {{ t('listDetail.obtained') }}
                 </span>
               </div>
@@ -384,9 +402,17 @@ onMounted(async () => {
               <button
                 @click="hideUnlocked = !hideUnlocked"
                 class="px-3 py-1.5 text-sm border rounded-lg hover:bg-gray-50 whitespace-nowrap"
-                :class="hideUnlocked ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-600'"
+                :class="
+                  hideUnlocked
+                    ? 'border-indigo-600 text-indigo-600'
+                    : 'border-gray-300 text-gray-600'
+                "
               >
-                {{ hideUnlocked ? t('listDetail.showUnlocked', { count: unlockedCoresCount }) : t('listDetail.hideUnlocked', { count: unlockedCoresCount }) }}
+                {{
+                  hideUnlocked
+                    ? t('listDetail.showUnlocked', { count: unlockedCoresCount })
+                    : t('listDetail.hideUnlocked', { count: unlockedCoresCount })
+                }}
               </button>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -436,8 +462,14 @@ onMounted(async () => {
                       {{ sortDirection === 'asc' ? '↑' : '↓' }}
                     </span>
                   </th>
-                  <th class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600">{{ t('listDetail.addedBy') }}</th>
-                  <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">{{ t('listDetail.actions') }}</th>
+                  <th
+                    class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600"
+                  >
+                    {{ t('listDetail.addedBy') }}
+                  </th>
+                  <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">
+                    {{ t('listDetail.actions') }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -452,15 +484,19 @@ onMounted(async () => {
                       :class="{
                         'px-2 py-1 text-xs font-medium rounded-full': true,
                         'bg-green-100 text-green-800': core.status === 'unlocked',
-                        'bg-blue-100 text-blue-800': core.status === 'obtained'
+                        'bg-blue-100 text-blue-800': core.status === 'obtained',
                       }"
                     >
                       {{ t(core.status) }}
                     </span>
                   </td>
-                  <td class="hidden sm:table-cell px-4 py-2 text-gray-600">{{ core.added_by || '-' }}</td>
+                  <td class="hidden sm:table-cell px-4 py-2 text-gray-600">
+                    {{ core.added_by || '-' }}
+                  </td>
                   <td class="px-2 sm:px-4 py-2 text-right">
-                    <div class="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2">
+                    <div
+                      class="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2"
+                    >
                       <button
                         v-if="canModifySoulcore(core) && core.status === 'obtained'"
                         @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
@@ -498,10 +534,7 @@ onMounted(async () => {
       class="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
       @click="showShareDialog = false"
     >
-      <div
-        class="bg-white rounded-xl p-6 max-w-lg w-full"
-        @click.stop
-      >
+      <div class="bg-white rounded-xl p-6 max-w-lg w-full" @click.stop>
         <h3 class="text-xl font-semibold mb-4">{{ t('listDetail.shareList') }}</h3>
         <p class="text-gray-600 mb-4">
           {{ t('listDetail.shareListDescription') }}
@@ -517,7 +550,10 @@ onMounted(async () => {
             @click="copyShareLink"
             class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
-            <span v-if="showCopiedMessage" class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm">
+            <span
+              v-if="showCopiedMessage"
+              class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+            >
               {{ t('listDetail.copied') }}
             </span>
             {{ t('listDetail.copyLink') }}

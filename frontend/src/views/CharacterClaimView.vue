@@ -59,7 +59,7 @@ const startClaim = async () => {
 
   try {
     const response = await axios.post<ClaimResponse>('/claims', {
-      character_name: characterName.value
+      character_name: characterName.value,
     })
 
     // handle anonymous users
@@ -68,7 +68,7 @@ const startClaim = async () => {
       userStore.setUser({
         session_token: authToken,
         id: response.data.claimer_id, // Backend provides claimer_id
-        has_email: false
+        has_email: false,
       })
 
       // Set the token for future requests
@@ -77,8 +77,10 @@ const startClaim = async () => {
 
     claim.value = response.data
   } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message :
-      ((err as ApiError).response?.data?.message || 'Failed to start claim')
+    error.value =
+      err instanceof Error
+        ? err.message
+        : (err as ApiError).response?.data?.message || 'Failed to start claim'
   } finally {
     loading.value = false
   }
@@ -100,8 +102,8 @@ const checkClaim = async (id?: string) => {
       router.replace({
         query: {
           ...route.query,
-          claim_id: response.data.claim_id
-        }
+          claim_id: response.data.claim_id,
+        },
       })
     }
 
@@ -116,11 +118,13 @@ const checkClaim = async (id?: string) => {
       // If forbidden (claim doesn't belong to user), start a new claim
       claim.value = null
       claimId.value = null
-      router.replace({ query: { character: characterName.value }})
+      router.replace({ query: { character: characterName.value } })
       startClaim()
     } else {
-      error.value = err instanceof Error ? err.message :
-        (apiError.response?.data?.message || 'Failed to check claim')
+      error.value =
+        err instanceof Error
+          ? err.message
+          : apiError.response?.data?.message || 'Failed to check claim'
     }
   } finally {
     loading.value = false
@@ -219,11 +223,12 @@ const resetClaim = () => {
             {{ loading ? t('characterClaim.checking') : t('characterClaim.checkStatus') }}
           </button>
 
-          <p
-            v-if="lastCheckTime > Date.now() - 60000"
-            class="text-sm text-gray-500 text-center"
-          >
-            {{ t('characterClaim.waitTime', { seconds: Math.ceil((60000 - (Date.now() - lastCheckTime)) / 1000) }) }}
+          <p v-if="lastCheckTime > Date.now() - 60000" class="text-sm text-gray-500 text-center">
+            {{
+              t('characterClaim.waitTime', {
+                seconds: Math.ceil((60000 - (Date.now() - lastCheckTime)) / 1000),
+              })
+            }}
           </p>
         </div>
       </div>
@@ -231,12 +236,26 @@ const resetClaim = () => {
       <!-- Claim success message -->
       <div v-else-if="claim.status === 'approved'" class="bg-white rounded-lg shadow p-8">
         <div class="text-center">
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4"
+          >
+            <svg
+              class="h-6 w-6 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ t('characterClaim.success.title') }}</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">
+            {{ t('characterClaim.success.title') }}
+          </h2>
           <p class="text-gray-600 mb-6">
             {{ t('characterClaim.success.message') }}
           </p>
@@ -246,12 +265,21 @@ const resetClaim = () => {
       <!-- Claim rejected message -->
       <div v-else-if="claim.status === 'rejected'" class="bg-white rounded-lg shadow p-8">
         <div class="text-center">
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4"
+          >
             <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ t('characterClaim.rejected.title') }}</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">
+            {{ t('characterClaim.rejected.title') }}
+          </h2>
           <p class="text-gray-600 mb-6">
             {{ t('characterClaim.rejected.message') }}
           </p>

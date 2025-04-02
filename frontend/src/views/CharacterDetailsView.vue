@@ -2,7 +2,9 @@
   <div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <div v-if="loading" class="flex items-center justify-center min-h-[400px]">
       <div class="flex flex-col items-center space-y-4">
-        <div class="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
+        <div
+          class="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full"
+        ></div>
         <p class="text-gray-600">{{ t('characterDetails.soulcores.loading') }}</p>
       </div>
     </div>
@@ -20,8 +22,19 @@
               to="/profile"
               class="text-gray-600 hover:text-gray-900 flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               <span>{{ t('profile.title') }}</span>
             </router-link>
@@ -32,21 +45,33 @@
         <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p class="text-sm font-medium text-gray-500">{{ t('characterDetails.soulcores.total') }}</p>
+              <p class="text-sm font-medium text-gray-500">
+                {{ t('characterDetails.soulcores.total') }}
+              </p>
               <p class="mt-1 text-2xl font-semibold text-gray-900">{{ unlockedCores.length }}</p>
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500">XP Boost Progress (200)</p>
-              <p class="mt-1 text-2xl font-semibold text-gray-900">{{ xpBoostProgress.current }}/{{ xpBoostProgress.target }}</p>
+              <p class="mt-1 text-2xl font-semibold text-gray-900">
+                {{ xpBoostProgress.current }}/{{ xpBoostProgress.target }}
+              </p>
               <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-blue-600 rounded-full h-2" :style="{ width: xpBoostProgress.percentage + '%' }"></div>
+                <div
+                  class="bg-blue-600 rounded-full h-2"
+                  :style="{ width: xpBoostProgress.percentage + '%' }"
+                ></div>
               </div>
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500">Total Progress</p>
-              <p class="mt-1 text-2xl font-semibold text-gray-900">{{ totalProgress.current }}/{{ totalProgress.total }}</p>
+              <p class="mt-1 text-2xl font-semibold text-gray-900">
+                {{ totalProgress.current }}/{{ totalProgress.total }}
+              </p>
               <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-green-600 rounded-full h-2" :style="{ width: totalProgress.percentage + '%' }"></div>
+                <div
+                  class="bg-green-600 rounded-full h-2"
+                  :style="{ width: totalProgress.percentage + '%' }"
+                ></div>
               </div>
             </div>
           </div>
@@ -56,7 +81,9 @@
       <!-- Soul Cores Section -->
       <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900">{{ t('characterDetails.soulcores.title') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900">
+            {{ t('characterDetails.soulcores.title') }}
+          </h2>
         </div>
 
         <div class="px-6 py-6">
@@ -78,8 +105,19 @@
                   class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded"
                   :title="t('characterDetails.soulcores.removeButton')"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                 </button>
               </div>
@@ -132,7 +170,7 @@ const xpBoostProgress = computed(() => {
   return {
     current: progress,
     target,
-    percentage
+    percentage,
   }
 })
 
@@ -142,7 +180,7 @@ const totalProgress = computed(() => {
   return {
     current: progress,
     total: totalCreatures.value,
-    percentage
+    percentage,
   }
 })
 
@@ -159,7 +197,7 @@ const loadUnlockedCores = async () => {
   try {
     const [soulcoresResponse, creaturesResponse] = await Promise.all([
       axios.get(`/characters/${characterId}/soulcores`),
-      axios.get('/creatures')
+      axios.get('/creatures'),
     ])
     unlockedCores.value = soulcoresResponse.data
     totalCreatures.value = creaturesResponse.data.length
