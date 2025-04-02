@@ -91,19 +91,25 @@ function getValueFromPath(obj: TranslationObject, path: string): string | undefi
     return typeof current === 'string' ? current : undefined;
 }
 
-function setValueInPath(obj: TranslationObject, path: string, value: string): void {
-    const parts = path.split('.');
-    let current: any = obj;
-    
+function setValue(obj: TranslationObject, key: string, value: string | TranslationObject): void {
+    const parts = key.split('.');
+    let current: TranslationObject = obj;
+
     for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i];
+        if (part === '__proto__' || part === 'constructor') {
+            return;
+        }
         if (!(part in current)) {
             current[part] = {};
         }
-        current = current[part];
+        current = current[part] as TranslationObject;
     }
-    
-    current[parts[parts.length - 1]] = value;
+
+    const lastPart = parts[parts.length - 1];
+    if (lastPart !== '__proto__' && lastPart !== 'constructor') {
+        current[lastPart] = value;
+    }
 }
 
 function cleanTranslations(translations: TranslationObject, usedKeys: Set<string>): TranslationObject {
@@ -112,7 +118,7 @@ function cleanTranslations(translations: TranslationObject, usedKeys: Set<string
     for (const key of Array.from(usedKeys).sort()) {
         const value = getValueFromPath(translations, key);
         if (value !== undefined) {
-            setValueInPath(cleaned, key, value);
+            setValue(cleaned, key, value);
         }
     }
     
