@@ -27,7 +27,6 @@ function extractKeys(obj: TranslationObject, prefix: string = ''): Set<string> {
 }
 
 async function checkKeyUsage(key: string, frontendDir: string): Promise<boolean> {
-    const extensions = ['.ts', '.tsx', '.js', '.jsx', '.vue'];
     const patterns = [
         `t("${key}")`,
         `t('${key}')`,
