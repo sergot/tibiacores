@@ -195,8 +195,8 @@
     "status": "Status",
     "totalProgress": "Całkowity Postęp",
     "xpBoostProgress": "Postęp do maks. boost XP (200)",
-    "hideUnlocked": "Ukryj {count} odblokowanych rdzeni",
-    "showUnlocked": "Pokaż {count} odblokowanych rdzeni"
+    "hideUnlocked": "Ukryj {count} odblokowanych soulcorów",
+    "showUnlocked": "Pokaż {count} odblokowanych soulcorów"
   },
   "lists": {
     "title": "Listy"
@@ -218,7 +218,7 @@
     "signUp": "Zarejestruj się",
     "suggestions": {
       "count": "{count} sugestii",
-      "title": "Oczekujące Sugestie Rdzeni Dusz"
+      "title": "Oczekujące sugestie soul corów"
     }
   },
   "oauth": {
@@ -239,8 +239,8 @@
   },
   "profile": {
     "characters": {
-      "empty": "Nie masz jeszcze żadnych przypisanych postaci",
-      "title": "Twoje Postacie"
+      "empty": "Nie masz jeszcze żadnych postaci",
+      "title": "Twoje postacie"
     },
     "email": {
       "title": "Ustawienia Email"
@@ -258,7 +258,7 @@
       "collaborate": "Dołącz i współpracuj przy innych listach",
       "secureData": "Zabezpiecz swoje dane hasłem i emailem"
     },
-    "subtitle": "Świetny początek z Twoją pierwszą listą! Zobacz, dlaczego warto dokończyć rejestrację:",
+    "subtitle": "Świetny początek! Zobacz, dlaczego warto dokończyć rejestrację:",
     "title": "Dokończ rejestrację"
   },
   "soulcoreSuggestions": {
