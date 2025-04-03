@@ -75,6 +75,36 @@ async function checkKeyUsage(key: string, frontendDir: string): Promise<boolean>
     return false;
 }
 
+async function findUsedTranslationKeys(frontendDir: string): Promise<Set<string>> {
+    const usedKeys = new Set<string>();
+    const translationPattern = /(?:t|useTranslation|\$t|i18n\.(?:global\.)?t)\(['"`]([a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+)['"`](?:\s*,\s*\{[^}]*\})?/gi;
+    
+    try {
+        const files = await glob('**/*.{ts,tsx,js,jsx,vue}', {
+            cwd: frontendDir,
+            ignore: ['**/node_modules/**', '**/dist/**']
+        });
+
+        for (const file of files) {
+            const filePath = path.join(frontendDir, file);
+            try {
+                const content = await fs.promises.readFile(filePath, 'utf-8');
+                let match;
+                while ((match = translationPattern.exec(content)) !== null) {
+                    if (!match[1].includes('${') && !match[1].includes('}')) {
+                        usedKeys.add(match[1]);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error reading file ${filePath}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error('Error scanning frontend directory:', error);
+    }
+    return usedKeys;
+}
+
 function getValueFromPath(obj: TranslationObject, path: string): string | undefined {
     const parts = path.split('.');
     let current: any = obj;
@@ -159,14 +189,28 @@ async function main() {
     // Get all keys from English file
     const enKeys = extractKeys(translations['en']);
 
-    // Check for unused keys in English file
-    const usedKeys = new Set<string>();
-    const unusedKeys = new Set<string>();
+    // Find all translation keys used in the code
+    const usedKeys = await findUsedTranslationKeys(frontendDir);
+    const allTranslationKeys = new Set<string>();
+    
+    // Combine all keys from all translation files
+    for (const lang of languages) {
+        const langKeys = extractKeys(translations[lang]);
+        langKeys.forEach(key => allTranslationKeys.add(key));
+    }
 
-    for (const key of enKeys) {
-        if (await checkKeyUsage(key, frontendDir)) {
-            usedKeys.add(key);
-        } else {
+    // Find missing translations that are actually used in code
+    const missingUsedKeys = new Set<string>();
+    for (const key of usedKeys) {
+        if (!allTranslationKeys.has(key)) {
+            missingUsedKeys.add(key);
+        }
+    }
+
+    // Find unused keys that should be removed
+    const unusedKeys = new Set<string>();
+    for (const key of allTranslationKeys) {
+        if (!usedKeys.has(key)) {
             unusedKeys.add(key);
         }
     }
@@ -175,9 +219,43 @@ async function main() {
     console.log('\nTranslation Key Summary:');
     console.log('='.repeat(50));
     console.log(`Total keys in English file: ${enKeys.size}`);
-    console.log(`Unused keys: ${unusedKeys.size}`);
-    console.log(`Used keys: ${usedKeys.size}`);
-    console.log(`Usage rate: ${((usedKeys.size / enKeys.size) * 100).toFixed(1)}%`);
+    console.log(`Total unique keys across all languages: ${allTranslationKeys.size}`);
+    console.log(`Total keys used in code: ${usedKeys.size}`);
+    console.log(`Missing translations used in code: ${missingUsedKeys.size}`);
+    console.log(`Unused translations: ${unusedKeys.size}`);
+
+    if (missingUsedKeys.size > 0) {
+        console.log('\nMissing Translations Used in Code:');
+        console.log('='.repeat(50));
+        for (const key of Array.from(missingUsedKeys).sort()) {
+            console.log(`- ${key}`);
+        }
+    }
+
+    // Check for missing translations in each language
+    console.log('\nMissing Translations:');
+    console.log('='.repeat(50));
+    for (const lang of languages) {
+        if (lang === 'en') continue; // Skip English as it's our reference
+        
+        const langKeys = extractKeys(translations[lang]);
+        const missingKeys = new Set<string>();
+        
+        for (const key of enKeys) {
+            if (!langKeys.has(key)) {
+                missingKeys.add(key);
+            }
+        }
+        
+        if (missingKeys.size > 0) {
+            console.log(`\nMissing translations in ${lang}:`);
+            for (const key of Array.from(missingKeys).sort()) {
+                console.log(`- ${key}`);
+            }
+        } else {
+            console.log(`\nNo missing translations in ${lang}`);
+        }
+    }
 
     // Create cleaned translation files
     for (const lang of languages) {
@@ -204,7 +282,7 @@ async function main() {
     }
 
     if (unusedKeys.size > 0) {
-        console.log('\nRemoved Keys:');
+        console.log('\nUnused Translation Keys:');
         console.log('='.repeat(50));
         for (const key of Array.from(unusedKeys).sort()) {
             console.log(`- ${key}`);

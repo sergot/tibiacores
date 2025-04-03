@@ -1,5 +1,4 @@
 {
-  "_locale": "pl",
   "about": {
     "comingSoon": {
       "list": {
@@ -98,21 +97,11 @@
     "checking": "Sprawdzanie...",
     "rejected": {
       "message": "Twoja weryfikacja została odrzucona. Może to być spowodowane:",
-      "reasons": {
-        "1": "Kod weryfikacyjny nie został znaleziony w komentarzu postaci",
-        "2": "Weryfikacja wygasła (limit 24 godziny)"
-      },
       "title": "Weryfikacja odrzucona",
       "tryAgain": "Spróbuj ponownie"
     },
     "startClaim": "Rozpocznij weryfikację",
     "starting": "Rozpoczynanie...",
-    "steps": {
-      "1": "Zaloguj się na Tibia.com",
-      "2": "Przejdź na stronę swojej postaci",
-      "3": "Edytuj komentarz postaci",
-      "4": "Dodaj następujący kod weryfikacyjny do komentarza:"
-    },
     "subtitle": "Zweryfikuj własność swojej postaci, aby używać jej na listach",
     "success": {
       "message": "Jesteś teraz zweryfikowanym właścicielem tej postaci. Przekierowywanie do profilu...",
@@ -121,7 +110,8 @@
     "title": "Przypisz postać",
     "verifySubtitle": "Wykonaj poniższe kroki, aby zweryfikować własność postaci",
     "verifyTitle": "Zweryfikuj postać",
-    "waitNote": "Uwaga: Po dodaniu kodu poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu weryfikacji."
+    "waitNote": "Uwaga: Po dodaniu kodu poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu weryfikacji.",
+    "waitTime": "Poczekaj {minutes} minut przed ponownym sprawdzeniem"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -204,7 +194,9 @@
     "shareListDescription": "Udostępnij ten link innym, aby mogli dołączyć do twojej listy:",
     "status": "Status",
     "totalProgress": "Całkowity Postęp",
-    "xpBoostProgress": "Postęp do maks. boost XP (200)"
+    "xpBoostProgress": "Postęp do maks. boost XP (200)",
+    "hideUnlocked": "Ukryj {count} odblokowanych rdzeni",
+    "showUnlocked": "Pokaż {count} odblokowanych rdzeni"
   },
   "lists": {
     "title": "Listy"
@@ -225,7 +217,8 @@
     "signOut": "Wyloguj się",
     "signUp": "Zarejestruj się",
     "suggestions": {
-      "title": "Oczekujące sugestie corów"
+      "count": "{count} sugestii",
+      "title": "Oczekujące Sugestie Rdzeni Dusz"
     }
   },
   "oauth": {
@@ -240,7 +233,8 @@
     },
     "initiate": {
       "error": "Nie udało się rozpocząć procesu OAuth",
-      "tryAgain": "Spróbuj Ponownie"
+      "loading": "Łączenie z {provider}...",
+      "tryAgain": "Spróbuj ponownie"
     }
   },
   "profile": {
@@ -271,6 +265,7 @@
     "accept": "Akceptuj",
     "dismiss": "Odrzuć",
     "title": "Sugestie soul corów",
-    "unknownList": "Nieznana Lista"
+    "unknownList": "Nieznana Lista",
+    "fromList": "Z listy: {name}"
   }
 }

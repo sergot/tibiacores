@@ -1,5 +1,4 @@
 {
-  "_locale": "de",
   "about": {
     "comingSoon": {
       "list": {
@@ -98,21 +97,11 @@
     "checking": "Überprüfe...",
     "rejected": {
       "message": "Dein Anspruch wurde abgelehnt. Dies kann passieren, wenn:",
-      "reasons": {
-        "1": "Der Verifizierungscode wurde nicht im Charakterkommentar gefunden",
-        "2": "Der Anspruch ist abgelaufen (24-Stunden-Limit)"
-      },
       "title": "Anspruch Abgelehnt",
       "tryAgain": "Erneut Versuchen"
     },
     "startClaim": "Anspruch Starten",
     "starting": "Startet...",
-    "steps": {
-      "1": "Melde dich bei Tibia.com an",
-      "2": "Gehe zur Seite deines Charakters",
-      "3": "Bearbeite den Kommentar deines Charakters",
-      "4": "Füge den folgenden Verifizierungscode zu deinem Kommentar hinzu:"
-    },
     "subtitle": "Verifiziere den Besitz deines Charakters, um ihn in deinen Listen zu verwenden",
     "success": {
       "message": "Du bist nun der verifizierte Besitzer dieses Charakters. Weiterleitung zu deinem Profil...",
@@ -121,7 +110,8 @@
     "title": "Charakter Beanspruchen",
     "verifySubtitle": "Folge diesen Schritten, um deinen Charakterbesitz zu verifizieren",
     "verifyTitle": "Charakter Verifizieren",
-    "waitNote": "Hinweis: Nach dem Hinzufügen des Codes warte bitte einige Minuten, bis die Änderungen übernommen wurden, bevor du den Anspruchsstatus überprüfst."
+    "waitNote": "Hinweis: Nach dem Hinzufügen des Codes warte bitte einige Minuten, bis die Änderungen übernommen wurden, bevor du den Anspruchsstatus überprüfst.",
+    "waitTime": "Bitte warten Sie {minutes} Minuten, bevor Sie erneut prüfen"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -204,7 +194,9 @@
     "shareListDescription": "Teile diesen Link mit anderen, damit sie deiner Liste beitreten können:",
     "status": "Status",
     "totalProgress": "Gesamtfortschritt",
-    "xpBoostProgress": "EP-Boost-Fortschritt (200)"
+    "xpBoostProgress": "EP-Boost-Fortschritt (200)",
+    "hideUnlocked": "{count} freigeschaltete Kerne ausblenden",
+    "showUnlocked": "{count} freigeschaltete Kerne anzeigen"
   },
   "lists": {
     "title": "Listen"
@@ -225,6 +217,7 @@
     "signOut": "Abmelden",
     "signUp": "Registrieren",
     "suggestions": {
+      "count": "{count} Vorschläge",
       "title": "Ausstehende Seelenkern-Vorschläge"
     }
   },
@@ -239,8 +232,9 @@
       "loading": "Anmeldung wird verarbeitet..."
     },
     "initiate": {
-      "error": "Fehler beim Starten des OAuth-Prozesses",
-      "tryAgain": "Erneut Versuchen"
+      "error": "OAuth-Flow konnte nicht gestartet werden",
+      "loading": "Verbindung zu {provider} wird hergestellt...",
+      "tryAgain": "Erneut versuchen"
     }
   },
   "profile": {
@@ -271,6 +265,7 @@
     "accept": "Akzeptieren",
     "dismiss": "Ablehnen",
     "title": "Seelenkern-Vorschläge",
-    "unknownList": "Unbekannte Liste"
+    "unknownList": "Unbekannte Liste",
+    "fromList": "Von Liste: {name}"
   }
 }

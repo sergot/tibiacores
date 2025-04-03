@@ -1,5 +1,4 @@
 {
-  "_locale": "en",
   "about": {
     "comingSoon": {
       "list": {
@@ -98,21 +97,11 @@
     "checking": "Checking...",
     "rejected": {
       "message": "Your claim has been rejected. This can happen if:",
-      "reasons": {
-        "1": "The verification code was not found in the character's comment",
-        "2": "The claim expired (24 hours limit)"
-      },
       "title": "Claim Rejected",
       "tryAgain": "Try Again"
     },
     "startClaim": "Start Claim",
     "starting": "Starting...",
-    "steps": {
-      "1": "Log in to Tibia.com",
-      "2": "Go to your character's page",
-      "3": "Edit your character's comment",
-      "4": "Add the following verification code to your comment:"
-    },
     "subtitle": "Verify ownership of your character to use it in your lists",
     "success": {
       "message": "You are now the verified owner of this character. Redirecting to your profile...",
@@ -121,7 +110,8 @@
     "title": "Claim Character",
     "verifySubtitle": "Follow these steps to verify your character ownership",
     "verifyTitle": "Verify Character",
-    "waitNote": "Note: After adding the code, please wait a few minutes for the changes to propagate before checking the claim status."
+    "waitNote": "Note: After adding the code, please wait a few minutes for the changes to propagate before checking the claim status.",
+    "waitTime": "Please wait {minutes} minutes before checking again"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -195,6 +185,7 @@
     "copyLink": "Copy Link",
     "created": "Created",
     "creatureName": "Creature Name",
+    "hideUnlocked": "Hide {count} unlocked cores",
     "inactiveCharacterTooltip": "This character is inactive due to a claim process",
     "markAsObtained": "Mark as Obtained",
     "markAsUnlocked": "Mark as Unlocked",
@@ -202,6 +193,7 @@
     "obtained": "obtained",
     "shareList": "Share List",
     "shareListDescription": "Share this link with others to let them join your list:",
+    "showUnlocked": "Show {count} unlocked cores",
     "status": "Status",
     "totalProgress": "Total Progress",
     "xpBoostProgress": "XP Boost Progress (200)"
@@ -225,6 +217,7 @@
     "signOut": "Sign out",
     "signUp": "Sign up",
     "suggestions": {
+      "count": "{count} suggestions",
       "title": "Pending Soul Core Suggestions"
     }
   },
@@ -240,6 +233,7 @@
     },
     "initiate": {
       "error": "Failed to start OAuth flow",
+      "loading": "Connecting to {provider}...",
       "tryAgain": "Try Again"
     }
   },
@@ -271,6 +265,7 @@
     "accept": "Accept",
     "dismiss": "Dismiss",
     "title": "Soul Core Suggestions",
-    "unknownList": "Unknown List"
+    "unknownList": "Unknown List",
+    "fromList": "From list: {name}"
   }
 }

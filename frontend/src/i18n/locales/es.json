@@ -1,5 +1,4 @@
 {
-  "_locale": "es",
   "about": {
     "comingSoon": {
       "list": {
@@ -98,21 +97,11 @@
     "checking": "Verificando...",
     "rejected": {
       "message": "Tu reclamo ha sido rechazado. Esto puede suceder si:",
-      "reasons": {
-        "1": "El código de verificación no se encontró en el comentario del personaje",
-        "2": "El reclamo expiró (límite de 24 horas)"
-      },
       "title": "Reclamo Rechazado",
       "tryAgain": "Intentar Nuevamente"
     },
     "startClaim": "Comenzar Reclamo",
     "starting": "Iniciando...",
-    "steps": {
-      "1": "Inicia sesión en Tibia.com",
-      "2": "Ve a la página de tu personaje",
-      "3": "Edita el comentario de tu personaje",
-      "4": "Agrega el siguiente código de verificación a tu comentario:"
-    },
     "subtitle": "Verifica la propiedad de tu personaje para usarlo en tus listas",
     "success": {
       "message": "Ahora eres el propietario verificado de este personaje. Redirigiendo a tu perfil...",
@@ -121,7 +110,8 @@
     "title": "Reclamar Personaje",
     "verifySubtitle": "Sigue estos pasos para verificar la propiedad de tu personaje",
     "verifyTitle": "Verificar Personaje",
-    "waitNote": "Nota: Después de agregar el código, espera unos minutos para que los cambios se propaguen antes de verificar el estado del reclamo."
+    "waitNote": "Nota: Después de agregar el código, espera unos minutos para que los cambios se propaguen antes de verificar el estado del reclamo.",
+    "waitTime": "Por favor espere {minutes} minutos antes de verificar nuevamente"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -204,7 +194,9 @@
     "shareListDescription": "Comparte este enlace con otros para permitirles unirse a tu lista:",
     "status": "Estado",
     "totalProgress": "Progreso Total",
-    "xpBoostProgress": "Progreso de Impulso de XP (200)"
+    "xpBoostProgress": "Progreso de Impulso de XP (200)",
+    "hideUnlocked": "Ocultar {count} núcleos desbloqueados",
+    "showUnlocked": "Mostrar {count} núcleos desbloqueados"
   },
   "lists": {
     "title": "Listas"
@@ -225,7 +217,8 @@
     "signOut": "Cerrar sesión",
     "signUp": "Registrarse",
     "suggestions": {
-      "title": "Sugerencias de Núcleos de Alma pendientes"
+      "count": "{count} sugerencias",
+      "title": "Sugerencias de Núcleos del Alma Pendientes"
     }
   },
   "oauth": {
@@ -240,7 +233,8 @@
     },
     "initiate": {
       "error": "Error al iniciar el flujo de OAuth",
-      "tryAgain": "Intentar Nuevamente"
+      "loading": "Conectando con {provider}...",
+      "tryAgain": "Intentar de nuevo"
     }
   },
   "profile": {
@@ -271,6 +265,7 @@
     "accept": "Aceptar",
     "dismiss": "Descartar",
     "title": "Sugerencias de Núcleos de Alma",
-    "unknownList": "Lista Desconocida"
+    "unknownList": "Lista Desconocida",
+    "fromList": "De la lista: {name}"
   }
 }
