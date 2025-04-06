@@ -366,6 +366,50 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// AddCharacterSoulcore adds a new soul core to a character
+func (h *UsersHandler) AddCharacterSoulcore(c echo.Context) error {
+	characterID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+	}
+
+	var req struct {
+		CreatureID uuid.UUID `json:"creature_id"`
+	}
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	ctx := c.Request().Context()
+
+	// Verify character belongs to user
+	character, err := h.store.GetCharacter(ctx, characterID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+	}
+	if character.UserID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+	}
+
+	// Add the soulcore to the character
+	err = h.store.AddCharacterSoulcore(ctx, db.AddCharacterSoulcoreParams{
+		CharacterID: characterID,
+		CreatureID:  req.CreatureID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add soul core")
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
 // GetPendingSuggestions returns all characters with pending soulcore suggestions
 func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 	// Get authenticated user ID from context
