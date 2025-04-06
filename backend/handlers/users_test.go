@@ -1,8 +1,11 @@
 package handlers_test
 
 import (
+	"bytes"
+	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -151,6 +154,181 @@ func TestGetPendingSuggestions(t *testing.T) {
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, response)
 			}
+		})
+	}
+}
+
+func TestAddCharacterSoulcore(t *testing.T) {
+	testCases := []struct {
+		name          string
+		setupRequest  func(c echo.Context, reqBody *bytes.Buffer)
+		setupMocks    func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID)
+		expectedCode  int
+		expectedError string
+	}{
+		{
+			name: "Success",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				// Verify character belongs to user
+				store.EXPECT().
+					GetCharacter(gomock.Any(), characterID).
+					Return(db.Character{
+						ID:     characterID,
+						UserID: userID,
+						Name:   "TestCharacter",
+						World:  "Antica",
+					}, nil)
+
+				// Add soulcore to character
+				store.EXPECT().
+					AddCharacterSoulcore(gomock.Any(), db.AddCharacterSoulcoreParams{
+						CharacterID: characterID,
+						CreatureID:  creatureID,
+					}).
+					Return(nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name: "Invalid Character ID",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				c.SetParamValues("invalid-uuid")
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				// No mocks needed for this case
+			},
+			expectedCode:  http.StatusBadRequest,
+			expectedError: "invalid character ID",
+		},
+		{
+			name: "Invalid Request Body",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				reqBody.Reset()
+				reqBody.WriteString("{invalid json")
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				// No mocks needed for this case
+			},
+			expectedCode:  http.StatusBadRequest,
+			expectedError: "invalid request body",
+		},
+		{
+			name: "Character Not Found",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				store.EXPECT().
+					GetCharacter(gomock.Any(), characterID).
+					Return(db.Character{}, sql.ErrNoRows)
+			},
+			expectedCode:  http.StatusInternalServerError,
+			expectedError: "failed to get character",
+		},
+		{
+			name: "Character Belongs To Different User",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				store.EXPECT().
+					GetCharacter(gomock.Any(), characterID).
+					Return(db.Character{
+						ID:     characterID,
+						UserID: uuid.New(), // Different user
+						Name:   "TestCharacter",
+						World:  "Antica",
+					}, nil)
+			},
+			expectedCode:  http.StatusForbidden,
+			expectedError: "character does not belong to user",
+		},
+		{
+			name: "Error Adding Soulcore",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				store.EXPECT().
+					GetCharacter(gomock.Any(), characterID).
+					Return(db.Character{
+						ID:     characterID,
+						UserID: userID,
+						Name:   "TestCharacter",
+						World:  "Antica",
+					}, nil)
+
+				store.EXPECT().
+					AddCharacterSoulcore(gomock.Any(), db.AddCharacterSoulcoreParams{
+						CharacterID: characterID,
+						CreatureID:  creatureID,
+					}).
+					Return(errors.New("database error"))
+			},
+			expectedCode:  http.StatusInternalServerError,
+			expectedError: "failed to add soul core",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Setup
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			characterID := uuid.New()
+			creatureID := uuid.New()
+			userID := uuid.New()
+
+			// Create request body
+			reqBody := &bytes.Buffer{}
+			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+				"creature_id": creatureID,
+			})
+			require.NoError(t, err)
+
+			// Create HTTP request
+			url := fmt.Sprintf("/api/characters/%s/soulcores", characterID.String())
+			req := httptest.NewRequest(http.MethodPost, url, reqBody)
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			e := echo.New()
+			c := e.NewContext(req, rec)
+
+			// Default context setup
+			c.SetPath("/api/characters/:id/soulcores")
+			c.Set("user_id", userID.String())
+			c.SetParamNames("id")
+			c.SetParamValues(characterID.String())
+
+			// Custom request setup if needed
+			if tc.setupRequest != nil {
+				tc.setupRequest(c, reqBody)
+			}
+
+			// Setup mock expectations
+			tc.setupMocks(store, characterID, creatureID, userID)
+
+			// Execute handler
+			h := handlers.NewUsersHandler(store, nil)
+			err = h.AddCharacterSoulcore(c)
+
+			// Check for expected error response
+			if tc.expectedError != "" {
+				httpError, ok := err.(*echo.HTTPError)
+				require.True(t, ok)
+				require.Equal(t, tc.expectedCode, httpError.Code)
+				require.Contains(t, httpError.Message, tc.expectedError)
+				return
+			}
+
+			// Check successful response
+			require.NoError(t, err)
+			require.Equal(t, tc.expectedCode, rec.Code)
 		})
 	}
 }

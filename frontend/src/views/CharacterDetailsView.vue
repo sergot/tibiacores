@@ -41,6 +41,32 @@
           </div>
         </div>
 
+        <!-- Add Soul Core Section -->
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center space-x-4">
+            <div class="w-64">
+              <CreatureSelect
+                v-model="selectedCreatureName"
+                :creatures="creatures"
+                :existing-soul-cores="unlockedCores.map(core => ({
+                  creature_id: core.creature_id,
+                  creature_name: core.creature_name,
+                  status: 'obtained',
+                  added_by: '',
+                  added_by_user_id: '',
+                }))"
+              />
+            </div>
+            <button
+              @click="addSoulcore"
+              :disabled="!selectedCreatureName"
+              class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ t('characterDetails.soulcores.addButton') }}
+            </button>
+          </div>
+        </div>
+
         <!-- Stats Overview -->
         <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -142,6 +168,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
+import CreatureSelect from '@/components/CreatureSelect.vue'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -162,6 +189,12 @@ const character = ref<Character | null>(null)
 const unlockedCores = ref<UnlockedCore[]>([])
 const totalCreatures = ref(0)
 const loading = ref(true)
+const selectedCreatureName = ref('')
+const creatures = ref<Array<{ id: string; name: string }>>([])
+
+const getSelectedCreature = computed(() => {
+  return creatures.value.find((c) => c.name === selectedCreatureName.value)
+})
 
 const xpBoostProgress = computed(() => {
   const progress = unlockedCores.value.length
@@ -201,6 +234,7 @@ const loadUnlockedCores = async () => {
     ])
     unlockedCores.value = soulcoresResponse.data
     totalCreatures.value = creaturesResponse.data.length
+    creatures.value = creaturesResponse.data
   } catch (error) {
     console.error('Failed to load unlocked cores:', error)
   }
@@ -212,6 +246,21 @@ const removeSoulcore = async (creatureId: string) => {
     loadUnlockedCores()
   } catch (error) {
     console.error('Failed to remove soul core:', error)
+  }
+}
+
+const addSoulcore = async () => {
+  const creature = getSelectedCreature.value
+  if (!creature) return
+
+  try {
+    await axios.post(`/characters/${characterId}/soulcores`, {
+      creature_id: creature.id
+    })
+    await loadUnlockedCores()
+    selectedCreatureName.value = ''
+  } catch (err) {
+    console.error('Failed to add soul core:', err)
   }
 }
 

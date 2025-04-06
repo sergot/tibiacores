@@ -75,6 +75,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	// Character and suggestion endpoints
 	protected.GET("/characters/:id", usersHandler.GetCharacter)
 	protected.GET("/characters/:id/soulcores", usersHandler.GetCharacterSoulcores)
+	protected.POST("/characters/:id/soulcores", usersHandler.AddCharacterSoulcore)
 	protected.DELETE("/characters/:id/soulcores/:creature_id", usersHandler.RemoveCharacterSoulcore)
 	protected.GET("/characters/:id/suggestions", listsHandler.GetCharacterSuggestions)
 	protected.POST("/characters/:id/suggestions/accept", listsHandler.AcceptSoulcoreSuggestion)
