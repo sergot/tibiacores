@@ -18,7 +18,7 @@ import (
 
 type ClaimsHandler struct {
 	store     db.Store
-	tibiaData *services.TibiaDataService
+	TibiaData services.TibiaDataServiceInterface
 }
 
 type StartClaimResponse struct {
@@ -31,7 +31,7 @@ type StartClaimResponse struct {
 func NewClaimsHandler(store db.Store) *ClaimsHandler {
 	return &ClaimsHandler{
 		store:     store,
-		tibiaData: services.NewTibiaDataService(),
+		TibiaData: services.NewTibiaDataService(),
 	}
 }
 
@@ -47,7 +47,7 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	// First check if character exists in TibiaData API
-	tibiaChar, err := h.tibiaData.GetCharacter(req.CharacterName)
+	tibiaChar, err := h.TibiaData.GetCharacter(req.CharacterName)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "character not found in Tibia")
 	}
@@ -156,7 +156,7 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 	// If claim is pending, verify it
 	if claim.Status == "pending" {
 		// Check TibiaData API for verification code
-		verified, err := h.tibiaData.VerifyCharacterClaim(claim.CharacterName, claim.VerificationCode)
+		verified, err := h.TibiaData.VerifyCharacterClaim(claim.CharacterName, claim.VerificationCode)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "failed to verify claim")
 		}
@@ -221,7 +221,7 @@ func (h *ClaimsHandler) ProcessPendingClaims() error {
 		}
 
 		// Check TibiaData API for verification code
-		verified, err := h.tibiaData.VerifyCharacterClaim(character.Name, claim.VerificationCode)
+		verified, err := h.TibiaData.VerifyCharacterClaim(character.Name, claim.VerificationCode)
 		if err != nil {
 			continue
 		}

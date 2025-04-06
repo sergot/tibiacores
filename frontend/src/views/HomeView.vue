@@ -23,7 +23,7 @@ onMounted(() => {
       <div class="text-center mb-8">
         <h1 class="text-4xl mb-2">Welcome to TibiaCores</h1>
         <p class="text-xl text-gray-600">
-          Your companion app for managing and sharing gaming lists
+          Your companion app for managing and sharing soul core lists
         </p>
       </div>
 
@@ -167,7 +167,7 @@ onMounted(() => {
       <div class="mt-8 p-6 rounded-lg bg-white text-center">
         <h2 class="mb-4 text-2xl">About TibiaCores</h2>
         <p class="text-gray-600 leading-relaxed">
-          TibiaCores is your companion app for managing and sharing gaming lists. Create characters,
+          TibiaCores is your companion app for managing and sharing soul core lists. Create characters,
           build your collections, and share them with friends. Join existing lists using share codes
           or direct links.
         </p>

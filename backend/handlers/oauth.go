@@ -13,11 +13,20 @@ import (
 )
 
 type OAuthHandler struct {
-	store db.Store
+	store         db.Store
+	oauthProvider auth.OAuthProvider
 }
 
 func NewOAuthHandler(store db.Store) *OAuthHandler {
-	return &OAuthHandler{store}
+	return &OAuthHandler{
+		store:         store,
+		oauthProvider: auth.NewDefaultOAuthProvider(),
+	}
+}
+
+// SetOAuthProvider allows setting a custom OAuth provider (useful for testing)
+func (h *OAuthHandler) SetOAuthProvider(provider auth.OAuthProvider) {
+	h.oauthProvider = provider
 }
 
 // Login initiates OAuth2 flow for the specified provider
@@ -37,14 +46,14 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	state := c.QueryParam("state")
 	code := c.QueryParam("code")
 
-	if !auth.ValidateOAuthState(state) {
+	if !h.oauthProvider.ValidateState(state) {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid oauth state")
 	}
 
 	ctx := context.Background()
 
 	// Exchange code for token
-	userInfo, err := auth.ExchangeCodeForUser(provider, code)
+	userInfo, err := h.oauthProvider.ExchangeCode(provider, code)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, "failed to authenticate with provider")
 	}
@@ -62,6 +71,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 			// User exists with password, meaning it's not an OAuth user
 			return echo.NewHTTPError(http.StatusConflict, "email already in use with a different account type")
 		}
+
 		// Existing OAuth user, generate token and return
 		token, err := auth.GenerateToken(existingUser.ID.String(), true)
 		if err != nil {

@@ -6,6 +6,15 @@ import (
 	"net/http"
 )
 
+// TibiaDataServiceInterface defines the methods for interacting with TibiaData API
+type TibiaDataServiceInterface interface {
+	GetCharacter(name string) (*TibiaCharacter, error)
+	VerifyCharacterClaim(name, verificationCode string) (bool, error)
+}
+
+// Ensure TibiaDataService implements TibiaDataServiceInterface
+var _ TibiaDataServiceInterface = (*TibiaDataService)(nil)
+
 type TibiaDataService struct {
 	baseURL string
 }
