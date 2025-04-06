@@ -1,405 +1,286 @@
 {
   "_locale": "pt",
-  "nav": {
-    "home": "Início",
-    "about": "Sobre",
-    "profile": "Perfil",
-    "signIn": "Entrar",
-    "signUp": "Cadastrar",
-    "signOut": "Sair",
-    "language": "Idioma",
-    "suggestions": {
-      "title": "Sugestões de Soul Core Pendentes",
-      "count": "{count} sugestão | {count} sugestões",
-      "none": "Nenhuma sugestão pendente"
-    },
-    "logout": {
-      "warning": {
-        "title": "Aviso: Você está usando uma conta anônima",
-        "message": "Se você sair agora, perderá acesso à sua sessão atual e todos os seus dados. Considere registrar uma conta para salvar seu progresso.",
-        "register": "Registrar agora",
-        "signOut": "Sair mesmo assim",
-        "cancel": "Cancelar"
-      }
-    }
-  },
-  "home": {
-    "owner": "Dono",
-    "member": "Membro"
-  },
   "about": {
-    "title": "Sobre TibiaCores",
-    "subtitle": "Seu companheiro para gerenciar criaturas e personagens no mundo de Tibia",
-    "whatIs": {
-      "title": "O que é TibiaCores?",
-      "description": "TibiaCores é uma ferramenta poderosa projetada para ajudar você a organizar e gerenciar a progressão das soul cores dos seus personagens. Seja para desbloquear 200 mestrias de animus ou todas elas, o TibiaCores facilita o acompanhamento da sua coleção."
-    },
-    "features": {
-      "title": "Recursos",
+    "comingSoon": {
       "list": {
-        "lists": "Criar e gerenciar listas de soulcore",
-        "collaboration": "Colaborar com outros usuários",
-        "tracking": "Acompanhar a progressão do seu personagem",
-        "organization": "Organizar coleção de soul cores"
-      }
+        "achievements": "Conquistas de personagem",
+        "highscores": "Rankings",
+        "market": "Mercado de soul cores",
+        "more": "E muito mais"
+      },
+      "title": "Recursos em breve:"
+    },
+    "contact": {
+      "description": "Tem dúvidas ou sugestões? Adoraríamos ouvir você! Você pode:",
+      "discord": "Entrar no nosso Discord: ",
+      "ingame": "Mensagem in-game: ",
+      "title": "Contato"
     },
     "contribute": {
-      "title": "Contribua",
       "description": "TibiaCores é um projeto de código aberto e recebemos contribuições da comunidade. Seja você um desenvolvedor, designer ou apenas tenha ideias para compartilhar, você pode ajudar a tornar o TibiaCores melhor:",
       "list": {
         "bugs": "Enviar relatórios de bugs ou solicitações de recursos",
         "code": "Contribuir com código via pull requests",
         "docs": "Ajudar a melhorar a documentação"
-      }
-    },
-    "comingSoon": {
-      "title": "Recursos em breve:",
-      "list": {
-        "market": "Mercado de soul cores",
-        "achievements": "Conquistas de personagem",
-        "highscores": "Rankings",
-        "more": "E muito mais"
-      }
+      },
+      "title": "Contribua"
     },
     "donation": {
-      "title": "Doação",
-      "description": "Suas doações ajudam o TibiaCores a crescer e melhorar, permitindo-nos adicionar novos recursos, manter os servidores e proporcionar uma melhor experiência para todos os usuários. Se você quiser apoiar nosso desenvolvimento, pode enviar doações in-game para:"
+      "description": "Suas doações ajudam o TibiaCores a crescer e melhorar, permitindo-nos adicionar novos recursos, manter os servidores e proporcionar uma melhor experiência para todos os usuários. Se você quiser apoiar nosso desenvolvimento, pode enviar doações in-game para:",
+      "title": "Doação"
     },
-    "contact": {
-      "title": "Contato",
-      "description": "Tem dúvidas ou sugestões? Adoraríamos ouvir você! Você pode:",
-      "discord": "Entrar no nosso Discord: ",
-      "ingame": "Mensagem in-game: "
+    "features": {
+      "list": {
+        "collaboration": "Colaborar com outros usuários",
+        "lists": "Criar e gerenciar listas de soulcore",
+        "organization": "Organizar coleção de soul cores",
+        "tracking": "Acompanhar a progressão do seu personagem"
+      },
+      "title": "Recursos"
+    },
+    "subtitle": "Seu companheiro para gerenciar criaturas e personagens no mundo de Tibia",
+    "title": "Sobre TibiaCores",
+    "whatIs": {
+      "description": "TibiaCores é uma ferramenta poderosa projetada para ajudar você a organizar e gerenciar a progressão das soul cores dos seus personagens. Seja para desbloquear 200 mestrias de animus ou todas elas, o TibiaCores facilita o acompanhamento da sua coleção.",
+      "title": "O que é TibiaCores?"
+    }
+  },
+  "auth": {
+    "errors": {
+      "accountNotFound": "Conta não encontrada",
+      "invalidCredentials": "Email ou senha inválidos",
+      "passwordMismatch": "As senhas não coincidem",
+      "unauthorized": "Por favor, faça login para continuar"
+    },
+    "signIn": {
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastrar",
+      "title": "Entre na sua conta",
+      "withEmail": {
+        "email": "Endereço de email",
+        "emailPlaceholder": "Digite seu email",
+        "password": "Senha",
+        "passwordPlaceholder": "Digite sua senha",
+        "signing": "Entrando...",
+        "submit": "Entrar"
+      },
+      "withProvider": {
+        "discord": "Entrar com Discord",
+        "google": "Entrar com Google",
+        "title": "Ou continue com"
+      }
+    },
+    "signUp": {
+      "hasAccount": "Já tem uma conta?",
+      "signIn": "Entrar",
+      "title": "Crie sua conta",
+      "withEmail": {
+        "confirmPassword": "Confirmar senha",
+        "confirmPasswordPlaceholder": "Digite a senha novamente",
+        "creating": "Criando conta...",
+        "email": "Endereço de email",
+        "emailPlaceholder": "Digite seu email",
+        "password": "Senha",
+        "passwordPlaceholder": "Crie uma senha",
+        "submit": "Criar conta"
+      },
+      "withProvider": {
+        "discord": "Cadastrar com Discord",
+        "google": "Cadastrar com Google",
+        "title": "Ou continue com"
+      }
     }
   },
   "characterClaim": {
-    "title": "Reivindicar Personagem",
-    "subtitle": "Verifique a propriedade do seu personagem para usá-lo em suas listas",
     "characterName": "Nome do Personagem",
     "characterNamePlaceholder": "Digite o nome do personagem",
+    "checkStatus": "Verificar Status da Reivindicação",
+    "checking": "Verificando...",
+    "rejected": {
+      "message": "Sua reivindicação foi rejeitada. Isso pode acontecer se:",
+      "reasons": {
+        "1": "O código de verificação não foi encontrado no comentário do personagem",
+        "2": "A reivindicação expirou (limite de 24 horas)"
+      },
+      "title": "Reivindicação Rejeitada",
+      "tryAgain": "Tentar Novamente"
+    },
     "startClaim": "Iniciar Reivindicação",
     "starting": "Iniciando...",
-    "verifyTitle": "Verificar Personagem",
-    "verifySubtitle": "Siga estes passos para verificar a propriedade do seu personagem",
     "steps": {
       "1": "Faça login no Tibia.com",
       "2": "Vá para a página do seu personagem",
       "3": "Edite o comentário do seu personagem",
       "4": "Adicione o seguinte código de verificação ao seu comentário:"
     },
-    "waitNote": "Observação: Após adicionar o código, aguarde alguns minutos para que as alterações se propaguem antes de verificar o status da reivindicação.",
-    "checkStatus": "Verificar Status da Reivindicação",
-    "checking": "Verificando...",
-    "waitTime": "Por favor, aguarde {seconds} segundos antes de verificar novamente",
+    "subtitle": "Verifique a propriedade do seu personagem para usá-lo em suas listas",
     "success": {
-      "title": "Reivindicação Aprovada!",
-      "message": "Você agora é o proprietário verificado deste personagem. Redirecionando para seu perfil..."
+      "message": "Você agora é o proprietário verificado deste personagem. Redirecionando para seu perfil...",
+      "title": "Reivindicação Aprovada!"
     },
-    "rejected": {
-      "title": "Reivindicação Rejeitada",
-      "message": "Sua reivindicação foi rejeitada. Isso pode acontecer se:",
-      "reasons": {
-        "1": "O código de verificação não foi encontrado no comentário do personagem",
-        "2": "A reivindicação expirou (limite de 24 horas)"
+    "title": "Reivindicar Personagem",
+    "verifySubtitle": "Siga estes passos para verificar a propriedade do seu personagem",
+    "verifyTitle": "Verificar Personagem",
+    "waitNote": "Observação: Após adicionar o código, aguarde alguns minutos para que as alterações se propaguem antes de verificar o status da reivindicação.",
+    "waitTime": "Por favor, aguarde {seconds} segundos antes de verificar novamente"
+  },
+  "characterDetails": {
+    "confirmDelete": {
+      "cancel": "Cancelar"
+    },
+    "information": {
+      "level": "Nível",
+      "name": "Nome",
+      "vocation": "Vocação",
+      "world": "Mundo"
+    },
+    "soulcores": {
+      "addButton": "Adicionar Soul Core",
+      "empty": "Nenhuma soul core desbloqueada ainda",
+      "filters": {
+        "search": "Pesquisar criaturas"
       },
+      "loading": "Carregando soul cores...",
+      "removeButton": "Remover",
+      "title": "Soul Cores",
+      "total": "Total de Soul Cores"
+    },
+    "title": "Detalhes do Personagem"
+  },
+  "createList": {
+    "form": {
+      "characterNamePlaceholder": "Digite o nome do personagem",
+      "characterNamePlaceholderAuth": "Digite novo personagem ou selecione existente",
+      "errors": {
+        "verificationFailed": "Falha ao verificar personagem"
+      },
+      "loadingCharacters": "Carregando seus personagens...",
+      "submit": "Criar",
+      "verifying": "Verificando..."
+    },
+    "title": "Criar Nova Lista"
+  },
+  "emailVerification": {
+    "actions": {
+      "backToProfile": "Voltar ao Perfil",
+      "tryAgain": "Tentar Novamente"
+    },
+    "subtitle": "Quase lá! Apenas mais um passo para começar.",
+    "verifying": {
+      "error": "Falha ao verificar email",
+      "invalidToken": "Token de verificação inválido ou expirado",
+      "message": "Verificando seu email...",
+      "redirect": "Redirecionando para o perfil...",
+      "success": "Email verificado com sucesso!"
+    }
+  },
+  "joinList": {
+    "form": {
+      "characterName": "Nome do Personagem",
+      "characterNamePlaceholder": "Digite o nome do seu personagem",
+      "errors": {
+        "characterNotFound": "Personagem não encontrado no Tibia. Verifique o nome e tente novamente.",
+        "joinFailed": "Falha ao entrar na lista"
+      },
+      "joining": "Entrando...",
+      "shareCode": "Código de Compartilhamento",
+      "shareCodePlaceholder": "Digite o código de compartilhamento ou cole a URL",
+      "submit": "Entrar na Lista"
+    },
+    "title": "Entrar na Lista"
+  },
+  "listDetail": {
+    "actions": "Ações",
+    "addedBy": "Adicionado Por",
+    "copied": "Copiado!",
+    "copyLink": "Copiar Link",
+    "created": "Criado",
+    "creatureName": "Nome da Criatura",
+    "hideUnlocked": "Ocultar Desbloqueados ({count})",
+    "inactiveCharacterTooltip": "Este personagem está inativo devido a um processo de reivindicação",
+    "markAsObtained": "Marcar como Obtido",
+    "markAsUnlocked": "Marcar como Desbloqueado",
+    "memberContributions": "Contribuições dos Membros",
+    "obtained": "obtido",
+    "shareList": "Compartilhar Lista",
+    "shareListDescription": "Compartilhe este link com outros para permitir que eles entrem na sua lista:",
+    "showUnlocked": "Mostrar Desbloqueados ({count})",
+    "status": "Status",
+    "totalProgress": "Progresso Total",
+    "xpBoostProgress": "Progresso do Boost de XP (200)"
+  },
+  "lists": {
+    "title": "Listas"
+  },
+  "nav": {
+    "about": "Sobre",
+    "logout": {
+      "warning": {
+        "cancel": "Cancelar",
+        "message": "Se você sair agora, perderá acesso à sua sessão atual e todos os seus dados. Considere registrar uma conta para salvar seu progresso.",
+        "register": "Registrar agora",
+        "signOut": "Sair mesmo assim",
+        "title": "Aviso: Você está usando uma conta anônima"
+      }
+    },
+    "profile": "Perfil",
+    "signIn": "Entrar",
+    "signOut": "Sair",
+    "signUp": "Cadastrar",
+    "suggestions": {
+      "count": "{count} sugestão | {count} sugestões",
+      "title": "Sugestões de Soul Core Pendentes"
+    }
+  },
+  "oauth": {
+    "callback": {
+      "error": {
+        "generic": "Falha ao completar autenticação",
+        "invalidProvider": "Provedor OAuth inválido",
+        "missingCode": "Código de autorização ausente",
+        "missingState": "Estado OAuth inválido"
+      },
+      "loading": "Processando login..."
+    },
+    "initiate": {
+      "error": "Falha ao iniciar fluxo OAuth",
+      "loading": "Redirecionando para {provider}...",
       "tryAgain": "Tentar Novamente"
     }
   },
   "profile": {
-    "title": "Seu Perfil",
-    "subtitle": "Gerencie sua conta e personagens",
+    "characters": {
+      "empty": "Você ainda não reivindicou nenhum personagem",
+      "title": "Seus Personagens"
+    },
     "email": {
-      "title": "Configurações de Email",
       "status": {
         "notVerified": "Não verificado",
         "verified": "Verificado"
       },
-      "verifyButton": "Verificar Email",
-      "changeButton": "Alterar Email",
-      "addButton": "Adicionar Email",
-      "placeholder": "Digite seu endereço de email"
-    },
-    "characters": {
-      "title": "Seus Personagens",
-      "empty": "Você ainda não reivindicou nenhum personagem",
-      "addButton": "Reivindicar Personagem",
-      "level": "Nível",
-      "vocation": "Vocação",
-      "world": "Mundo",
-      "actions": {
-        "view": "Ver Detalhes",
-        "remove": "Remover"
-      },
-      "confirmRemove": {
-        "title": "Remover Personagem",
-        "message": "Tem certeza que deseja remover este personagem? Você pode reivindicá-lo novamente depois.",
-        "confirm": "Remover",
-        "cancel": "Cancelar"
-      }
+      "title": "Configurações de Email"
     },
     "lists": {
-      "title": "Suas Listas",
-      "owned": "Listas que você possui",
-      "member": "Listas das quais você é membro",
-      "empty": "Você ainda não tem nenhuma lista",
-      "createButton": "Criar Nova Lista",
-      "actions": {
-        "view": "Ver Lista",
-        "edit": "Editar",
-        "delete": "Excluir"
-      }
+      "empty": "Você ainda não tem nenhuma lista"
     },
-    "deleteAccount": {
-      "button": "Excluir Conta",
-      "confirm": {
-        "title": "Excluir Conta",
-        "message": "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.",
-        "confirm": "Sim, excluir minha conta",
-        "cancel": "Não, manter minha conta"
-      }
-    }
-  },
-  "characterDetails": {
-    "title": "Detalhes do Personagem",
-    "information": {
-      "name": "Nome",
-      "world": "Mundo",
-      "level": "Nível",
-      "vocation": "Vocação",
-      "residence": "Residência"
-    },
-    "soulcores": {
-      "title": "Soul Cores",
-      "total": "Total de Soul Cores",
-      "loading": "Carregando soul cores...",
-      "empty": "Nenhuma soul core desbloqueada ainda",
-      "error": "Falha ao carregar soul cores",
-      "addButton": "Adicionar Soul Core",
-      "removeButton": "Remover",
-      "filters": {
-        "search": "Pesquisar criaturas",
-        "sort": "Ordenar por",
-        "sortOptions": {
-          "name": "Nome",
-          "level": "Nível",
-          "dateAdded": "Data de Adição"
-        }
-      }
-    },
-    "actions": {
-      "refresh": "Atualizar Dados",
-      "refreshing": "Atualizando...",
-      "edit": "Editar Personagem",
-      "delete": "Excluir Personagem"
-    },
-    "confirmDelete": {
-      "title": "Excluir Personagem",
-      "message": "Tem certeza que deseja excluir este personagem? Esta ação não pode ser desfeita.",
-      "confirm": "Sim, excluir",
-      "cancel": "Cancelar"
-    }
-  },
-  "createList": {
-    "title": "Criar Nova Lista",
-    "subtitle": "Criar uma nova lista para acompanhar soul cores do seu grupo",
-    "form": {
-      "characterNamePlaceholder": "Digite o nome do personagem",
-      "characterNamePlaceholderAuth": "Digite novo personagem ou selecione existente",
-      "loadingCharacters": "Carregando seus personagens...",
-      "submit": "Criar",
-      "verifying": "Verificando...",
-      "errors": {
-        "verificationFailed": "Falha ao verificar personagem"
-      }
-    }
-  },
-  "joinList": {
-    "title": "Entrar na Lista",
-    "subtitle": "Entre em uma lista existente usando um código de convite",
-    "form": {
-      "shareCode": "Código de Compartilhamento",
-      "shareCodePlaceholder": "Digite o código de compartilhamento ou cole a URL",
-      "characterName": "Nome do Personagem",
-      "characterNamePlaceholder": "Digite o nome do seu personagem",
-      "submit": "Entrar na Lista",
-      "joining": "Entrando...",
-      "errors": {
-        "characterNotFound": "Personagem não encontrado no Tibia. Verifique o nome e tente novamente.",
-        "joinFailed": "Falha ao entrar na lista"
-      }
-    }
-  },
-  "auth": {
-    "signIn": {
-      "title": "Entre na sua conta",
-      "subtitle": "Bem-vindo de volta",
-      "withEmail": {
-        "title": "Entrar com email",
-        "email": "Endereço de email",
-        "emailPlaceholder": "Digite seu email",
-        "password": "Senha",
-        "passwordPlaceholder": "Digite sua senha",
-        "submit": "Entrar",
-        "signing": "Entrando..."
-      },
-      "withProvider": {
-        "title": "Ou continue com",
-        "google": "Entrar com Google",
-        "discord": "Entrar com Discord"
-      },
-      "noAccount": "Não tem uma conta?",
-      "signUp": "Cadastrar"
-    },
-    "signUp": {
-      "title": "Crie sua conta",
-      "subtitle": "Junte-se ao TibiaCores hoje",
-      "withEmail": {
-        "title": "Cadastrar com email",
-        "email": "Endereço de email",
-        "emailPlaceholder": "Digite seu email",
-        "password": "Senha",
-        "passwordPlaceholder": "Crie uma senha",
-        "confirmPassword": "Confirmar senha",
-        "confirmPasswordPlaceholder": "Digite a senha novamente",
-        "submit": "Criar conta",
-        "creating": "Criando conta..."
-      },
-      "withProvider": {
-        "title": "Ou continue com",
-        "google": "Cadastrar com Google",
-        "discord": "Cadastrar com Discord"
-      },
-      "hasAccount": "Já tem uma conta?",
-      "signIn": "Entrar"
-    },
-    "errors": {
-      "invalidEmail": "Endereço de email inválido",
-      "passwordRequired": "Senha é obrigatória",
-      "passwordMismatch": "As senhas não coincidem",
-      "weakPassword": "A senha deve ter pelo menos 8 caracteres",
-      "emailInUse": "Endereço de email já está em uso",
-      "invalidCredentials": "Email ou senha inválidos",
-      "accountNotFound": "Conta não encontrada",
-      "unauthorized": "Por favor, faça login para continuar",
-      "verificationRequired": "Por favor, verifique seu endereço de email"
-    }
-  },
-  "emailVerification": {
-    "title": "Verifique Seu Email",
-    "subtitle": "Quase lá! Apenas mais um passo para começar.",
-    "pending": {
-      "message": "Enviamos um email de verificação para {email}",
-      "instructions": "Clique no link no email para verificar sua conta.",
-      "resend": "Não recebeu o email?",
-      "resendButton": "Reenviar email de verificação",
-      "resending": "Reenviando...",
-      "resent": "Email de verificação enviado!",
-      "error": "Falha ao enviar email de verificação"
-    },
-    "verifying": {
-      "message": "Verificando seu email...",
-      "success": "Email verificado com sucesso!",
-      "error": "Falha ao verificar email",
-      "invalidToken": "Token de verificação inválido ou expirado",
-      "redirect": "Redirecionando para o perfil..."
-    },
-    "actions": {
-      "backToProfile": "Voltar ao Perfil",
-      "tryAgain": "Tentar Novamente"
-    }
-  },
-  "oauth": {
-    "initiate": {
-      "loading": "Redirecionando para {provider}...",
-      "error": "Falha ao iniciar fluxo OAuth",
-      "tryAgain": "Tentar Novamente"
-    },
-    "callback": {
-      "loading": "Processando login...",
-      "error": {
-        "generic": "Falha ao completar autenticação",
-        "missingState": "Estado OAuth inválido",
-        "missingCode": "Código de autorização ausente",
-        "invalidProvider": "Provedor OAuth inválido"
-      },
-      "success": {
-        "message": "Autenticado com sucesso",
-        "redirect": "Redirecionando para seu perfil..."
-      }
-    }
-  },
-  "claimSuggestion": {
-    "title": "Nome do Personagem Já Registrado",
-    "message": "O personagem \"{name}\" já está registrado para outro usuário.",
-    "isYours": {
-      "title": "Este é seu personagem?",
-      "description": "Se este é seu personagem, você pode reivindicar a propriedade verificando-o com o comentário do seu personagem no Tibia.com.",
-      "button": "Iniciar Processo de Reivindicação"
-    },
-    "notYours": {
-      "title": "Não é seu personagem?",
-      "description": "Se este não é seu personagem, tente com um nome de personagem diferente.",
-      "button": "Tentar Personagem Diferente"
-    }
-  },
-  "soulcoreSuggestions": {
-    "title": "Sugestões de Soul Core",
-    "fromList": "da lista \"{name}\"",
-    "accept": "Aceitar",
-    "dismiss": "Dispensar",
-    "unknownList": "Lista Desconhecida"
+    "subtitle": "Gerencie sua conta e personagens",
+    "title": "Seu Perfil"
   },
   "registerSuggestion": {
-    "title": "Complete Seu Cadastro",
-    "subtitle": "Ótimo começo com sua primeira lista! Aqui está por que você deve completar seu cadastro:",
+    "completeButton": "Completar Cadastro",
     "features": {
       "accessAnywhere": "Acesse suas listas de qualquer dispositivo",
-      "secureData": "Proteja seus dados com email e senha",
-      "collaborate": "Entre e colabore em outras listas"
+      "collaborate": "Entre e colabore em outras listas",
+      "secureData": "Proteja seus dados com email e senha"
     },
-    "completeButton": "Completar Cadastro"
+    "subtitle": "Ótimo começo com sua primeira lista! Aqui está por que você deve completar seu cadastro:",
+    "title": "Complete Seu Cadastro"
   },
-  "lists": {
-    "title": "Listas",
-    "created": "Criado",
-    "shareList": "Compartilhar Lista",
-    "shareListDescription": "Compartilhe este link com outros para permitir que eles entrem na sua lista:",
-    "copyLink": "Copiar Link",
-    "copied": "Copiado!",
-    "memberContributions": "Contribuições dos Membros",
-    "inactiveCharacterTooltip": "Este personagem está inativo devido a um processo de reivindicação",
-    "xpBoostProgress": "Progresso do Boost de XP (200)",
-    "totalProgress": "Progresso Total",
-    "creatureName": "Nome da Criatura",
-    "status": "Status",
-    "addedBy": "Adicionado Por",
-    "actions": "Ações",
-    "showUnlocked": "Mostrar Desbloqueados ({count})",
-    "hideUnlocked": "Ocultar Desbloqueados ({count})",
-    "obtained": "obtido",
-    "unlocked": "desbloqueado",
-    "markAsUnlocked": "Marcar como Desbloqueado",
-    "markAsObtained": "Marcar como Obtido"
-  },
-  "listDetail": {
-    "created": "Criado",
-    "shareList": "Compartilhar Lista",
-    "shareListDescription": "Compartilhe este link com outros para permitir que eles entrem na sua lista:",
-    "copyLink": "Copiar Link",
-    "copied": "Copiado!",
-    "memberContributions": "Contribuições dos Membros",
-    "inactiveCharacterTooltip": "Este personagem está inativo devido a um processo de reivindicação",
-    "xpBoostProgress": "Progresso do Boost de XP (200)",
-    "totalProgress": "Progresso Total",
-    "creatureName": "Nome da Criatura",
-    "status": "Status",
-    "addedBy": "Adicionado Por",
-    "actions": "Ações",
-    "showUnlocked": "Mostrar Desbloqueados ({count})",
-    "hideUnlocked": "Ocultar Desbloqueados ({count})",
-    "obtained": "obtido",
-    "unlocked": "desbloqueado",
-    "markAsUnlocked": "Marcar como Desbloqueado",
-    "markAsObtained": "Marcar como Obtido"
+  "soulcoreSuggestions": {
+    "accept": "Aceitar",
+    "dismiss": "Dispensar",
+    "fromList": "da lista \"{name}\"",
+    "title": "Sugestões de Soul Core",
+    "unknownList": "Lista Desconhecida"
   }
 }

@@ -1,4 +1,5 @@
 {
+  "_locale": "es",
   "about": {
     "comingSoon": {
       "list": {
@@ -93,15 +94,25 @@
   "characterClaim": {
     "characterName": "Nombre del Personaje",
     "characterNamePlaceholder": "Ingresa el nombre del personaje",
-    "checkStatus": "Verificar Estado del Reclamo",
+    "checkStatus": "Verificar Estado de Reclamo",
     "checking": "Verificando...",
     "rejected": {
       "message": "Tu reclamo ha sido rechazado. Esto puede suceder si:",
+      "reasons": {
+        "1": "El código de verificación no se encontró en el comentario de tu personaje",
+        "2": "El comentario de tu personaje fue cambiado recientemente y aún no se ha actualizado en Tibia.com"
+      },
       "title": "Reclamo Rechazado",
-      "tryAgain": "Intentar Nuevamente"
+      "tryAgain": "Intentar de Nuevo"
     },
-    "startClaim": "Comenzar Reclamo",
+    "startClaim": "Iniciar Reclamo",
     "starting": "Iniciando...",
+    "steps": {
+      "1": "Inicia sesión en Tibia.com",
+      "2": "Ve a la página de tu personaje",
+      "3": "Edita el comentario de tu personaje",
+      "4": "Añade el siguiente código de verificación a tu comentario:"
+    },
     "subtitle": "Verifica la propiedad de tu personaje para usarlo en tus listas",
     "success": {
       "message": "Ahora eres el propietario verificado de este personaje. Redirigiendo a tu perfil...",
@@ -110,8 +121,8 @@
     "title": "Reclamar Personaje",
     "verifySubtitle": "Sigue estos pasos para verificar la propiedad de tu personaje",
     "verifyTitle": "Verificar Personaje",
-    "waitNote": "Nota: Después de agregar el código, espera unos minutos para que los cambios se propaguen antes de verificar el estado del reclamo.",
-    "waitTime": "Por favor espere {minutes} minutos antes de verificar nuevamente"
+    "waitNote": "Nota: Después de añadir el código, espera unos minutos para que los cambios se propaguen antes de verificar el estado del reclamo.",
+    "waitTime": "Por favor espera {seconds} segundos antes de verificar nuevamente"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -180,11 +191,12 @@
   },
   "listDetail": {
     "actions": "Acciones",
-    "addedBy": "Agregado Por",
+    "addedBy": "Añadido por",
     "copied": "¡Copiado!",
     "copyLink": "Copiar Enlace",
-    "created": "Creada",
+    "created": "Creado",
     "creatureName": "Nombre de Criatura",
+    "hideUnlocked": "Ocultar Desbloqueados",
     "inactiveCharacterTooltip": "Este personaje está inactivo debido a un proceso de reclamo",
     "markAsObtained": "Marcar como Obtenido",
     "markAsUnlocked": "Marcar como Desbloqueado",
@@ -192,11 +204,10 @@
     "obtained": "obtenido",
     "shareList": "Compartir Lista",
     "shareListDescription": "Comparte este enlace con otros para permitirles unirse a tu lista:",
+    "showUnlocked": "Mostrar Desbloqueados",
     "status": "Estado",
     "totalProgress": "Progreso Total",
-    "xpBoostProgress": "Progreso de Impulso de XP (200)",
-    "hideUnlocked": "Ocultar {count} núcleos desbloqueados",
-    "showUnlocked": "Mostrar {count} núcleos desbloqueados"
+    "xpBoostProgress": "Progreso de Impulso de EXP (200)"
   },
   "lists": {
     "title": "Listas"
@@ -217,8 +228,8 @@
     "signOut": "Cerrar sesión",
     "signUp": "Registrarse",
     "suggestions": {
-      "count": "{count} sugerencias",
-      "title": "Sugerencias de Núcleos del Alma Pendientes"
+      "count": "{count} sugerencias pendientes",
+      "title": "Sugerencias de Núcleos de Alma Pendientes"
     }
   },
   "oauth": {
@@ -232,8 +243,8 @@
       "loading": "Procesando inicio de sesión..."
     },
     "initiate": {
-      "error": "Error al iniciar el flujo de OAuth",
-      "loading": "Conectando con {provider}...",
+      "error": "Error al iniciar el flujo OAuth",
+      "loading": "Redirigiendo al proveedor de autenticación...",
       "tryAgain": "Intentar de nuevo"
     }
   },
@@ -243,12 +254,16 @@
       "title": "Tus Personajes"
     },
     "email": {
-      "title": "Configuración de Email"
+      "status": {
+        "verified": "Tu correo electrónico está verificado",
+        "notVerified": "Tu correo electrónico no está verificado"
+      },
+      "title": "Configuración de Correo Electrónico"
     },
     "lists": {
       "empty": "Aún no tienes ninguna lista"
     },
-    "subtitle": "Gestiona tu cuenta y personajes",
+    "subtitle": "Administra tu cuenta y personajes",
     "title": "Tu Perfil"
   },
   "registerSuggestion": {
@@ -264,8 +279,8 @@
   "soulcoreSuggestions": {
     "accept": "Aceptar",
     "dismiss": "Descartar",
+    "fromList": "De la Lista: {listName}",
     "title": "Sugerencias de Núcleos de Alma",
-    "unknownList": "Lista Desconocida",
-    "fromList": "De la lista: {name}"
+    "unknownList": "Lista Desconocida"
   }
 }

@@ -12,8 +12,9 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
-    "format": "prettier --write src/",
-    "check-translations": "tsx scripts/check-translations.ts"
+    "format": "prettier --write src/ scripts/",
+    "check-translations": "tsx scripts/check-translations.ts",
+    "check-translations:ci": "tsx scripts/check-translations.ts --check-only"
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",

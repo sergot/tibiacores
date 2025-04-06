@@ -1,4 +1,5 @@
 {
+  "_locale": "pl",
   "about": {
     "comingSoon": {
       "list": {
@@ -92,26 +93,36 @@
   },
   "characterClaim": {
     "characterName": "Nazwa postaci",
-    "characterNamePlaceholder": "Wpisz nazwę postaci",
-    "checkStatus": "Sprawdź status weryfikacji",
+    "characterNamePlaceholder": "Wprowadź nazwę postaci",
+    "checkStatus": "Sprawdź status claima",
     "checking": "Sprawdzanie...",
     "rejected": {
-      "message": "Twoja weryfikacja została odrzucona. Może to być spowodowane:",
-      "title": "Weryfikacja odrzucona",
-      "tryAgain": "Spróbuj ponownie"
+      "message": "Twoje roszczenie zostało odrzucone. Może to nastąpić, jeśli:",
+      "reasons": {
+        "1": "Kod weryfikacyjny nie został znaleziony w komentarzu Twojej postaci",
+        "2": "Komentarz Twojej postaci został niedawno zmieniony i nie został jeszcze zaktualizowany na Tibia.com"
+      },
+      "title": "Roszczenie Odrzucone",
+      "tryAgain": "Spróbuj Ponownie"
     },
-    "startClaim": "Rozpocznij weryfikację",
+    "startClaim": "Rozpocznij Roszczenie",
     "starting": "Rozpoczynanie...",
-    "subtitle": "Zweryfikuj własność swojej postaci, aby używać jej na listach",
-    "success": {
-      "message": "Jesteś teraz zweryfikowanym właścicielem tej postaci. Przekierowywanie do profilu...",
-      "title": "Weryfikacja zatwierdzona!"
+    "steps": {
+      "1": "Zaloguj się na Tibia.com",
+      "2": "Przejdź do strony swojej postaci",
+      "3": "Edytuj komentarz swojej postaci",
+      "4": "Dodaj następujący kod weryfikacyjny do swojego komentarza:"
     },
-    "title": "Przypisz postać",
-    "verifySubtitle": "Wykonaj poniższe kroki, aby zweryfikować własność postaci",
-    "verifyTitle": "Zweryfikuj postać",
-    "waitNote": "Uwaga: Po dodaniu kodu poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu weryfikacji.",
-    "waitTime": "Poczekaj {minutes} minut przed ponownym sprawdzeniem"
+    "subtitle": "Zweryfikuj własność swojej postaci, aby używać jej na swoich listach",
+    "success": {
+      "message": "Jesteś teraz zweryfikowanym właścicielem tej postaci. Przekierowywanie do Twojego profilu...",
+      "title": "Roszczenie Zatwierdzone!"
+    },
+    "title": "Roszczenie Postaci",
+    "verifySubtitle": "Wykonaj te kroki, aby zweryfikować własność postaci",
+    "verifyTitle": "Weryfikacja Postaci",
+    "waitNote": "Uwaga: Po dodaniu kodu, poczekaj kilka minut na propagację zmian przed sprawdzeniem statusu roszczenia.",
+    "waitTime": "Proszę poczekać {seconds} sekund przed ponownym sprawdzeniem"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -184,32 +195,32 @@
     "copied": "Skopiowano!",
     "copyLink": "Kopiuj Link",
     "created": "Utworzono",
-    "creatureName": "Nazwa Stwora",
-    "inactiveCharacterTooltip": "Ta postać jest nieaktywna z powodu procesu weryfikacji",
+    "creatureName": "Nazwa Stworzenia",
+    "hideUnlocked": "Ukryj Odblokowane",
+    "inactiveCharacterTooltip": "Ta postać jest nieaktywna z powodu procesu roszczenia",
     "markAsObtained": "Oznacz jako Zdobyte",
     "markAsUnlocked": "Oznacz jako Odblokowane",
     "memberContributions": "Wkład Członków",
     "obtained": "zdobyte",
     "shareList": "Udostępnij Listę",
-    "shareListDescription": "Udostępnij ten link innym, aby mogli dołączyć do twojej listy:",
+    "shareListDescription": "Udostępnij ten link innym, aby umożliwić im dołączenie do Twojej listy:",
+    "showUnlocked": "Pokaż Odblokowane",
     "status": "Status",
     "totalProgress": "Całkowity Postęp",
-    "xpBoostProgress": "Postęp do maks. boost XP (200)",
-    "hideUnlocked": "Ukryj {count} odblokowanych soulcorów",
-    "showUnlocked": "Pokaż {count} odblokowanych soulcorów"
+    "xpBoostProgress": "Postęp Zwiększenia Doświadczenia (200)"
   },
   "lists": {
     "title": "Listy"
   },
   "nav": {
-    "about": "O nas",
+    "about": "O Nas",
     "logout": {
       "warning": {
         "cancel": "Anuluj",
-        "message": "Jeśli się wylogujesz, stracisz dostęp do obecnej sesji i wszystkich swoich danych. Rozważ utworzenie konta, aby zachować swoje postępy.",
+        "message": "Jeśli wylogujesz się teraz, stracisz dostęp do swojej bieżącej sesji i wszystkich danych. Rozważ zarejestrowanie konta, aby zapisać swój postęp.",
         "register": "Zarejestruj się teraz",
         "signOut": "Wyloguj się mimo to",
-        "title": "Uwaga: używasz anonimowego konta"
+        "title": "Ostrzeżenie: Korzystasz z anonimowego konta"
       }
     },
     "profile": "Profil",
@@ -217,33 +228,37 @@
     "signOut": "Wyloguj się",
     "signUp": "Zarejestruj się",
     "suggestions": {
-      "count": "{count} sugestii",
-      "title": "Oczekujące sugestie soul corów"
+      "count": "{count} oczekujących sugestii",
+      "title": "Oczekujące Sugestie Rdzeni Dusz"
     }
   },
   "oauth": {
     "callback": {
       "error": {
-        "generic": "Nie udało się zakończyć uwierzytelniania",
+        "generic": "Nie udało się dokończyć uwierzytelniania",
         "invalidProvider": "Nieprawidłowy dostawca OAuth",
-        "missingCode": "Brak kodu autoryzacji",
+        "missingCode": "Brakujący kod autoryzacji",
         "missingState": "Nieprawidłowy stan OAuth"
       },
       "loading": "Przetwarzanie logowania..."
     },
     "initiate": {
-      "error": "Nie udało się rozpocząć procesu OAuth",
-      "loading": "Łączenie z {provider}...",
+      "error": "Nie udało się rozpocząć przepływu OAuth",
+      "loading": "Przekierowywanie do dostawcy uwierzytelniania...",
       "tryAgain": "Spróbuj ponownie"
     }
   },
   "profile": {
     "characters": {
-      "empty": "Nie masz jeszcze żadnych postaci",
-      "title": "Twoje postacie"
+      "empty": "Nie masz jeszcze żadnych roszczeń do postaci",
+      "title": "Twoje Postacie"
     },
     "email": {
-      "title": "Ustawienia Email"
+      "status": {
+        "verified": "Twój e-mail jest zweryfikowany",
+        "notVerified": "Twój e-mail nie jest zweryfikowany"
+      },
+      "title": "Ustawienia E-mail"
     },
     "lists": {
       "empty": "Nie masz jeszcze żadnych list"
@@ -264,8 +279,8 @@
   "soulcoreSuggestions": {
     "accept": "Akceptuj",
     "dismiss": "Odrzuć",
-    "title": "Sugestie soul corów",
-    "unknownList": "Nieznana Lista",
-    "fromList": "Z listy: {name}"
+    "fromList": "Z Listy: {listName}",
+    "title": "Sugestie Rdzeni Dusz",
+    "unknownList": "Nieznana Lista"
   }
 }

@@ -1,4 +1,5 @@
 {
+  "_locale": "de",
   "about": {
     "comingSoon": {
       "list": {
@@ -97,11 +98,21 @@
     "checking": "Überprüfe...",
     "rejected": {
       "message": "Dein Anspruch wurde abgelehnt. Dies kann passieren, wenn:",
+      "reasons": {
+        "1": "Der Verifizierungscode wurde nicht in deinem Charakterkommentar gefunden",
+        "2": "Dein Charakterkommentar wurde kürzlich geändert und ist noch nicht auf Tibia.com aktualisiert"
+      },
       "title": "Anspruch Abgelehnt",
       "tryAgain": "Erneut Versuchen"
     },
     "startClaim": "Anspruch Starten",
     "starting": "Startet...",
+    "steps": {
+      "1": "Logge dich bei Tibia.com ein",
+      "2": "Gehe zur Seite deines Charakters",
+      "3": "Bearbeite den Kommentar deines Charakters",
+      "4": "Füge den folgenden Verifizierungscode deinem Kommentar hinzu:"
+    },
     "subtitle": "Verifiziere den Besitz deines Charakters, um ihn in deinen Listen zu verwenden",
     "success": {
       "message": "Du bist nun der verifizierte Besitzer dieses Charakters. Weiterleitung zu deinem Profil...",
@@ -111,7 +122,7 @@
     "verifySubtitle": "Folge diesen Schritten, um deinen Charakterbesitz zu verifizieren",
     "verifyTitle": "Charakter Verifizieren",
     "waitNote": "Hinweis: Nach dem Hinzufügen des Codes warte bitte einige Minuten, bis die Änderungen übernommen wurden, bevor du den Anspruchsstatus überprüfst.",
-    "waitTime": "Bitte warten Sie {minutes} Minuten, bevor Sie erneut prüfen"
+    "waitTime": "Bitte warte {seconds} Sekunden, bevor du erneut überprüfst"
   },
   "characterDetails": {
     "confirmDelete": {
@@ -185,6 +196,7 @@
     "copyLink": "Link Kopieren",
     "created": "Erstellt",
     "creatureName": "Kreaturname",
+    "hideUnlocked": "Freigeschaltete Ausblenden",
     "inactiveCharacterTooltip": "Dieser Charakter ist aufgrund eines Anspruchsprozesses inaktiv",
     "markAsObtained": "Als Erhalten markieren",
     "markAsUnlocked": "Als Freigeschaltet markieren",
@@ -192,11 +204,10 @@
     "obtained": "erhalten",
     "shareList": "Liste Teilen",
     "shareListDescription": "Teile diesen Link mit anderen, damit sie deiner Liste beitreten können:",
+    "showUnlocked": "Freigeschaltete Anzeigen",
     "status": "Status",
     "totalProgress": "Gesamtfortschritt",
-    "xpBoostProgress": "EP-Boost-Fortschritt (200)",
-    "hideUnlocked": "{count} freigeschaltete Kerne ausblenden",
-    "showUnlocked": "{count} freigeschaltete Kerne anzeigen"
+    "xpBoostProgress": "EP-Boost-Fortschritt (200)"
   },
   "lists": {
     "title": "Listen"
@@ -217,7 +228,7 @@
     "signOut": "Abmelden",
     "signUp": "Registrieren",
     "suggestions": {
-      "count": "{count} Vorschläge",
+      "count": "{count} ausstehende Vorschläge",
       "title": "Ausstehende Seelenkern-Vorschläge"
     }
   },
@@ -233,7 +244,7 @@
     },
     "initiate": {
       "error": "OAuth-Flow konnte nicht gestartet werden",
-      "loading": "Verbindung zu {provider} wird hergestellt...",
+      "loading": "Weiterleitung zum Authentifizierungsanbieter...",
       "tryAgain": "Erneut versuchen"
     }
   },
@@ -243,6 +254,10 @@
       "title": "Deine Charaktere"
     },
     "email": {
+      "status": {
+        "verified": "Deine E-Mail ist verifiziert",
+        "notVerified": "Deine E-Mail ist nicht verifiziert"
+      },
       "title": "E-Mail-Einstellungen"
     },
     "lists": {
@@ -264,8 +279,8 @@
   "soulcoreSuggestions": {
     "accept": "Akzeptieren",
     "dismiss": "Ablehnen",
+    "fromList": "Von Liste: {listName}",
     "title": "Seelenkern-Vorschläge",
-    "unknownList": "Unbekannte Liste",
-    "fromList": "Von Liste: {name}"
+    "unknownList": "Unbekannte Liste"
   }
 }
