@@ -39,6 +39,28 @@ interface Creature {
   name: string
 }
 
+interface UnlockStats {
+  creature_id: string
+  unlocked_count: number
+  unlocked_by: Array<{
+    character_name: string
+    list_name: string
+  }>
+}
+
+interface ListMemberWithUnlocks {
+  user_id: string
+  character_id: string
+  character_name: string
+  unlocked_creatures: Array<{
+    creature_id: string
+    creature_name: string
+  }>
+  obtained_count: number
+  unlocked_count: number
+  is_active: boolean
+}
+
 const props = defineProps<{
   id: string
 }>()
@@ -53,9 +75,10 @@ const selectedCreatureName = ref('')
 const sortField = ref<'creature_name' | 'status'>('creature_name')
 const sortDirection = ref<'asc' | 'desc'>('asc')
 const searchQuery = ref('')
-const hideUnlocked = ref(true) // New state for hiding unlocked cores
-
+const hideUnlocked = ref(true)
 const showCopiedMessage = ref(false)
+const unlockStats = ref<Record<string, UnlockStats>>({})
+const membersWithUnlocks = ref<ListMemberWithUnlocks[]>([])
 
 // Add computed property for unlocked cores count
 const unlockedCoresCount = computed(() => {
@@ -96,11 +119,44 @@ const fetchCreatures = async () => {
   try {
     const response = await axios.get<Creature[]>('/creatures')
     creatures.value = response.data
+
+    // Build unlock stats from membersWithUnlocks data
+    const stats: Record<string, UnlockStats> = {}
+    membersWithUnlocks.value.forEach(member => {
+      member.unlocked_creatures.forEach(creature => {
+        if (!stats[creature.creature_id]) {
+          stats[creature.creature_id] = {
+            creature_id: creature.creature_id,
+            unlocked_count: 0,
+            unlocked_by: []
+          }
+        }
+        stats[creature.creature_id].unlocked_count++
+        stats[creature.creature_id].unlocked_by.push({
+          character_name: member.character_name,
+          list_name: listDetails.value?.name || ''
+        })
+      })
+    })
+    unlockStats.value = stats
   } catch (err) {
     if (axios.isAxiosError(err)) {
       error.value = err.response?.data?.message || 'Failed to fetch creatures'
     } else {
       error.value = 'Failed to fetch creatures'
+    }
+  }
+}
+
+const fetchListMembers = async () => {
+  try {
+    const response = await axios.get<ListMemberWithUnlocks[]>(`/lists/${props.id}/members`)
+    membersWithUnlocks.value = response.data
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      error.value = err.response?.data?.message || 'Failed to fetch list members'
+    } else {
+      error.value = 'Failed to fetch list members'
     }
   }
 }
@@ -207,14 +263,16 @@ const sortedAndFilteredSoulCores = computed(() => {
 })
 
 const canModifySoulcore = (soulcore: SoulCore) => {
-  return soulcore.added_by_user_id === userStore.userId
+  return soulcore.added_by_user_id === userStore.userId || (listDetails.value?.author_id === userStore.userId)
 }
 
 const { t } = useI18n()
 
 onMounted(async () => {
   try {
-    await Promise.all([fetchListDetails(), fetchCreatures()])
+    await fetchListDetails()
+    await fetchListMembers()
+    await fetchCreatures() // This needs to run after members are loaded
   } catch (err) {
     console.error('Error loading data:', err)
   } finally {
@@ -296,14 +354,12 @@ onMounted(async () => {
           <div class="space-y-4">
             <div class="flex justify-between text-sm text-gray-600">
               <span>{{ t('listDetail.xpBoostProgress') }}</span>
-              <span
-                >{{
+              <span>{{
                   listDetails.soul_cores.filter(
                     (sc) => sc.status === 'obtained' || sc.status === 'unlocked',
                   ).length
                 }}
-                / 200</span
-              >
+                / 200</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
@@ -322,14 +378,12 @@ onMounted(async () => {
             </div>
             <div class="flex justify-between text-sm text-gray-600">
               <span>{{ t('listDetail.totalProgress') }}</span>
-              <span
-                >{{
+              <span>{{
                   listDetails.soul_cores.filter(
                     (sc) => sc.status === 'obtained' || sc.status === 'unlocked',
                   ).length
                 }}
-                / {{ totalCreaturesCount }}</span
-              >
+                / {{ totalCreaturesCount }}</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
@@ -385,7 +439,7 @@ onMounted(async () => {
                     'bg-gray-100 text-gray-600': !member.is_active,
                   }"
                 >
-                  {{ member.obtained_count }} {{ t('listDetail.obtained') }}
+obtained                         {{ member.obtained_count }} {{ t('listDetail.obtained') }}
                 </span>
               </div>
             </div>
@@ -420,6 +474,7 @@ onMounted(async () => {
                 v-model="selectedCreatureName"
                 :creatures="availableCreatures"
                 :existing-soul-cores="listDetails?.soul_cores || []"
+                :unlock-stats="unlockStats"
               />
               <button
                 @click="addSoulcore"
@@ -462,9 +517,7 @@ onMounted(async () => {
                       {{ sortDirection === 'asc' ? '↑' : '↓' }}
                     </span>
                   </th>
-                  <th
-                    class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600"
-                  >
+                  <th class="hidden sm:table-cell px-4 py-2 text-left text-sm font-medium text-gray-600">
                     {{ t('listDetail.addedBy') }}
                   </th>
                   <th class="px-2 sm:px-4 py-2 text-right text-sm font-medium text-gray-600">
@@ -473,11 +526,8 @@ onMounted(async () => {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="core in sortedAndFilteredSoulCores"
-                  :key="core.creature_id"
-                  class="border-b border-gray-200 last:border-0"
-                >
+                <tr v-for="core in sortedAndFilteredSoulCores" :key="core.creature_id"
+                    class="border-b border-gray-200 last:border-0">
                   <td class="px-2 sm:px-4 py-2">{{ core.creature_name }}</td>
                   <td class="hidden sm:table-cell px-4 py-2">
                     <span
@@ -493,10 +543,8 @@ onMounted(async () => {
                   <td class="hidden sm:table-cell px-4 py-2 text-gray-600">
                     {{ core.added_by || '-' }}
                   </td>
-                  <td class="px-2 sm:px-4 py-2 text-right">
-                    <div
-                      class="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2"
-                    >
+                  <td class="px-2 sm:px-4 py-2">
+                    <div class="flex items-center justify-end gap-2">
                       <button
                         v-if="canModifySoulcore(core) && core.status === 'obtained'"
                         @click="updateSoulcoreStatus(core.creature_id, 'unlocked')"
