@@ -277,10 +277,17 @@
     "title": "Registrierung Abschließen"
   },
   "soulcoreSuggestions": {
+    "title": "Seelenkern-Vorschläge",
+    "fromList": "Von Liste",
     "accept": "Akzeptieren",
     "dismiss": "Ablehnen",
-    "fromList": "Von Liste: {listName}",
-    "title": "Seelenkern-Vorschläge",
-    "unknownList": "Unbekannte Liste"
+    "unknownList": "Unbekannte Liste",
+    "noSuggestions": "Keine Vorschläge verfügbar"
+  },
+  "listTag": {
+    "members": "{count} Mitglieder",
+    "goToList": "Zur Liste gehen",
+    "loadingMembers": "Mitglieder werden geladen...",
+    "membersList": "Mitglieder:"
   }
 }

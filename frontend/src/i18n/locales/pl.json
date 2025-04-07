@@ -207,7 +207,7 @@
     "showUnlocked": "Pokaż Odblokowane",
     "status": "Status",
     "totalProgress": "Całkowity Postęp",
-    "xpBoostProgress": "Postęp Zwiększenia Doświadczenia (200)"
+    "xpBoostProgress": "Postęp do maks. XP boosta (200)"
   },
   "lists": {
     "title": "Listy"
@@ -229,7 +229,7 @@
     "signUp": "Zarejestruj się",
     "suggestions": {
       "count": "{count} oczekujących sugestii",
-      "title": "Oczekujące Sugestie Rdzeni Dusz"
+      "title": "Oczekujące sugestie soul corów"
     }
   },
   "oauth": {
@@ -277,10 +277,17 @@
     "title": "Dokończ rejestrację"
   },
   "soulcoreSuggestions": {
+    "title": "Sugestie Soul Corów",
+    "fromList": "Z listy",
     "accept": "Akceptuj",
     "dismiss": "Odrzuć",
-    "fromList": "Z Listy: {listName}",
-    "title": "Sugestie Rdzeni Dusz",
-    "unknownList": "Nieznana Lista"
+    "unknownList": "Nieznana lista",
+    "noSuggestions": "Brak dostępnych sugestii"
+  },
+  "listTag": {
+    "members": "{count} członków",
+    "goToList": "Przejdź do listy",
+    "loadingMembers": "Ładowanie członków...",
+    "membersList": "Członkowie:"
   }
 }

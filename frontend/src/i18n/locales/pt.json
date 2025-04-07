@@ -277,10 +277,17 @@
     "title": "Complete Seu Cadastro"
   },
   "soulcoreSuggestions": {
+    "title": "Sugestões de Soul Core",
+    "fromList": "Da lista",
     "accept": "Aceitar",
     "dismiss": "Dispensar",
-    "fromList": "da lista \"{name}\"",
-    "title": "Sugestões de Soul Core",
-    "unknownList": "Lista Desconhecida"
+    "unknownList": "Lista desconhecida",
+    "noSuggestions": "Nenhuma sugestão disponível"
+  },
+  "listTag": {
+    "members": "{count} membros",
+    "goToList": "Ir para a lista",
+    "loadingMembers": "Carregando membros...",
+    "membersList": "Membros:"
   }
 }
