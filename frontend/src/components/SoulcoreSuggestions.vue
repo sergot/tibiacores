@@ -1,18 +1,24 @@
 <!-- A component to display and manage soulcore suggestions for a character -->
 <template>
-  <div v-if="suggestions.length > 0" class="bg-white shadow rounded-lg p-4 mt-4">
+  <div class="bg-white shadow rounded-lg p-4 mt-4 overflow-visible">
     <h3 class="text-lg font-semibold mb-3">{{ t('soulcoreSuggestions.title') }}</h3>
-    <div class="space-y-3">
+    <div v-if="suggestions.length === 0" class="text-gray-500 text-center py-4">
+      {{ t('soulcoreSuggestions.noSuggestions') }}
+    </div>
+    <div v-else class="space-y-3 overflow-visible">
       <div
         v-for="suggestion in suggestions"
         :key="`${suggestion.character_id}-${suggestion.creature_id}`"
-        class="flex items-center justify-between p-2 bg-gray-50 rounded"
+        class="flex items-center justify-between p-2 bg-gray-50 rounded overflow-visible"
       >
-        <div>
-          <span class="font-medium">{{ suggestion.creature_name }}</span>
-          <span class="text-sm text-gray-500 ml-2">{{
-            t('soulcoreSuggestions.fromList', { name: getListName(suggestion.list_id) })
-          }}</span>
+        <div class="overflow-visible">
+          <div class="mb-1">
+            <span class="font-medium">{{ suggestion.creature_name }}</span>
+          </div>
+          <div class="flex items-center overflow-visible">
+            <span class="text-sm text-gray-500">{{ t('soulcoreSuggestions.fromList') }}:</span>
+            <span class="ml-1"><ListTag :list="lists[suggestion.list_id]" /></span>
+          </div>
         </div>
         <div class="flex space-x-2">
           <button
@@ -37,10 +43,13 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import ListTag from './ListTag.vue'
 
 const props = defineProps<{
   characterId: string
 }>()
+
+console.log('SoulcoreSuggestions mounted with characterId:', props.characterId)
 
 const emit = defineEmits<{
   (e: 'suggestion-accepted'): void
@@ -57,20 +66,27 @@ interface Suggestion {
 }
 
 const suggestions = ref<Suggestion[]>([])
-const lists = ref<Record<string, { name: string }>>({})
+const lists = ref<Record<string, { id: string; name: string; member_count?: number }>>({})
 
 const loadSuggestions = async () => {
   try {
+    console.log('Loading suggestions for character:', props.characterId)
     const response = await axios.get(`/characters/${props.characterId}/suggestions`)
+    console.log('Suggestions response:', response.data)
     suggestions.value = response.data
 
     // Load list names for all unique list IDs
     const listIds = [...new Set(suggestions.value.map((s) => s.list_id))]
+    console.log('List IDs to load:', listIds)
     await Promise.all(
       listIds.map(async (listId) => {
         try {
           const listResponse = await axios.get(`/lists/${listId}`)
-          lists.value[listId] = { name: listResponse.data.name }
+          lists.value[listId] = {
+            id: listId,
+            name: listResponse.data.name,
+            member_count: listResponse.data.member_count
+          }
         } catch (error) {
           console.error('Failed to load list details:', error)
         }
@@ -79,10 +95,6 @@ const loadSuggestions = async () => {
   } catch (error) {
     console.error('Failed to load suggestions:', error)
   }
-}
-
-const getListName = (listId: string): string => {
-  return lists.value[listId]?.name || t('soulcoreSuggestions.unknownList')
 }
 
 const acceptSuggestion = async (suggestion: Suggestion) => {
@@ -111,6 +123,7 @@ const dismissSuggestion = async (suggestion: Suggestion) => {
 }
 
 onMounted(() => {
+  console.log('SoulcoreSuggestions onMounted called')
   loadSuggestions()
 })
 </script>

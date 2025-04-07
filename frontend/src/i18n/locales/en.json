@@ -277,10 +277,17 @@
     "title": "Complete Your Registration"
   },
   "soulcoreSuggestions": {
+    "title": "Soul Core Suggestions",
+    "fromList": "From list",
     "accept": "Accept",
     "dismiss": "Dismiss",
-    "fromList": "From List: {listName}",
-    "title": "Soul Core Suggestions",
-    "unknownList": "Unknown List"
+    "unknownList": "Unknown List",
+    "noSuggestions": "No suggestions available"
+  },
+  "listTag": {
+    "members": "{count} members",
+    "goToList": "Go to list",
+    "loadingMembers": "Loading members...",
+    "membersList": "Members:"
   }
 }

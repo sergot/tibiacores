@@ -277,10 +277,17 @@
     "title": "Completa Tu Registro"
   },
   "soulcoreSuggestions": {
+    "title": "Sugerencias de Núcleo del Alma",
+    "fromList": "De la lista",
     "accept": "Aceptar",
-    "dismiss": "Descartar",
-    "fromList": "De la Lista: {listName}",
-    "title": "Sugerencias de Núcleos de Alma",
-    "unknownList": "Lista Desconocida"
+    "dismiss": "Rechazar",
+    "unknownList": "Lista desconocida",
+    "noSuggestions": "No hay sugerencias disponibles"
+  },
+  "listTag": {
+    "members": "{count} miembros",
+    "goToList": "Ir a la lista",
+    "loadingMembers": "Cargando miembros...",
+    "membersList": "Miembros:"
   }
 }

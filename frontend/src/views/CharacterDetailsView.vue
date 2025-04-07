@@ -77,7 +77,7 @@
               <p class="mt-1 text-2xl font-semibold text-gray-900">{{ unlockedCores.length }}</p>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-500">XP Boost Progress (200)</p>
+              <p class="text-sm font-medium text-gray-500">{{ t('listDetail.xpBoostProgress') }}</p>
               <p class="mt-1 text-2xl font-semibold text-gray-900">
                 {{ xpBoostProgress.current }}/{{ xpBoostProgress.target }}
               </p>
@@ -173,6 +173,7 @@ import CreatureSelect from '@/components/CreatureSelect.vue'
 const route = useRoute()
 const { t } = useI18n()
 const characterId = route.params.id as string
+console.log('CharacterDetailsView mounted with ID:', characterId)
 
 interface Character {
   id: string
