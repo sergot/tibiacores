@@ -352,9 +352,15 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
 	}
 
-	// Check if the user is the one who added the soulcore
-	if soulcore.AddedByUserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "only the user who added the soulcore can modify it")
+	// Get list details to check if user is the owner
+	list, err := h.store.GetList(ctx, listID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list details")
+	}
+
+	// Allow both the soulcore adder and list owner to modify it
+	if soulcore.AddedByUserID != userID && list.AuthorID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "only the list owner or the user who added the soulcore can modify it")
 	}
 
 	// Update soul core status
@@ -609,9 +615,15 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
 	}
 
-	// Check if the user is the one who added the soulcore
-	if soulcore.AddedByUserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "only the user who added the soulcore can remove it")
+	// Get list details to check if user is the owner
+	list, err := h.store.GetList(ctx, listID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list details")
+	}
+
+	// Allow both the soulcore adder and list owner to remove it
+	if soulcore.AddedByUserID != userID && list.AuthorID != userID {
+		return echo.NewHTTPError(http.StatusForbidden, "only the list owner or the user who added the soulcore can remove it")
 	}
 
 	// Delete the soulcore from the list
@@ -822,4 +834,40 @@ func (h *ListsHandler) GetListPreview(c echo.Context) error {
 		World:       list.World,
 		MemberCount: len(members),
 	})
+}
+
+// GetListMembersWithUnlocks returns all members of a list with their unlocked soulcores
+func (h *ListsHandler) GetListMembersWithUnlocks(c echo.Context) error {
+	listID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+	}
+
+	// Get authenticated user ID from context
+	userIDStr := c.Get("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+	}
+
+	ctx := c.Request().Context()
+
+	// Check if user is a member of the list
+	isMember, err := h.store.IsUserListMember(ctx, db.IsUserListMemberParams{
+		ListID: listID,
+		UserID: userID,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+	}
+	if !isMember {
+		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+	}
+
+	members, err := h.store.GetListMembersWithUnlocks(ctx, listID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+	}
+
+	return c.JSON(http.StatusOK, members)
 }

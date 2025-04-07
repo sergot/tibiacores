@@ -34,6 +34,7 @@ type Querier interface {
 	GetList(ctx context.Context, id uuid.UUID) (List, error)
 	GetListByShareCode(ctx context.Context, shareCode uuid.UUID) (List, error)
 	GetListMembers(ctx context.Context, listID uuid.UUID) ([]GetListMembersRow, error)
+	GetListMembersWithUnlocks(ctx context.Context, listID uuid.UUID) ([]GetListMembersWithUnlocksRow, error)
 	GetListSoulcore(ctx context.Context, arg GetListSoulcoreParams) (GetListSoulcoreRow, error)
 	GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]GetListSoulcoresRow, error)
 	GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([]List, error)

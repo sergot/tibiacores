@@ -44,6 +44,36 @@ LEFT JOIN lists_soulcores ls ON ls.list_id = $1 AND ls.added_by_user_id = u.id
 WHERE lu.list_id = $1
 GROUP BY u.id, c.name, lu.active;
 
+-- name: GetListMembersWithUnlocks :many
+WITH member_unlocks AS (
+    SELECT 
+        cs.character_id,
+        jsonb_agg(
+            jsonb_build_object(
+                'creature_id', cs.creature_id,
+                'creature_name', c.name
+            )
+        ) as unlocked_creatures
+    FROM characters_soulcores cs
+    JOIN creatures c ON c.id = cs.creature_id
+    GROUP BY cs.character_id
+)
+SELECT 
+    u.id as user_id,
+    c.id as character_id,
+    c.name as character_name,
+    COALESCE(mu.unlocked_creatures, '[]'::jsonb) as unlocked_creatures,
+    COUNT(DISTINCT CASE WHEN ls.status = 'obtained' OR ls.status = 'unlocked' THEN ls.creature_id END) as obtained_count,
+    COUNT(DISTINCT CASE WHEN ls.status = 'unlocked' THEN ls.creature_id END) as unlocked_count,
+    lu.active as is_active
+FROM lists_users lu 
+JOIN users u ON lu.user_id = u.id
+JOIN characters c ON lu.character_id = c.id
+LEFT JOIN lists_soulcores ls ON ls.list_id = $1
+LEFT JOIN member_unlocks mu ON mu.character_id = c.id
+WHERE lu.list_id = $1
+GROUP BY u.id, c.id, c.name, lu.active, mu.unlocked_creatures;
+
 -- name: GetListSoulcores :many
 SELECT 
   ls.list_id,

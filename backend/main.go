@@ -62,6 +62,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	// Protected routes with auth middleware
 	protected := api.Group("", auth.AuthMiddleware)
 	protected.GET("/lists/:id", listsHandler.GetList)
+	protected.GET("/lists/:id/members", listsHandler.GetListMembersWithUnlocks)
 	protected.POST("/lists/:id/soulcores", listsHandler.AddSoulcore)
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
 	protected.DELETE("/lists/:id/soulcores/:creature_id", listsHandler.RemoveSoulcore)
