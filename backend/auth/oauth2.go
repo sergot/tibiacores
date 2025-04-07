@@ -267,3 +267,36 @@ func GetFrontendCallbackURL(token string, userID string) string {
 
 	return callbackURL.String()
 }
+
+// OAuthProvider defines the interface for OAuth operations
+type OAuthProvider interface {
+	ValidateState(state string) bool
+	ExchangeCode(provider string, code string) (*OAuthUserInfo, error)
+}
+
+// DefaultOAuthProvider implements OAuthProvider using the standard OAuth flow
+type DefaultOAuthProvider struct{}
+
+func (p *DefaultOAuthProvider) ValidateState(state string) bool {
+	return ValidateOAuthState(state)
+}
+
+func (p *DefaultOAuthProvider) ExchangeCode(provider string, code string) (*OAuthUserInfo, error) {
+	return ExchangeCodeForUser(provider, code)
+}
+
+// NewDefaultOAuthProvider creates a new default OAuth provider
+func NewDefaultOAuthProvider() OAuthProvider {
+	return &DefaultOAuthProvider{}
+}
+
+var defaultProvider = NewDefaultOAuthProvider()
+
+// These functions use the default provider for backward compatibility
+func ValidateOAuthStateWithProvider(state string) bool {
+	return defaultProvider.ValidateState(state)
+}
+
+func ExchangeCodeForUserWithProvider(provider string, code string) (*OAuthUserInfo, error) {
+	return defaultProvider.ExchangeCode(provider, code)
+}
