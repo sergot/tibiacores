@@ -49,8 +49,6 @@ const props = defineProps<{
   characterId: string
 }>()
 
-console.log('SoulcoreSuggestions mounted with characterId:', props.characterId)
-
 const emit = defineEmits<{
   (e: 'suggestion-accepted'): void
 }>()
@@ -70,14 +68,11 @@ const lists = ref<Record<string, { id: string; name: string; member_count?: numb
 
 const loadSuggestions = async () => {
   try {
-    console.log('Loading suggestions for character:', props.characterId)
     const response = await axios.get(`/characters/${props.characterId}/suggestions`)
-    console.log('Suggestions response:', response.data)
     suggestions.value = response.data
 
     // Load list names for all unique list IDs
     const listIds = [...new Set(suggestions.value.map((s) => s.list_id))]
-    console.log('List IDs to load:', listIds)
     await Promise.all(
       listIds.map(async (listId) => {
         try {
@@ -85,7 +80,7 @@ const loadSuggestions = async () => {
           lists.value[listId] = {
             id: listId,
             name: listResponse.data.name,
-            member_count: listResponse.data.member_count
+            member_count: listResponse.data.member_count,
           }
         } catch (error) {
           console.error('Failed to load list details:', error)
@@ -123,7 +118,6 @@ const dismissSuggestion = async (suggestion: Suggestion) => {
 }
 
 onMounted(() => {
-  console.log('SoulcoreSuggestions onMounted called')
   loadSuggestions()
 })
 </script>

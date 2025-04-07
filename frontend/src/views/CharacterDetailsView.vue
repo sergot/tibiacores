@@ -48,13 +48,15 @@
               <CreatureSelect
                 v-model="selectedCreatureName"
                 :creatures="creatures"
-                :existing-soul-cores="unlockedCores.map(core => ({
-                  creature_id: core.creature_id,
-                  creature_name: core.creature_name,
-                  status: 'obtained',
-                  added_by: '',
-                  added_by_user_id: '',
-                }))"
+                :existing-soul-cores="
+                  unlockedCores.map((core) => ({
+                    creature_id: core.creature_id,
+                    creature_name: core.creature_name,
+                    status: 'obtained',
+                    added_by: '',
+                    added_by_user_id: '',
+                  }))
+                "
               />
             </div>
             <button
@@ -173,7 +175,6 @@ import CreatureSelect from '@/components/CreatureSelect.vue'
 const route = useRoute()
 const { t } = useI18n()
 const characterId = route.params.id as string
-console.log('CharacterDetailsView mounted with ID:', characterId)
 
 interface Character {
   id: string
@@ -256,7 +257,7 @@ const addSoulcore = async () => {
 
   try {
     await axios.post(`/characters/${characterId}/soulcores`, {
-      creature_id: creature.id
+      creature_id: creature.id,
     })
     await loadUnlockedCores()
     selectedCreatureName.value = ''

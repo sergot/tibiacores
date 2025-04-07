@@ -2,15 +2,17 @@
   <div class="relative group" @mouseenter="fetchListMembers">
     <!-- Hover area that includes both the tag and tooltip -->
     <div class="absolute -inset-2 z-40"></div>
-    
-    <div class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 cursor-pointer relative z-50">
+
+    <div
+      class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 cursor-pointer relative z-50"
+    >
       <ListBulletIcon class="h-4 w-4" />
       <span>{{ list?.name || t('soulcoreSuggestions.unknownList') }}</span>
     </div>
-    
+
     <!-- Tooltip -->
-    <div 
-      v-if="list" 
+    <div
+      v-if="list"
       class="absolute left-0 -top-2 -translate-y-full hidden group-hover:block z-50 w-72 tooltip-shadow"
     >
       <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
@@ -21,11 +23,16 @@
             {{ t('listTag.members', { count: members.length || 0 }) }}
           </p>
         </div>
-        
+
         <!-- Members list -->
         <div class="p-3">
-          <div v-if="loadingMembers" class="py-2 text-center text-sm text-gray-500 flex items-center justify-center space-x-2">
-            <div class="w-4 h-4 border-2 border-gray-300 border-t-indigo-500 rounded-full animate-spin"></div>
+          <div
+            v-if="loadingMembers"
+            class="py-2 text-center text-sm text-gray-500 flex items-center justify-center space-x-2"
+          >
+            <div
+              class="w-4 h-4 border-2 border-gray-300 border-t-indigo-500 rounded-full animate-spin"
+            ></div>
             <span>{{ t('listTag.loadingMembers') }}</span>
           </div>
           <div v-else-if="members.length > 0" class="max-h-32 overflow-y-auto mb-2">
@@ -50,7 +57,9 @@
         </div>
       </div>
       <!-- Tooltip arrow -->
-      <div class="absolute left-5 bottom-0 w-3 h-3 bg-white transform rotate-45 border-r border-b border-gray-200 tooltip-arrow"></div>
+      <div
+        class="absolute left-5 bottom-0 w-3 h-3 bg-white transform rotate-45 border-r border-b border-gray-200 tooltip-arrow"
+      ></div>
     </div>
   </div>
 </template>
@@ -65,7 +74,9 @@
 }
 
 .tooltip-shadow {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .tooltip-arrow {
@@ -117,4 +128,4 @@ const fetchListMembers = async () => {
     loadingMembers.value = false
   }
 }
-</script> 
+</script>

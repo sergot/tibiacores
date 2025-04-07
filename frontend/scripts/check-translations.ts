@@ -10,8 +10,8 @@ interface TranslationObject {
 }
 
 // Parse command line arguments
-const args = process.argv.slice(2);
-const checkOnly = args.includes('--check-only') || args.includes('-c');
+const args = process.argv.slice(2)
+const checkOnly = args.includes('--check-only') || args.includes('-c')
 
 function extractKeys(obj: TranslationObject, prefix: string = ''): Set<string> {
   const keys = new Set<string>()
@@ -31,60 +31,62 @@ function extractKeys(obj: TranslationObject, prefix: string = ''): Set<string> {
 }
 
 async function findUsedTranslationKeys(frontendDir: string): Promise<Set<string>> {
-  const usedKeys = new Set<string>();
+  const usedKeys = new Set<string>()
 
   // Standard translation keys pattern (for quoted strings)
-  const standardTranslationPattern = /(?<=(?:^|[^\w$])(?:t|useTranslation|\$t|i18n\.(?:global\.)?t)\s*\(['"`])([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)(?=['"`](?:\s*\)|\s*,))/gm;
+  const standardTranslationPattern =
+    /(?<=(?:^|[^\w$])(?:t|useTranslation|\$t|i18n\.(?:global\.)?t)\s*\(['"`])([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)(?=['"`](?:\s*\)|\s*,))/gm
 
   // Template literal with dynamic expression pattern
   // For cases like: t(`profile.email.status.${emailVerified ? 'verified' : 'notVerified'}`)
-  const templateLiteralPattern = /(?:t|useTranslation|\$t|i18n\.(?:global\.)?t)\s*\(`(.*?)\$\{.*?['"]([a-zA-Z0-9_]+)['"].*?(?:['"]([a-zA-Z0-9_]+)['"]).?\}`\)/gm;
+  const templateLiteralPattern =
+    /(?:t|useTranslation|\$t|i18n\.(?:global\.)?t)\s*\(`(.*?)\$\{.*?['"]([a-zA-Z0-9_]+)['"].*?(?:['"]([a-zA-Z0-9_]+)['"]).?\}`\)/gm
 
   try {
-      const files = await glob('**/*.{ts,tsx,js,jsx,vue}', {
-          cwd: frontendDir,
-          ignore: ['**/node_modules/**', '**/dist/**'],
-      });
+    const files = await glob('**/*.{ts,tsx,js,jsx,vue}', {
+      cwd: frontendDir,
+      ignore: ['**/node_modules/**', '**/dist/**'],
+    })
 
-      for (const file of files) {
-          const filePath = path.join(frontendDir, file);
-          try {
-              const content = await fs.promises.readFile(filePath, 'utf-8');
-              let match;
+    for (const file of files) {
+      const filePath = path.join(frontendDir, file)
+      try {
+        const content = await fs.promises.readFile(filePath, 'utf-8')
+        let match
 
-              // Match standard translation keys
-              while ((match = standardTranslationPattern.exec(content)) !== null) {
-                  if (!match[1].includes('${') && !match[1].includes('}')) {
-                      usedKeys.add(match[1]);
-                  }
-              }
-
-              // Match template literal patterns
-              while ((match = templateLiteralPattern.exec(content)) !== null) {
-                  if (match[1]) {
-                      const prefix = match[1];
-                      const firstSuffix = match[2];
-
-                      // Add the first possible key (e.g., profile.email.status.verified)
-                      if (prefix && firstSuffix) {
-                          usedKeys.add(`${prefix}${firstSuffix}`);
-                      }
-
-                      // If there's a second suffix in the ternary (the part after the colon),
-                      // add it as another key (e.g., profile.email.status.notVerified)
-                      if (prefix && match[3]) {
-                          usedKeys.add(`${prefix}${match[3]}`);
-                      }
-                  }
-              }
-          } catch (error) {
-              console.error(`Error reading file ${filePath}:`, error);
+        // Match standard translation keys
+        while ((match = standardTranslationPattern.exec(content)) !== null) {
+          if (!match[1].includes('${') && !match[1].includes('}')) {
+            usedKeys.add(match[1])
           }
+        }
+
+        // Match template literal patterns
+        while ((match = templateLiteralPattern.exec(content)) !== null) {
+          if (match[1]) {
+            const prefix = match[1]
+            const firstSuffix = match[2]
+
+            // Add the first possible key (e.g., profile.email.status.verified)
+            if (prefix && firstSuffix) {
+              usedKeys.add(`${prefix}${firstSuffix}`)
+            }
+
+            // If there's a second suffix in the ternary (the part after the colon),
+            // add it as another key (e.g., profile.email.status.notVerified)
+            if (prefix && match[3]) {
+              usedKeys.add(`${prefix}${match[3]}`)
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error reading file ${filePath}:`, error)
       }
+    }
   } catch (error) {
-      console.error('Error scanning frontend directory:', error);
+    console.error('Error scanning frontend directory:', error)
   }
-  return usedKeys;
+  return usedKeys
 }
 
 function getValueFromPath(obj: TranslationObject, path: string): string | undefined {
