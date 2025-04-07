@@ -367,6 +367,21 @@ func (mr *MockStoreMockRecorder) GetListMembers(ctx, listID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListMembers", reflect.TypeOf((*MockStore)(nil).GetListMembers), ctx, listID)
 }
 
+// GetListMembersWithUnlocks mocks base method.
+func (m *MockStore) GetListMembersWithUnlocks(ctx context.Context, listID uuid.UUID) ([]db.GetListMembersWithUnlocksRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListMembersWithUnlocks", ctx, listID)
+	ret0, _ := ret[0].([]db.GetListMembersWithUnlocksRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetListMembersWithUnlocks indicates an expected call of GetListMembersWithUnlocks.
+func (mr *MockStoreMockRecorder) GetListMembersWithUnlocks(ctx, listID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListMembersWithUnlocks", reflect.TypeOf((*MockStore)(nil).GetListMembersWithUnlocks), ctx, listID)
+}
+
 // GetListSoulcore mocks base method.
 func (m *MockStore) GetListSoulcore(ctx context.Context, arg db.GetListSoulcoreParams) (db.GetListSoulcoreRow, error) {
 	m.ctrl.T.Helper()
