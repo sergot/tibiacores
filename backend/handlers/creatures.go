@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/errors"
 )
 
 type CreaturesHandler struct {
@@ -16,9 +17,19 @@ func NewCreaturesHandler(store db.Store) *CreaturesHandler {
 }
 
 func (h *CreaturesHandler) GetCreatures(c echo.Context) error {
-	creatures, err := h.store.GetCreatures(c.Request().Context())
+	ctx := c.Request().Context()
+
+	creatures, err := h.store.GetCreatures(ctx)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return errors.NewCreatureUnavailableError(err).
+			WithOperation("get_creatures").
+			WithResource("creature")
+	}
+
+	if len(creatures) == 0 {
+		return errors.NewCreatureNotFoundError(errors.ErrCreatureNotFound).
+			WithOperation("get_creatures").
+			WithResource("creature")
 	}
 
 	return c.JSON(http.StatusOK, creatures)

@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/errors"
 )
 
 type ListsHandler struct {
@@ -46,11 +47,15 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 
 	var req CreateListRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("list")
 	}
 
 	if req.Name == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "name is required")
+		return errors.NewListInvalidError(errors.ErrListInvalid).
+			WithOperation("validate_request").
+			WithResource("list")
 	}
 
 	// Check if user is authenticated by looking for user_id in context
@@ -62,32 +67,42 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		// Create new user account
 		newUser, err := h.store.CreateAnonymousUser(ctx, uuid.New())
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+			return errors.NewDatabaseError(err).
+				WithOperation("create_anonymous_user").
+				WithResource("user")
 		}
 		userID = newUser.ID
 
 		// Generate token
 		token, err = auth.GenerateToken(userID.String(), false)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+			return errors.NewInternalError(err).
+				WithOperation("generate_token").
+				WithResource("auth")
 		}
 		c.Response().Header().Set("X-Auth-Token", token)
 
 		// For new users, we need character info
 		if req.CharacterName == "" || req.World == "" {
-			return echo.NewHTTPError(http.StatusBadRequest, "character_name and world are required for first list")
+			return errors.NewListInvalidError(errors.ErrListInvalid).
+				WithOperation("validate_character_info").
+				WithResource("list")
 		}
 	} else {
 		// Use existing user
 		var ok bool
 		userIDStr, ok := userIDStr.(string)
 		if !ok {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+			return errors.NewUnauthorizedError(errors.ErrUnauthorized).
+				WithOperation("validate_user_auth").
+				WithResource("user")
 		}
 		var err error
 		userID, err = uuid.Parse(userIDStr)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+			return errors.NewUnauthorizedError(err).
+				WithOperation("parse_user_id").
+				WithResource("user")
 		}
 	}
 
@@ -96,10 +111,14 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		// Verify character exists and belongs to user
 		char, err := h.store.GetCharacter(ctx, *req.CharacterID)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusNotFound, "character not found")
+			return errors.NewNotFoundError(err).
+				WithOperation("get_character").
+				WithResource("character")
 		}
 		if char.UserID != userID {
-			return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+			return errors.NewForbiddenError(errors.ErrForbidden).
+				WithOperation("verify_character_ownership").
+				WithResource("character")
 		}
 
 		// Create list using character's world
@@ -109,7 +128,9 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 			World:    char.World,
 		})
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create list")
+			return errors.NewDatabaseError(err).
+				WithOperation("create_list").
+				WithResource("list")
 		}
 
 		// Add character to list
@@ -119,7 +140,9 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 			CharacterID: *req.CharacterID,
 		})
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to add character to list")
+			return errors.NewDatabaseError(err).
+				WithOperation("add_character_to_list").
+				WithResource("list")
 		}
 
 		// Safely get has_email value
@@ -144,11 +167,12 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 
 	// Handle new character case
 	if req.CharacterName == "" || req.World == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "character_name and world are required for new character")
+		return errors.NewListInvalidError(errors.ErrListInvalid).
+			WithOperation("validate_character_info").
+			WithResource("list")
 	}
 
 	// Check if the character name is already taken
-	// This single check replaces the two separate checks in the original code
 	if req.CharacterName != "" {
 		existingChar, err := h.store.GetCharacterByName(ctx, req.CharacterName)
 		if err == nil {
@@ -156,10 +180,10 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 			if existingChar.UserID != userID {
 				// Character belongs to another user, return conflict error
 				log.Printf("Character %s already exists and belongs to user %s", existingChar.Name, existingChar.UserID)
-				return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+				return errors.NewConflictError(errors.ErrConflict).
+					WithOperation("check_character_name").
+					WithResource("character")
 			}
-			// Character belongs to current user, we could use it but for simplicity
-			// we'll create a new one as in the original flow
 		}
 	}
 
@@ -170,7 +194,9 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		World:  strings.TrimSpace(req.World),
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create character")
+		return errors.NewDatabaseError(err).
+			WithOperation("create_character").
+			WithResource("character")
 	}
 
 	// Create list
@@ -180,7 +206,9 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		World:    strings.TrimSpace(req.World),
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create list")
+		return errors.NewDatabaseError(err).
+			WithOperation("create_list").
+			WithResource("list")
 	}
 
 	// Add character to list
@@ -190,7 +218,9 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		CharacterID: character.ID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add character to list")
+		return errors.NewDatabaseError(err).
+			WithOperation("add_character_to_list").
+			WithResource("list")
 	}
 
 	// Safely get has_email value
@@ -237,14 +267,18 @@ type MemberStats struct {
 func (h *ListsHandler) GetList(c echo.Context) error {
 	listID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_list_id").
+			WithResource("list")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -252,13 +286,22 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 	// Get list details
 	list, err := h.store.GetList(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "list not found")
+		if err == sql.ErrNoRows {
+			return errors.NewListNotFoundError(err).
+				WithOperation("get_list").
+				WithResource("list")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list").
+			WithResource("list")
 	}
 
 	// Get member stats
 	members, err := h.store.GetListMembers(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_members").
+			WithResource("list")
 	}
 
 	isMember := false
@@ -270,7 +313,9 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 	}
 
 	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+		return errors.NewListForbiddenError(errors.ErrListForbidden).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 
 	memberStats := make([]MemberStats, len(members))
@@ -287,7 +332,9 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 	// Get soul cores
 	soulCores, err := h.store.GetListSoulcores(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get soul cores")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_soulcores").
+			WithResource("list")
 	}
 
 	return c.JSON(http.StatusOK, ListDetailResponse{
@@ -307,7 +354,9 @@ func (h *ListsHandler) GetList(c echo.Context) error {
 func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 	listID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_list_id").
+			WithResource("list")
 	}
 
 	var req struct {
@@ -315,14 +364,18 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		Status     db.SoulcoreStatus `json:"status"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("list")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -333,11 +386,15 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		UserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+		return errors.NewDatabaseError(err).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 
 	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+		return errors.NewListForbiddenError(errors.ErrListForbidden).
+			WithOperation("verify_list_membership").
+			WithResource("list")
 	}
 
 	// Get the soulcore to check ownership
@@ -347,20 +404,28 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return echo.NewHTTPError(http.StatusNotFound, "soulcore not found")
+			return errors.NewNotFoundError(err).
+				WithOperation("get_soulcore").
+				WithResource("soulcore")
 		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_soulcore").
+			WithResource("soulcore")
 	}
 
 	// Get list details to check if user is the owner
 	list, err := h.store.GetList(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list details")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list").
+			WithResource("list")
 	}
 
 	// Allow both the soulcore adder and list owner to modify it
 	if soulcore.AddedByUserID != userID && list.AuthorID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "only the list owner or the user who added the soulcore can modify it")
+		return errors.NewForbiddenError(errors.ErrForbidden).
+			WithOperation("verify_soulcore_ownership").
+			WithResource("soulcore")
 	}
 
 	// Update soul core status
@@ -370,7 +435,9 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 		Status:     req.Status,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to update soul core status")
+		return errors.NewDatabaseError(err).
+			WithOperation("update_soulcore_status").
+			WithResource("soulcore")
 	}
 
 	// If the status is being set to unlocked, create suggestions for all members
@@ -392,14 +459,18 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 func (h *ListsHandler) GetCharacterSuggestions(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_character_id").
+			WithResource("character")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -407,15 +478,26 @@ func (h *ListsHandler) GetCharacterSuggestions(c echo.Context) error {
 	// Verify that the character belongs to the user
 	char, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if err == sql.ErrNoRows {
+			return errors.NewNotFoundError(err).
+				WithOperation("get_character").
+				WithResource("character")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_character").
+			WithResource("character")
 	}
 	if char.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return errors.NewForbiddenError(errors.ErrForbidden).
+			WithOperation("verify_character_ownership").
+			WithResource("character")
 	}
 
 	suggestions, err := h.store.GetCharacterSuggestions(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get suggestions")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_character_suggestions").
+			WithResource("suggestion")
 	}
 
 	return c.JSON(http.StatusOK, suggestions)
@@ -425,21 +507,27 @@ func (h *ListsHandler) GetCharacterSuggestions(c echo.Context) error {
 func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_character_id").
+			WithResource("character")
 	}
 
 	var req struct {
 		CreatureID uuid.UUID `json:"creature_id"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("suggestion")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -447,10 +535,19 @@ func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
 	// Verify that the character belongs to the user
 	char, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if err == sql.ErrNoRows {
+			return errors.NewNotFoundError(err).
+				WithOperation("get_character").
+				WithResource("character")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_character").
+			WithResource("character")
 	}
 	if char.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return errors.NewForbiddenError(errors.ErrForbidden).
+			WithOperation("verify_character_ownership").
+			WithResource("character")
 	}
 
 	// Add the soulcore to the character
@@ -459,7 +556,9 @@ func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
 		CreatureID:  req.CreatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add soulcore to character")
+		return errors.NewDatabaseError(err).
+			WithOperation("add_character_soulcore").
+			WithResource("soulcore")
 	}
 
 	// Remove the suggestion
@@ -468,7 +567,9 @@ func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
 		CreatureID:  req.CreatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to delete suggestion")
+		return errors.NewDatabaseError(err).
+			WithOperation("delete_soulcore_suggestion").
+			WithResource("suggestion")
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -478,21 +579,27 @@ func (h *ListsHandler) AcceptSoulcoreSuggestion(c echo.Context) error {
 func (h *ListsHandler) DismissSoulcoreSuggestion(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_character_id").
+			WithResource("character")
 	}
 
 	var req struct {
 		CreatureID uuid.UUID `json:"creature_id"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("suggestion")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -500,10 +607,19 @@ func (h *ListsHandler) DismissSoulcoreSuggestion(c echo.Context) error {
 	// Verify that the character belongs to the user
 	char, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if err == sql.ErrNoRows {
+			return errors.NewNotFoundError(err).
+				WithOperation("get_character").
+				WithResource("character")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_character").
+			WithResource("character")
 	}
 	if char.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return errors.NewForbiddenError(errors.ErrForbidden).
+			WithOperation("verify_character_ownership").
+			WithResource("character")
 	}
 
 	// Remove the suggestion
@@ -512,7 +628,9 @@ func (h *ListsHandler) DismissSoulcoreSuggestion(c echo.Context) error {
 		CreatureID:  req.CreatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to delete suggestion")
+		return errors.NewDatabaseError(err).
+			WithOperation("delete_soulcore_suggestion").
+			WithResource("suggestion")
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -522,7 +640,9 @@ func (h *ListsHandler) DismissSoulcoreSuggestion(c echo.Context) error {
 func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 	listID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_list_id").
+			WithResource("list")
 	}
 
 	var req struct {
@@ -530,14 +650,18 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 		Status     db.SoulcoreStatus `json:"status"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("list")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -548,11 +672,15 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 		UserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+		return errors.NewDatabaseError(err).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 
 	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+		return errors.NewListForbiddenError(errors.ErrListForbidden).
+			WithOperation("verify_list_membership").
+			WithResource("list")
 	}
 
 	// Add soul core with the user ID who added it
@@ -563,7 +691,9 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 		AddedByUserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add soul core")
+		return errors.NewDatabaseError(err).
+			WithOperation("add_soulcore_to_list").
+			WithResource("soulcore")
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -573,19 +703,25 @@ func (h *ListsHandler) AddSoulcore(c echo.Context) error {
 func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 	listID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_list_id").
+			WithResource("list")
 	}
 
 	creatureID, err := uuid.Parse(c.Param("creature_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid creature ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_creature_id").
+			WithResource("creature")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -596,11 +732,15 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 		UserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+		return errors.NewDatabaseError(err).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 
 	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+		return errors.NewListForbiddenError(errors.ErrListForbidden).
+			WithOperation("verify_list_membership").
+			WithResource("list")
 	}
 
 	// Get the soulcore to check ownership
@@ -610,20 +750,28 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return echo.NewHTTPError(http.StatusNotFound, "soulcore not found")
+			return errors.NewNotFoundError(err).
+				WithOperation("get_soulcore").
+				WithResource("soulcore")
 		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check soulcore ownership")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_soulcore").
+			WithResource("soulcore")
 	}
 
 	// Get list details to check if user is the owner
 	list, err := h.store.GetList(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list details")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list").
+			WithResource("list")
 	}
 
 	// Allow both the soulcore adder and list owner to remove it
 	if soulcore.AddedByUserID != userID && list.AuthorID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "only the list owner or the user who added the soulcore can remove it")
+		return errors.NewForbiddenError(errors.ErrForbidden).
+			WithOperation("verify_soulcore_ownership").
+			WithResource("soulcore")
 	}
 
 	// Delete the soulcore from the list
@@ -632,7 +780,9 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 		CreatureID: creatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to remove soul core")
+		return errors.NewDatabaseError(err).
+			WithOperation("remove_list_soulcore").
+			WithResource("soulcore")
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -649,12 +799,16 @@ type JoinListRequest struct {
 func (h *ListsHandler) JoinList(c echo.Context) error {
 	shareCode, err := uuid.Parse(c.Param("share_code"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid share code")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_share_code").
+			WithResource("list")
 	}
 
 	var req JoinListRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("decode_request").
+			WithResource("list")
 	}
 
 	ctx := c.Request().Context()
@@ -662,7 +816,14 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 	// Get the list by share code
 	list, err := h.store.GetListByShareCode(ctx, shareCode)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "list not found")
+		if err == sql.ErrNoRows {
+			return errors.NewListNotFoundError(err).
+				WithOperation("get_list_by_share_code").
+				WithResource("list")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_by_share_code").
+			WithResource("list")
 	}
 
 	// Check if user is authenticated
@@ -674,7 +835,9 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		// User is authenticated, parse their ID
 		userID, err = uuid.Parse(userIDStr)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+			return errors.NewUnauthorizedError(err).
+				WithOperation("parse_user_id").
+				WithResource("user")
 		}
 		log.Printf("Using existing authenticated user: %s", userID)
 	} else {
@@ -682,20 +845,26 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		log.Printf("No authenticated user found, creating anonymous user")
 		newUser, err := h.store.CreateAnonymousUser(ctx, uuid.New())
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+			return errors.NewDatabaseError(err).
+				WithOperation("create_anonymous_user").
+				WithResource("user")
 		}
 		userID = newUser.ID
 
 		// Generate token
 		token, err = auth.GenerateToken(userID.String(), false)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+			return errors.NewInternalError(err).
+				WithOperation("generate_token").
+				WithResource("auth")
 		}
 		c.Response().Header().Set("X-Auth-Token", token)
 
 		// For new users joining with a new character, require character info
 		if req.CharacterID == "" && (req.CharacterName == "" || req.World == "") {
-			return echo.NewHTTPError(http.StatusBadRequest, "character_name and world are required for first join")
+			return errors.NewListInvalidError(errors.ErrListInvalid).
+				WithOperation("validate_character_info").
+				WithResource("list")
 		}
 	}
 
@@ -705,10 +874,14 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		UserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+		return errors.NewDatabaseError(err).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 	if isMember {
-		return echo.NewHTTPError(http.StatusBadRequest, "user is already a member of this list")
+		return errors.NewConflictError(errors.ErrConflict).
+			WithOperation("check_existing_membership").
+			WithResource("list")
 	}
 
 	var character db.Character
@@ -716,34 +889,42 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		// Parse character ID from string to UUID
 		characterID, err := uuid.Parse(req.CharacterID)
 		if err != nil {
-			log.Printf("Failed to parse character ID %q: %v", req.CharacterID, err)
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID format")
+			return errors.NewInvalidRequestError(err).
+				WithOperation("parse_character_id").
+				WithResource("character")
 		}
-		log.Printf("Parsed character ID: %s", characterID)
 
 		// Verify character exists and belongs to user
 		character, err = h.store.GetCharacter(ctx, characterID)
 		if err != nil {
-			log.Printf("Failed to find character with ID %s: %v", characterID, err)
-			return echo.NewHTTPError(http.StatusNotFound, "character not found")
+			if err == sql.ErrNoRows {
+				return errors.NewNotFoundError(err).
+					WithOperation("get_character").
+					WithResource("character")
+			}
+			return errors.NewDatabaseError(err).
+				WithOperation("get_character").
+				WithResource("character")
 		}
-		log.Printf("Found character: ID=%s, UserID=%s, Name=%s, World=%s", character.ID, character.UserID, character.Name, character.World)
-		log.Printf("Current user ID: %s", userID)
 
 		if character.UserID != userID {
-			log.Printf("Character %s belongs to user %s, but current user is %s", character.ID, character.UserID, userID)
-			return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+			return errors.NewForbiddenError(errors.ErrForbidden).
+				WithOperation("verify_character_ownership").
+				WithResource("character")
 		}
 		if character.World != list.World {
-			log.Printf("Character world %s does not match list world %s", character.World, list.World)
-			return echo.NewHTTPError(http.StatusBadRequest, "character world does not match list world")
+			return errors.NewListInvalidError(errors.ErrListInvalid).
+				WithOperation("verify_character_world").
+				WithResource("list")
 		}
 	} else {
 		// Check if the character name is already taken
 		if req.CharacterName != "" {
 			existingChar, err := h.store.GetCharacterByName(ctx, req.CharacterName)
 			if err == nil && existingChar.UserID != userID {
-				return echo.NewHTTPError(http.StatusConflict, "character name is already registered")
+				return errors.NewConflictError(errors.ErrConflict).
+					WithOperation("check_character_name").
+					WithResource("character")
 			}
 		}
 
@@ -754,7 +935,9 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 			World:  strings.TrimSpace(req.World),
 		})
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create character")
+			return errors.NewDatabaseError(err).
+				WithOperation("create_character").
+				WithResource("character")
 		}
 	}
 
@@ -765,13 +948,17 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		CharacterID: character.ID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add character to list")
+		return errors.NewDatabaseError(err).
+			WithOperation("add_character_to_list").
+			WithResource("list")
 	}
 
 	// Get member stats for the newly added member
 	members, err := h.store.GetListMembers(ctx, list.ID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_members").
+			WithResource("list")
 	}
 
 	memberStats := make([]MemberStats, len(members))
@@ -811,7 +998,9 @@ type ListPreviewResponse struct {
 func (h *ListsHandler) GetListPreview(c echo.Context) error {
 	shareCode, err := uuid.Parse(c.Param("share_code"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid share code")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_share_code").
+			WithResource("list")
 	}
 
 	ctx := c.Request().Context()
@@ -819,13 +1008,22 @@ func (h *ListsHandler) GetListPreview(c echo.Context) error {
 	// Get the list by share code
 	list, err := h.store.GetListByShareCode(ctx, shareCode)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "list not found")
+		if err == sql.ErrNoRows {
+			return errors.NewListNotFoundError(err).
+				WithOperation("get_list_by_share_code").
+				WithResource("list")
+		}
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_by_share_code").
+			WithResource("list")
 	}
 
 	// Get member count
 	members, err := h.store.GetMembers(ctx, list.ID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_members").
+			WithResource("list")
 	}
 
 	return c.JSON(http.StatusOK, ListPreviewResponse{
@@ -840,14 +1038,18 @@ func (h *ListsHandler) GetListPreview(c echo.Context) error {
 func (h *ListsHandler) GetListMembersWithUnlocks(c echo.Context) error {
 	listID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid list ID")
+		return errors.NewInvalidRequestError(err).
+			WithOperation("parse_list_id").
+			WithResource("list")
 	}
 
 	// Get authenticated user ID from context
 	userIDStr := c.Get("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return errors.NewUnauthorizedError(err).
+			WithOperation("parse_user_id").
+			WithResource("user")
 	}
 
 	ctx := c.Request().Context()
@@ -858,15 +1060,21 @@ func (h *ListsHandler) GetListMembersWithUnlocks(c echo.Context) error {
 		UserID: userID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to check list membership")
+		return errors.NewDatabaseError(err).
+			WithOperation("check_list_membership").
+			WithResource("list")
 	}
 	if !isMember {
-		return echo.NewHTTPError(http.StatusForbidden, "user is not a member of this list")
+		return errors.NewListForbiddenError(errors.ErrListForbidden).
+			WithOperation("verify_list_membership").
+			WithResource("list")
 	}
 
 	members, err := h.store.GetListMembersWithUnlocks(ctx, listID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get list members")
+		return errors.NewDatabaseError(err).
+			WithOperation("get_list_members_with_unlocks").
+			WithResource("list")
 	}
 
 	return c.JSON(http.StatusOK, members)

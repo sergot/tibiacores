@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/errors"
 )
 
 type OAuthHandler struct {
@@ -34,7 +35,9 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	provider := c.Param("provider")
 	redirectURL, err := auth.GetOAuthRedirect(provider)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return errors.NewOAuthProviderError(err).
+			WithOperation("get_oauth_redirect").
+			WithResource("oauth")
 	}
 
 	return c.String(http.StatusOK, redirectURL)
@@ -47,7 +50,9 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	code := c.QueryParam("code")
 
 	if !h.oauthProvider.ValidateState(state) {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid oauth state")
+		return errors.NewOAuthStateError(errors.ErrOAuthStateInvalid).
+			WithOperation("validate_oauth_state").
+			WithResource("oauth")
 	}
 
 	ctx := context.Background()
@@ -55,7 +60,9 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	// Exchange code for token
 	userInfo, err := h.oauthProvider.ExchangeCode(provider, code)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "failed to authenticate with provider")
+		return errors.NewOAuthCodeError(err).
+			WithOperation("exchange_oauth_code").
+			WithResource("oauth")
 	}
 
 	// Find or create user
@@ -69,13 +76,17 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		// User exists with this email
 		if existingUser.Password.Valid {
 			// User exists with password, meaning it's not an OAuth user
-			return echo.NewHTTPError(http.StatusConflict, "email already in use with a different account type")
+			return errors.NewOAuthEmailInUseError(errors.ErrOAuthEmailInUse).
+				WithOperation("check_existing_user").
+				WithResource("user")
 		}
 
 		// Existing OAuth user, generate token and return
 		token, err := auth.GenerateToken(existingUser.ID.String(), true)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+			return errors.NewOAuthTokenError(err).
+				WithOperation("generate_token").
+				WithResource("oauth")
 		}
 
 		c.Response().Header().Set("X-Auth-Token", token)
@@ -114,7 +125,9 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 					// Successfully migrated anonymous user
 					token, err := auth.GenerateToken(user.ID.String(), true)
 					if err != nil {
-						return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+						return errors.NewOAuthTokenError(err).
+							WithOperation("generate_token").
+							WithResource("oauth")
 					}
 
 					c.Response().Header().Set("X-Auth-Token", token)
@@ -137,13 +150,17 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		EmailVerified:              true,                 // OAuth users are already verified
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+		return errors.NewDatabaseError(err).
+			WithOperation("create_user").
+			WithResource("user")
 	}
 
 	// Generate JWT token
 	token, err := auth.GenerateToken(user.ID.String(), true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+		return errors.NewOAuthTokenError(err).
+			WithOperation("generate_token").
+			WithResource("oauth")
 	}
 
 	// Set token in X-Auth-Token header
