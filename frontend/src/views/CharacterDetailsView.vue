@@ -41,34 +41,6 @@
           </div>
         </div>
 
-        <!-- Add Soul Core Section -->
-        <div class="px-6 py-4 border-b border-gray-200">
-          <div class="flex items-center space-x-4">
-            <div class="w-64">
-              <CreatureSelect
-                v-model="selectedCreatureName"
-                :creatures="creatures"
-                :existing-soul-cores="
-                  unlockedCores.map((core) => ({
-                    creature_id: core.creature_id,
-                    creature_name: core.creature_name,
-                    status: 'obtained',
-                    added_by: '',
-                    added_by_user_id: '',
-                  }))
-                "
-              />
-            </div>
-            <button
-              @click="addSoulcore"
-              :disabled="!selectedCreatureName"
-              class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ t('characterDetails.soulcores.addButton') }}
-            </button>
-          </div>
-        </div>
-
         <!-- Stats Overview -->
         <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -109,9 +81,35 @@
       <!-- Soul Cores Section -->
       <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900">
-            {{ t('characterDetails.soulcores.title') }}
-          </h2>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 class="text-xl font-semibold text-gray-900">
+              {{ t('characterDetails.soulcores.title') }}
+            </h2>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <div class="w-full sm:w-80">
+                <CreatureSelect
+                  v-model="selectedCreatureName"
+                  :creatures="creatures"
+                  :existing-soul-cores="
+                    unlockedCores.map((core) => ({
+                      creature_id: core.creature_id,
+                      creature_name: core.creature_name,
+                      status: 'obtained',
+                      added_by: '',
+                      added_by_user_id: '',
+                    }))
+                  "
+                />
+              </div>
+              <button
+                @click="addSoulcore"
+                :disabled="!selectedCreatureName"
+                class="w-full sm:w-auto min-w-[120px] bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ t('characterDetails.soulcores.addButton') }}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="px-6 py-6">
