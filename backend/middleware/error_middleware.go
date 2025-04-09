@@ -32,51 +32,58 @@ func ErrorHandler(err error, c echo.Context) {
 		Operation: c.Request().Method + " " + c.Request().URL.Path,
 	}
 
+	var appErr *apperror.AppError
+	var statusCode int
+
 	switch e := err.(type) {
 	case *apperror.AppError:
 		// Add request context to the error
-		e = e.WithContext(ctx)
-
-		// Log internal error details
-		e.LogError()
-
-		// Return client-safe error response
-		response := e.ToHTTPResponse()
-		c.JSON(e.StatusCode, response)
+		appErr = e.WithContext(ctx)
+		statusCode = e.StatusCode
 
 	case *echo.HTTPError:
 		// Convert Echo HTTP error to our AppError format
-		appErr := apperror.NewError(
+		appErr = apperror.NewError(
 			apperror.ErrorTypeInternal,
 			"http_error",
 			e.Message.(string),
 			e.Code,
 			err,
 		).WithContext(ctx)
-
-		// Log internal error details
-		appErr.LogError()
-
-		// Return client-safe error response
-		response := appErr.ToHTTPResponse()
-		c.JSON(e.Code, response)
+		statusCode = e.Code
 
 	default:
 		// Create a new internal error for unknown error types
-		appErr := apperror.NewError(
+		appErr = apperror.NewError(
 			apperror.ErrorTypeInternal,
 			"internal_error",
 			"An unexpected error occurred",
 			http.StatusInternalServerError,
 			err,
 		).WithContext(ctx)
+		statusCode = http.StatusInternalServerError
+	}
 
-		// Log internal error details
-		appErr.LogError()
+	// Log internal error details
+	appErr.LogError()
 
-		// Return client-safe error response
-		response := appErr.ToHTTPResponse()
-		c.JSON(http.StatusInternalServerError, response)
+	// Return client-safe error response
+	response := appErr.ToHTTPResponse()
+	if jsonErr := c.JSON(statusCode, response); jsonErr != nil {
+		// If we fail to send JSON, create a new error with the JSON error
+		jsonAppErr := apperror.NewError(
+			apperror.ErrorTypeInternal,
+			"json_serialization_error",
+			"Failed to serialize error response",
+			statusCode,
+			jsonErr,
+		).WithContext(ctx)
+
+		// Log the JSON error
+		jsonAppErr.LogError()
+
+		// Try to send a simple text response as a last resort
+		c.String(statusCode, "Internal Server Error")
 	}
 }
 
@@ -105,26 +112,44 @@ func RecoverWithConfig() echo.MiddlewareFunc {
 						}
 					}
 
-					// Create error with context
+					// Create error context
+					ctx := apperror.ErrorContext{
+						RequestID: requestID,
+						UserID:    userID,
+						Operation: c.Request().Method + " " + c.Request().URL.Path,
+					}
+
+					// Create a new internal error for the panic
 					appErr := apperror.NewError(
 						apperror.ErrorTypeInternal,
 						"panic",
 						"An unexpected error occurred",
 						http.StatusInternalServerError,
 						err,
-					).WithContext(apperror.ErrorContext{
-						RequestID: requestID,
-						UserID:    userID,
-						Operation: c.Request().Method + " " + c.Request().URL.Path,
-					})
+					).WithContext(ctx)
 
-					// Log internal error details including stack trace
+					// Log the panic and stack trace
 					appErr.LogError()
-					debug.PrintStack()
+					c.Logger().Errorf("Panic recovered: %v\n%s", err, debug.Stack())
 
 					// Return client-safe error response
 					response := appErr.ToHTTPResponse()
-					c.JSON(http.StatusInternalServerError, response)
+					if jsonErr := c.JSON(http.StatusInternalServerError, response); jsonErr != nil {
+						// If we fail to send JSON, create a new error with the JSON error
+						jsonAppErr := apperror.NewError(
+							apperror.ErrorTypeInternal,
+							"json_serialization_error",
+							"Failed to serialize error response",
+							http.StatusInternalServerError,
+							jsonErr,
+						).WithContext(ctx)
+
+						// Log the JSON error
+						jsonAppErr.LogError()
+
+						// Try to send a simple text response as a last resort
+						c.String(http.StatusInternalServerError, "Internal Server Error")
+					}
 				}
 			}()
 
