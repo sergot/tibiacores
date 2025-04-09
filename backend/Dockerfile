@@ -12,7 +12,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server
 
 # For development with hot reload
 FROM golang:1.24-alpine AS dev
@@ -48,4 +48,4 @@ RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 EXPOSE 8080
 
 # Command to run the application
-CMD ["./main"] 
+CMD ["./main"]
