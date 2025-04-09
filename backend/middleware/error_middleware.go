@@ -83,7 +83,20 @@ func ErrorHandler(err error, c echo.Context) {
 		jsonAppErr.LogError()
 
 		// Try to send a simple text response as a last resort
-		c.String(statusCode, "Internal Server Error")
+		if stringErr := c.String(statusCode, "Internal Server Error"); stringErr != nil {
+			// If we can't even send a text response, log the error
+			stringAppErr := apperror.NewError(
+				apperror.ErrorTypeInternal,
+				"text_response_error",
+				"Failed to send text error response",
+				statusCode,
+				stringErr,
+			).WithContext(ctx)
+			stringAppErr.LogError()
+
+			// Set the status code and let the request complete
+			c.Response().WriteHeader(statusCode)
+		}
 	}
 }
 
@@ -148,7 +161,20 @@ func RecoverWithConfig() echo.MiddlewareFunc {
 						jsonAppErr.LogError()
 
 						// Try to send a simple text response as a last resort
-						c.String(http.StatusInternalServerError, "Internal Server Error")
+						if stringErr := c.String(http.StatusInternalServerError, "Internal Server Error"); stringErr != nil {
+							// If we can't even send a text response, log the error
+							stringAppErr := apperror.NewError(
+								apperror.ErrorTypeInternal,
+								"text_response_error",
+								"Failed to send text error response",
+								http.StatusInternalServerError,
+								stringErr,
+							).WithContext(ctx)
+							stringAppErr.LogError()
+
+							// Set the status code and let the request complete
+							c.Response().WriteHeader(http.StatusInternalServerError)
+						}
 					}
 				}
 			}()
