@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 )
 
 type OAuthHandler struct {
@@ -34,7 +35,7 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	provider := c.Param("provider")
 	redirectURL, err := auth.GetOAuthRedirect(provider)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return apperror.ValidationError("Unable to get OAuth redirect URL", err)
 	}
 
 	return c.String(http.StatusOK, redirectURL)
@@ -47,7 +48,12 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	code := c.QueryParam("code")
 
 	if !h.oauthProvider.ValidateState(state) {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid oauth state")
+		return apperror.ValidationError("Invalid OAuth state", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "state",
+				Value:  state,
+				Reason: "State validation failed",
+			})
 	}
 
 	ctx := context.Background()
@@ -55,7 +61,13 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	// Exchange code for token
 	userInfo, err := h.oauthProvider.ExchangeCode(provider, code)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "failed to authenticate with provider")
+		return apperror.ExternalServiceError("Failed to authenticate with provider", err).
+			WithDetails(&apperror.ExternalServiceErrorDetails{
+				Service:   "OAuth",
+				Operation: "ExchangeCode",
+				Endpoint:  provider,
+			}).
+			Wrap(err)
 	}
 
 	// Find or create user
@@ -69,13 +81,23 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		// User exists with this email
 		if existingUser.Password.Valid {
 			// User exists with password, meaning it's not an OAuth user
-			return echo.NewHTTPError(http.StatusConflict, "email already in use with a different account type")
+			return apperror.ValidationError("Email already in use with a different account type", nil).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "email",
+					Value:  userInfo.Email,
+					Reason: "Account type mismatch",
+				})
 		}
 
 		// Existing OAuth user, generate token and return
 		token, err := auth.GenerateToken(existingUser.ID.String(), true)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+			return apperror.InternalError("Failed to generate token", err).
+				WithContext(apperror.ErrorContext{
+					Operation: "GenerateToken",
+					UserID:    existingUser.ID.String(),
+				}).
+				Wrap(err)
 		}
 
 		c.Response().Header().Set("X-Auth-Token", token)
@@ -114,7 +136,12 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 					// Successfully migrated anonymous user
 					token, err := auth.GenerateToken(user.ID.String(), true)
 					if err != nil {
-						return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+						return apperror.InternalError("Failed to generate token", err).
+							WithContext(apperror.ErrorContext{
+								Operation: "GenerateToken",
+								UserID:    user.ID.String(),
+							}).
+							Wrap(err)
 					}
 
 					c.Response().Header().Set("X-Auth-Token", token)
@@ -137,13 +164,23 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		EmailVerified:              true,                 // OAuth users are already verified
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+		return apperror.DatabaseError("Failed to create user", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "CreateUser",
+				Table:     "users",
+			}).
+			Wrap(err)
 	}
 
 	// Generate JWT token
 	token, err := auth.GenerateToken(user.ID.String(), true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+		return apperror.InternalError("Failed to generate token", err).
+			WithContext(apperror.ErrorContext{
+				Operation: "GenerateToken",
+				UserID:    user.ID.String(),
+			}).
+			Wrap(err)
 	}
 
 	// Set token in X-Auth-Token header

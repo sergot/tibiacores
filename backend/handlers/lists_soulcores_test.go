@@ -15,6 +15,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -24,7 +25,7 @@ func TestAddSoulcore(t *testing.T) {
 		name          string
 		setupRequest  func(c echo.Context, reqBody *bytes.Buffer)
 		setupMocks    func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID)
-		expectedCode  int
+		expectedCode  string
 		expectedError string
 	}{
 		{
@@ -51,7 +52,7 @@ func TestAddSoulcore(t *testing.T) {
 					}).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Invalid List ID",
@@ -61,8 +62,8 @@ func TestAddSoulcore(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid list ID",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid list ID",
 		},
 		{
 			name: "Invalid Request Body",
@@ -73,8 +74,8 @@ func TestAddSoulcore(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "User Not a Member",
@@ -89,8 +90,8 @@ func TestAddSoulcore(t *testing.T) {
 					}).
 					Return(false, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "user is not a member of this list",
+			expectedCode:  "authorization_error",
+			expectedError: "User is not a member of this list",
 		},
 		{
 			name: "Error Adding Soulcore",
@@ -114,8 +115,8 @@ func TestAddSoulcore(t *testing.T) {
 					}).
 					Return(errors.New("database error"))
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to add soul core",
+			expectedCode:  "database_error",
+			expectedError: "Failed to add soul core",
 		},
 	}
 
@@ -166,16 +167,17 @@ func TestAddSoulcore(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				require.Error(t, err)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.Code)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
 			// Check successful response
 			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
+			require.Equal(t, http.StatusOK, rec.Code)
 		})
 	}
 }
@@ -188,7 +190,7 @@ func TestRemoveSoulcore(t *testing.T) {
 		name          string
 		setupRequest  func(c echo.Context)
 		setupMocks    func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID)
-		expectedCode  int
+		expectedCode  string
 		expectedError string
 	}{
 		{
@@ -230,7 +232,7 @@ func TestRemoveSoulcore(t *testing.T) {
 					}).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Success - List Owner",
@@ -261,7 +263,7 @@ func TestRemoveSoulcore(t *testing.T) {
 					GetList(gomock.Any(), listID).
 					Return(db.List{
 						ID:       listID,
-						AuthorID: userID, // Current user is the list owner
+						AuthorID: userID, // Current user is the owner
 					}, nil)
 
 				store.EXPECT().
@@ -271,7 +273,7 @@ func TestRemoveSoulcore(t *testing.T) {
 					}).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Invalid List ID",
@@ -281,8 +283,8 @@ func TestRemoveSoulcore(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid list ID",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid list ID",
 		},
 		{
 			name: "Invalid Creature ID",
@@ -292,8 +294,8 @@ func TestRemoveSoulcore(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid creature ID",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid creature ID",
 		},
 		{
 			name: "User Not a Member",
@@ -308,8 +310,8 @@ func TestRemoveSoulcore(t *testing.T) {
 					}).
 					Return(false, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "user is not a member of this list",
+			expectedCode:  "authorization_error",
+			expectedError: "User is not a member of this list",
 		},
 		{
 			name: "Soulcore Not Found",
@@ -331,11 +333,11 @@ func TestRemoveSoulcore(t *testing.T) {
 					}).
 					Return(db.GetListSoulcoreRow{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusNotFound,
-			expectedError: "soulcore not found",
+			expectedCode:  "not_found_error",
+			expectedError: "Soulcore not found",
 		},
 		{
-			name: "Neither Owner Nor Adder",
+			name: "Not Authorized to Remove",
 			setupRequest: func(c echo.Context) {
 				// Default setup is fine
 			},
@@ -355,7 +357,7 @@ func TestRemoveSoulcore(t *testing.T) {
 					Return(db.GetListSoulcoreRow{
 						ListID:        listID,
 						CreatureID:    creatureID,
-						AddedByUserID: uuid.New(), // Different user
+						AddedByUserID: uuid.New(), // Different user added the soulcore
 						Status:        db.SoulcoreStatusObtained,
 					}, nil)
 
@@ -363,14 +365,14 @@ func TestRemoveSoulcore(t *testing.T) {
 					GetList(gomock.Any(), listID).
 					Return(db.List{
 						ID:       listID,
-						AuthorID: uuid.New(), // Different user
+						AuthorID: uuid.New(), // Different user is the owner
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "only the list owner or the user who added the soulcore can remove it",
+			expectedCode:  "authorization_error",
+			expectedError: "Only the list owner or the user who added the soulcore can remove it",
 		},
 		{
-			name: "Error Removing Soulcore",
+			name: "Database Error",
 			setupRequest: func(c echo.Context) {
 				// Default setup is fine
 			},
@@ -408,8 +410,8 @@ func TestRemoveSoulcore(t *testing.T) {
 					}).
 					Return(errors.New("database error"))
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to remove soul core",
+			expectedCode:  "database_error",
+			expectedError: "Failed to remove soul core",
 		},
 	}
 
@@ -420,8 +422,6 @@ func TestRemoveSoulcore(t *testing.T) {
 			defer ctrl.Finish()
 
 			store := mockdb.NewMockStore(ctrl)
-			listID := uuid.New()
-			creatureID := uuid.New()
 			userID := uuid.New()
 
 			// Create HTTP request
@@ -451,40 +451,36 @@ func TestRemoveSoulcore(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				require.Error(t, err)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.Code)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
 			// Check successful response
 			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
+			require.Equal(t, http.StatusOK, rec.Code)
 		})
 	}
 }
 
 func TestUpdateSoulcoreStatus(t *testing.T) {
-	// Create common IDs for all tests upfront
-	sharedCreatureID := uuid.New()
+	listID := uuid.New()
+	creatureID := uuid.New()
 
 	testCases := []struct {
 		name          string
-		setupRequest  func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID)
+		setupRequest  func(c echo.Context, reqBody *bytes.Buffer)
 		setupMocks    func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID)
-		expectedCode  int
+		expectedCode  string
 		expectedError string
 	}{
 		{
 			name: "Success - Soulcore Adder",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -528,17 +524,12 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Success - List Owner",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -582,11 +573,11 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Success - Update to Obtained Status",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
 				reqBody.Reset()
 				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
 					"creature_id": creatureID,
@@ -618,7 +609,7 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					GetList(gomock.Any(), listID).
 					Return(db.List{
 						ID:       listID,
-						AuthorID: uuid.New(), // Different user is the owner
+						AuthorID: uuid.New(),
 					}, nil)
 
 				store.EXPECT().
@@ -628,51 +619,36 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 						Status:     db.SoulcoreStatusObtained,
 					}).
 					Return(nil)
-				// No suggestion creation call expected for obtained status
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 		},
 		{
 			name: "Invalid List ID",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
 				c.SetParamValues("invalid-uuid")
-
-				// Still need valid JSON in the body
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid list ID",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid list ID",
 		},
 		{
 			name: "Invalid Request Body",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
 				reqBody.Reset()
 				reqBody.WriteString("{invalid json")
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "User Not a Member",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				// Default setup
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -682,19 +658,13 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(false, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "user is not a member of this list",
+			expectedCode:  "authorization_error",
+			expectedError: "User is not a member of this list",
 		},
 		{
 			name: "Soulcore Not Found",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				// Default setup
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -711,19 +681,13 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(db.GetListSoulcoreRow{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusNotFound,
-			expectedError: "soulcore not found",
+			expectedCode:  "not_found_error",
+			expectedError: "Soulcore not found",
 		},
 		{
-			name: "Neither Owner Nor Adder",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				// Default setup
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			name: "Not Authorized to Update",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -741,7 +705,7 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					Return(db.GetListSoulcoreRow{
 						ListID:        listID,
 						CreatureID:    creatureID,
-						AddedByUserID: uuid.New(), // Different user
+						AddedByUserID: uuid.New(), // Different user added the soulcore
 						Status:        db.SoulcoreStatusObtained,
 					}, nil)
 
@@ -749,22 +713,16 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					GetList(gomock.Any(), listID).
 					Return(db.List{
 						ID:       listID,
-						AuthorID: uuid.New(), // Different user
+						AuthorID: uuid.New(), // Different user is the owner
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "only the list owner or the user who added the soulcore can modify it",
+			expectedCode:  "authorization_error",
+			expectedError: "Only the list owner or the user who added the soulcore can modify it",
 		},
 		{
-			name: "Error Updating Status",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				// Default setup
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			name: "Database Error",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -801,19 +759,13 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(errors.New("database error"))
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to update soul core status",
+			expectedCode:  "database_error",
+			expectedError: "Failed to update soul core status",
 		},
 		{
 			name: "Error Creating Suggestions",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer, creatureID uuid.UUID) {
-				// Default setup
-				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-					"creature_id": creatureID,
-					"status":      db.SoulcoreStatusUnlocked,
-				})
-				require.NoError(t, err)
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				// Default setup is fine
 			},
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
 				store.EXPECT().
@@ -857,7 +809,7 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 					}).
 					Return(errors.New("database error"))
 			},
-			expectedCode: http.StatusOK, // Should still succeed as suggestion errors are logged but not returned
+			expectedCode: "success", // Should still succeed even if suggestions creation fails
 		},
 	}
 
@@ -868,14 +820,18 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 			defer ctrl.Finish()
 
 			store := mockdb.NewMockStore(ctrl)
-			listID := uuid.New()
 			userID := uuid.New()
 
-			// Create request body with a shared creatureID
+			// Create request body
 			reqBody := &bytes.Buffer{}
+			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+				"creature_id": creatureID,
+				"status":      db.SoulcoreStatusUnlocked,
+			})
+			require.NoError(t, err)
 
 			// Create HTTP request
-			url := fmt.Sprintf("/api/lists/%s/soulcores", listID.String())
+			url := fmt.Sprintf("/api/lists/%s/soulcores/%s/status", listID.String(), creatureID.String())
 			req := httptest.NewRequest(http.MethodPut, url, reqBody)
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
@@ -883,35 +839,36 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 			c := e.NewContext(req, rec)
 
 			// Default context setup
-			c.SetPath("/api/lists/:id/soulcores")
+			c.SetPath("/api/lists/:id/soulcores/:creature_id/status")
 			c.Set("user_id", userID.String())
 			c.SetParamNames("id")
 			c.SetParamValues(listID.String())
 
 			// Custom request setup if needed
 			if tc.setupRequest != nil {
-				tc.setupRequest(c, reqBody, sharedCreatureID)
+				tc.setupRequest(c, reqBody)
 			}
 
-			// Setup mock expectations with the shared creatureID
-			tc.setupMocks(store, listID, sharedCreatureID, userID)
+			// Setup mock expectations
+			tc.setupMocks(store, listID, creatureID, userID)
 
 			// Execute handler
 			h := handlers.NewListsHandler(store)
-			err := h.UpdateSoulcoreStatus(c)
+			err = h.UpdateSoulcoreStatus(c)
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				require.Error(t, err)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.Code)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
 			// Check successful response
 			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
+			require.Equal(t, http.StatusOK, rec.Code)
 		})
 	}
 }

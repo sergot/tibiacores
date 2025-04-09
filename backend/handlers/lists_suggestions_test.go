@@ -15,6 +15,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -81,7 +82,7 @@ func TestGetCharacterSuggestions(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid character ID",
+			expectedError: "Invalid character ID",
 		},
 		{
 			name: "Character Not Found",
@@ -94,8 +95,8 @@ func TestGetCharacterSuggestions(t *testing.T) {
 					GetCharacter(gomock.Any(), characterID).
 					Return(db.Character{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get character",
+			expectedCode:  http.StatusNotFound,
+			expectedError: "Character not found",
 		},
 		{
 			name: "Character Belongs To Different User",
@@ -113,8 +114,8 @@ func TestGetCharacterSuggestions(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "character does not belong to user",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "Character does not belong to user",
 		},
 		{
 			name: "Database Error Getting Suggestions",
@@ -138,7 +139,7 @@ func TestGetCharacterSuggestions(t *testing.T) {
 					Return(nil, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get suggestions",
+			expectedError: "Failed to get suggestions",
 		},
 		{
 			name: "No Suggestions",
@@ -205,10 +206,10 @@ func TestGetCharacterSuggestions(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
@@ -281,7 +282,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid character ID",
+			expectedError: "Invalid character ID",
 		},
 		{
 			name: "Invalid Request Body",
@@ -293,7 +294,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "Character Not Found",
@@ -306,8 +307,8 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 					GetCharacter(gomock.Any(), characterID).
 					Return(db.Character{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get character",
+			expectedCode:  http.StatusNotFound,
+			expectedError: "Character not found",
 		},
 		{
 			name: "Character Belongs To Different User",
@@ -325,8 +326,8 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "character does not belong to user",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "Character does not belong to user",
 		},
 		{
 			name: "Error Adding Soulcore",
@@ -353,7 +354,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 					Return(errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to add soulcore to character",
+			expectedError: "Failed to add soulcore to character",
 		},
 		{
 			name: "Error Deleting Suggestion",
@@ -388,7 +389,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 					Return(errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to delete suggestion",
+			expectedError: "Failed to delete suggestion",
 		},
 	}
 
@@ -438,10 +439,10 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
@@ -498,7 +499,7 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid character ID",
+			expectedError: "Invalid character ID",
 		},
 		{
 			name: "Invalid Request Body",
@@ -510,7 +511,7 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "Character Not Found",
@@ -523,8 +524,8 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 					GetCharacter(gomock.Any(), characterID).
 					Return(db.Character{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get character",
+			expectedCode:  http.StatusNotFound,
+			expectedError: "Character not found",
 		},
 		{
 			name: "Character Belongs To Different User",
@@ -542,8 +543,8 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "character does not belong to user",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "Character does not belong to user",
 		},
 		{
 			name: "Error Deleting Suggestion",
@@ -570,7 +571,7 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 					Return(errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to delete suggestion",
+			expectedError: "Failed to delete suggestion",
 		},
 	}
 
@@ -620,10 +621,10 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 

@@ -1,8 +1,8 @@
 package handlers_test
 
 import (
+	"database/sql"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,68 +12,58 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/middleware"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
 func TestGetCreatures(t *testing.T) {
-	// Test cases
 	testCases := []struct {
-		name           string
-		setupMocks     func(store *mockdb.MockStore)
-		expectedStatus int
-		validateResp   func(t *testing.T, recorder *httptest.ResponseRecorder)
+		name          string
+		setupMocks    func(store *mockdb.MockStore)
+		expectedCode  int
+		expectedError string
+		checkResponse func(t *testing.T, creatures []db.Creature, rec *httptest.ResponseRecorder)
 	}{
 		{
-			name: "Success",
+			name: "Success - Single Creature",
 			setupMocks: func(store *mockdb.MockStore) {
-				creatures := []db.Creature{
-					{
-						ID:   uuid.New(),
-						Name: "Demon",
-					},
-					{
-						ID:   uuid.New(),
-						Name: "Dragon",
-					},
-				}
 				store.EXPECT().
 					GetCreatures(gomock.Any()).
-					Return(creatures, nil)
+					Return([]db.Creature{
+						{
+							ID:   uuid.New(),
+							Name: "Dragon",
+						},
+					}, nil)
 			},
-			expectedStatus: http.StatusOK,
-			validateResp: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusOK, recorder.Code)
-
-				// Parse the response
-				var creatures []db.Creature
-				err := json.Unmarshal(recorder.Body.Bytes(), &creatures)
-				require.NoError(t, err)
-
-				// Validate response content
-				require.Len(t, creatures, 2)
-				require.Equal(t, "Demon", creatures[0].Name)
-				require.Equal(t, "Dragon", creatures[1].Name)
-				require.NotEmpty(t, creatures[0].ID)
-				require.NotEmpty(t, creatures[1].ID)
+			expectedCode: http.StatusOK,
+			checkResponse: func(t *testing.T, creatures []db.Creature, rec *httptest.ResponseRecorder) {
+				require.Len(t, creatures, 1)
+				require.Equal(t, "Dragon", creatures[0].Name)
 			},
 		},
 		{
-			name: "Database Error",
+			name: "Success - Multiple Creatures",
 			setupMocks: func(store *mockdb.MockStore) {
 				store.EXPECT().
 					GetCreatures(gomock.Any()).
-					Return(nil, errors.New("database connection error"))
+					Return([]db.Creature{
+						{
+							ID:   uuid.New(),
+							Name: "Dragon",
+						},
+						{
+							ID:   uuid.New(),
+							Name: "Demon",
+						},
+					}, nil)
 			},
-			expectedStatus: http.StatusInternalServerError,
-			validateResp: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusInternalServerError, recorder.Code)
-
-				// Validate error response
-				var errorResp map[string]string
-				err := json.Unmarshal(recorder.Body.Bytes(), &errorResp)
-				require.NoError(t, err)
-				require.Contains(t, errorResp["error"], "database connection error")
+			expectedCode: http.StatusOK,
+			checkResponse: func(t *testing.T, creatures []db.Creature, rec *httptest.ResponseRecorder) {
+				require.Len(t, creatures, 2)
+				require.Equal(t, "Dragon", creatures[0].Name)
+				require.Equal(t, "Demon", creatures[1].Name)
 			},
 		},
 		{
@@ -83,19 +73,21 @@ func TestGetCreatures(t *testing.T) {
 					GetCreatures(gomock.Any()).
 					Return([]db.Creature{}, nil)
 			},
-			expectedStatus: http.StatusOK,
-			validateResp: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusOK, recorder.Code)
-
-				// Parse the response
-				var creatures []db.Creature
-				err := json.Unmarshal(recorder.Body.Bytes(), &creatures)
-				require.NoError(t, err)
-
-				// Validate empty array
+			expectedCode: http.StatusOK,
+			checkResponse: func(t *testing.T, creatures []db.Creature, rec *httptest.ResponseRecorder) {
 				require.Len(t, creatures, 0)
-				require.Equal(t, "[]\n", recorder.Body.String())
+				require.Equal(t, "[]\n", rec.Body.String())
 			},
+		},
+		{
+			name: "Database Error",
+			setupMocks: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					GetCreatures(gomock.Any()).
+					Return(nil, sql.ErrConnDone)
+			},
+			expectedCode:  http.StatusInternalServerError,
+			expectedError: "Failed to retrieve creatures",
 		},
 	}
 
@@ -108,20 +100,42 @@ func TestGetCreatures(t *testing.T) {
 			store := mockdb.NewMockStore(ctrl)
 			tc.setupMocks(store)
 
-			// Create request and recorder
-			e := echo.New()
+			// Create HTTP request
 			req := httptest.NewRequest(http.MethodGet, "/api/creatures", nil)
 			rec := httptest.NewRecorder()
+			e := echo.New()
 			c := e.NewContext(req, rec)
-			c.SetPath("/api/creatures")
 
-			// Execute the handler
+			// Create handler with mock store
 			h := handlers.NewCreaturesHandler(store)
+
+			// Execute handler
 			err := h.GetCreatures(c)
 
-			// Validate results
+			// Check for expected error response
+			if tc.expectedError != "" {
+				// Use the ErrorHandler to process the error
+				middleware.ErrorHandler(err, c)
+
+				// Check if we received an error with the correct status code and message
+				require.Equal(t, tc.expectedCode, rec.Code)
+
+				var errorResponse map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
+				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
+				return
+			}
+
+			// Check successful response
 			require.NoError(t, err)
-			tc.validateResp(t, rec)
+			require.Equal(t, tc.expectedCode, rec.Code)
+
+			// Check response body
+			if tc.checkResponse != nil {
+				var creatures []db.Creature
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &creatures))
+				tc.checkResponse(t, creatures, rec)
+			}
 		})
 	}
 }

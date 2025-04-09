@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 )
 
 // AuthMiddleware requires a valid auth token and sets user info in context
@@ -13,7 +13,11 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		authHeader := c.Request().Header.Get("Authorization")
 
 		if authHeader == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "missing authorization header")
+			return apperror.AuthorizationError("Missing authorization header", nil).
+				WithDetails(&apperror.AuthorizationErrorDetails{
+					Reason: "missing_auth_header",
+					Field:  "Authorization",
+				})
 		}
 
 		// Validate JWT token
@@ -21,7 +25,11 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		claims, err := ValidateToken(tokenString)
 
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid or expired token")
+			return apperror.AuthorizationError("Invalid or expired token", err).
+				WithDetails(&apperror.AuthorizationErrorDetails{
+					Reason: "token_validation_failed",
+					Field:  "Authorization",
+				})
 		}
 
 		// Set authenticated user information in context

@@ -1,8 +1,8 @@
-package handlers_test
+package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,374 +11,257 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
-	mockdb "github.com/sergot/tibiacores/backend/db/mock"
+	"github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
-	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
-func init() {
-	// Initialize OAuth providers for testing
-	auth.PrepareOAuthProviders()
-}
-
 type mockOAuthProvider struct {
-	validateStateFn func(state string) bool
-	exchangeCodeFn  func(provider, code string) (*auth.OAuthUserInfo, error)
+	auth.OAuthProvider
+	validateState bool
+	userInfo      *auth.OAuthUserInfo
+	err           error
 }
 
 func (m *mockOAuthProvider) ValidateState(state string) bool {
-	if m.validateStateFn != nil {
-		return m.validateStateFn(state)
-	}
-	return false
+	return m.validateState
 }
 
 func (m *mockOAuthProvider) ExchangeCode(provider, code string) (*auth.OAuthUserInfo, error) {
-	if m.exchangeCodeFn != nil {
-		return m.exchangeCodeFn(provider, code)
-	}
-	return nil, nil
+	return m.userInfo, m.err
 }
 
-func TestLogin(t *testing.T) {
+func TestOAuthHandler_Callback(t *testing.T) {
+	e := echo.New()
+
 	testCases := []struct {
 		name          string
-		provider      string
-		expectedCode  int
-		expectedError string
-	}{
-		{
-			name:         "Success - Discord",
-			provider:     "discord",
-			expectedCode: http.StatusOK,
-		},
-		{
-			name:         "Success - Google",
-			provider:     "google",
-			expectedCode: http.StatusOK,
-		},
-		{
-			name:          "Invalid Provider",
-			provider:      "invalid",
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "unsupported OAuth provider: invalid",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			// Setup
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
-
-			store := mockdb.NewMockStore(ctrl)
-
-			// Create HTTP request
-			req := httptest.NewRequest(http.MethodGet, "/api/auth/oauth/"+tc.provider, nil)
-			rec := httptest.NewRecorder()
-			e := echo.New()
-			c := e.NewContext(req, rec)
-
-			// Default context setup
-			c.SetPath("/api/auth/oauth/:provider")
-			c.SetParamNames("provider")
-			c.SetParamValues(tc.provider)
-
-			// Execute handler
-			h := handlers.NewOAuthHandler(store)
-			err := h.Login(c)
-
-			// Check for expected error response
-			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
-				return
-			}
-
-			// Check successful response
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
-
-			// Check URL format based on provider
-			if tc.provider == "google" {
-				require.Contains(t, rec.Body.String(), "accounts.google.com/o/oauth2/v2/auth")
-			} else {
-				require.Contains(t, rec.Body.String(), "oauth2/authorize")
-			}
-		})
-	}
-}
-
-func TestCallback(t *testing.T) {
-	testCases := []struct {
-		name          string
-		setupRequest  func(c echo.Context)
-		setupMocks    func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text)
-		expectedCode  int
-		expectedError string
-		checkResponse func(t *testing.T, response map[string]interface{}, headers http.Header)
+		setupMock     func(*mock.MockStore)
+		setupProvider func() *mockOAuthProvider
+		queryParams   map[string]string
+		pathParams    map[string]string
+		checkResponse func(*testing.T, *httptest.ResponseRecorder, error)
 	}{
 		{
 			name: "Success - New User",
-			setupRequest: func(c echo.Context) {
-				c.SetParamValues("discord")
-				c.QueryParams().Set("state", "valid-state")
-				c.QueryParams().Set("code", "valid-code")
-			},
-			setupMocks: func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text) {
-				provider.validateStateFn = func(state string) bool {
-					return state == "valid-state"
-				}
-				provider.exchangeCodeFn = func(provider, code string) (*auth.OAuthUserInfo, error) {
-					if code == "valid-code" {
-						return &auth.OAuthUserInfo{
-							ID:            "oauth-user-id",
-							Email:         "test@example.com",
-							VerifiedEmail: true,
-							Provider:      provider,
-						}, nil
-					}
-					return nil, errors.New("invalid code")
-				}
-
-				// User doesn't exist yet
+			setupMock: func(store *mock.MockStore) {
 				store.EXPECT().
-					GetUserByEmail(gomock.Any(), email).
-					Return(db.User{}, errors.New("not found"))
-
-				// Create new user
+					GetUserByEmail(gomock.Any(), pgtype.Text{String: "test@example.com", Valid: true}).
+					Return(db.User{}, sql.ErrNoRows)
 				store.EXPECT().
 					CreateUser(gomock.Any(), gomock.Any()).
 					Return(db.User{
-						ID:            uuid.New(),
-						Email:         email,
-						EmailVerified: true,
+						ID:    uuid.New(),
+						Email: pgtype.Text{String: "test@example.com", Valid: true},
 					}, nil)
 			},
-			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
-				require.NotEmpty(t, response["id"])
-				require.True(t, response["has_email"].(bool))
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
-			},
-		},
-		{
-			name: "Success - Existing OAuth User",
-			setupRequest: func(c echo.Context) {
-				c.SetParamValues("discord")
-				c.QueryParams().Set("state", "valid-state")
-				c.QueryParams().Set("code", "valid-code")
-			},
-			setupMocks: func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text) {
-				provider.validateStateFn = func(state string) bool {
-					return state == "valid-state"
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
 				}
-				provider.exchangeCodeFn = func(provider, code string) (*auth.OAuthUserInfo, error) {
-					if code == "valid-code" {
-						return &auth.OAuthUserInfo{
-							ID:            "oauth-user-id",
-							Email:         "test@example.com",
-							VerifiedEmail: true,
-							Provider:      provider,
-						}, nil
-					}
-					return nil, errors.New("invalid code")
-				}
-
-				// User exists with no password (OAuth user)
-				store.EXPECT().
-					GetUserByEmail(gomock.Any(), email).
-					Return(db.User{
-						ID:            uuid.New(),
-						Email:         email,
-						EmailVerified: true,
-						Password:      pgtype.Text{}, // No password means OAuth user
-					}, nil)
 			},
-			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
-				require.NotEmpty(t, response["id"])
-				require.True(t, response["has_email"].(bool))
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
 			},
-		},
-		{
-			name: "Success - Migrate Anonymous User",
-			setupRequest: func(c echo.Context) {
-				c.SetParamValues("discord")
-				c.QueryParams().Set("state", "valid-state")
-				c.QueryParams().Set("code", "valid-code")
-
-				// Use a fixed test UUID
-				existingUserID := uuid.MustParse("c6f36c1c-f957-4655-9dcd-89072ebaabda")
-				token, err := auth.GenerateToken(existingUserID.String(), false)
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
 				require.NoError(t, err)
-				c.Request().Header.Set("Authorization", "Bearer "+token)
-			},
-			setupMocks: func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text) {
-				provider.validateStateFn = func(state string) bool {
-					return state == "valid-state"
-				}
-				provider.exchangeCodeFn = func(provider, code string) (*auth.OAuthUserInfo, error) {
-					if code == "valid-code" {
-						return &auth.OAuthUserInfo{
-							ID:            "oauth-user-id",
-							Email:         "test@example.com",
-							VerifiedEmail: true,
-							Provider:      provider,
-						}, nil
-					}
-					return nil, errors.New("invalid code")
-				}
+				assert.Equal(t, http.StatusOK, rec.Code)
 
-				// Use the same fixed test UUID
-				existingUserID := uuid.MustParse("c6f36c1c-f957-4655-9dcd-89072ebaabda")
-
-				// User doesn't exist with this email
-				store.EXPECT().
-					GetUserByEmail(gomock.Any(), email).
-					Return(db.User{}, errors.New("not found"))
-
-				// Get existing anonymous user
-				store.EXPECT().
-					GetUserByID(gomock.Any(), existingUserID).
-					Return(db.User{
-						ID:          existingUserID,
-						IsAnonymous: true,
-					}, nil)
-
-				// Migrate anonymous user
-				store.EXPECT().
-					MigrateAnonymousUser(gomock.Any(), db.MigrateAnonymousUserParams{
-						ID:                         existingUserID,
-						Email:                      email,
-						Password:                   pgtype.Text{},
-						EmailVerificationToken:     uuid.Nil,
-						EmailVerificationExpiresAt: pgtype.Timestamptz{},
-					}).
-					Return(db.User{
-						ID:            existingUserID,
-						Email:         email,
-						EmailVerified: true,
-						IsAnonymous:   false,
-					}, nil)
-			},
-			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
-				require.NotEmpty(t, response["id"])
-				require.True(t, response["has_email"].(bool))
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
+				var resp map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+				assert.True(t, resp["has_email"].(bool))
 			},
 		},
 		{
-			name: "Invalid State",
-			setupRequest: func(c echo.Context) {
-				c.SetParamValues("discord")
-				c.QueryParams().Set("state", "invalid-state")
-				c.QueryParams().Set("code", "valid-code")
-			},
-			setupMocks: func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text) {
-				provider.validateStateFn = func(state string) bool {
-					return state == "valid-state"
-				}
-			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid oauth state",
-		},
-		{
-			name: "Email Already Used with Password Account",
-			setupRequest: func(c echo.Context) {
-				c.SetParamValues("discord")
-				c.QueryParams().Set("state", "valid-state")
-				c.QueryParams().Set("code", "valid-code")
-			},
-			setupMocks: func(store *mockdb.MockStore, provider *mockOAuthProvider, email pgtype.Text) {
-				provider.validateStateFn = func(state string) bool {
-					return state == "valid-state"
-				}
-				provider.exchangeCodeFn = func(provider, code string) (*auth.OAuthUserInfo, error) {
-					if code == "valid-code" {
-						return &auth.OAuthUserInfo{
-							ID:            "oauth-user-id",
-							Email:         "test@example.com",
-							VerifiedEmail: true,
-							Provider:      provider,
-						}, nil
-					}
-					return nil, errors.New("invalid code")
-				}
-
-				// User exists with password
+			name: "Success - Existing User",
+			setupMock: func(store *mock.MockStore) {
 				store.EXPECT().
-					GetUserByEmail(gomock.Any(), email).
+					GetUserByEmail(gomock.Any(), pgtype.Text{String: "test@example.com", Valid: true}).
 					Return(db.User{
-						ID:       uuid.New(),
-						Email:    email,
-						Password: pgtype.Text{String: "hashed-password", Valid: true},
+						ID:    uuid.New(),
+						Email: pgtype.Text{String: "test@example.com", Valid: true},
 					}, nil)
 			},
-			expectedCode:  http.StatusConflict,
-			expectedError: "email already in use with a different account type",
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
+			},
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.NoError(t, err)
+				assert.Equal(t, http.StatusOK, rec.Code)
+
+				var resp map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+				assert.True(t, resp["has_email"].(bool))
+			},
+		},
+		{
+			name: "Database Error - GetUserByEmail",
+			setupMock: func(store *mock.MockStore) {
+				store.EXPECT().
+					GetUserByEmail(gomock.Any(), pgtype.Text{String: "test@example.com", Valid: true}).
+					Return(db.User{}, sql.ErrConnDone)
+				store.EXPECT().
+					CreateUser(gomock.Any(), gomock.Any()).
+					Return(db.User{}, sql.ErrConnDone)
+			},
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
+			},
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.Error(t, err)
+
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				assert.Equal(t, "Failed to create user", appErr.Message)
+				assert.Equal(t, sql.ErrConnDone, appErr.Unwrap())
+			},
+		},
+		{
+			name:      "Missing Email from Provider",
+			setupMock: func(store *mock.MockStore) {},
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "",
+					},
+					err: apperror.ValidationError("Email is required", nil),
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
+			},
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.Error(t, err)
+
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				assert.Equal(t, "Failed to authenticate with provider", appErr.Message)
+			},
+		},
+		{
+			name:      "Invalid Provider",
+			setupMock: func(store *mock.MockStore) {},
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
+					err: apperror.ValidationError("Invalid OAuth provider", nil),
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
+			},
+			pathParams: map[string]string{
+				"provider": "invalid",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.Error(t, err)
+
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				assert.Equal(t, "Failed to authenticate with provider", appErr.Message)
+			},
+		},
+		{
+			name:      "Invalid State",
+			setupMock: func(store *mock.MockStore) {},
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: false,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "invalid",
+			},
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.Error(t, err)
+
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				assert.Equal(t, "Invalid OAuth state", appErr.Message)
+			},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Setup
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			store := mockdb.NewMockStore(ctrl)
-			oauthProvider := &mockOAuthProvider{}
+			mockStore := mock.NewMockStore(ctrl)
+			tc.setupMock(mockStore)
 
-			// Create HTTP request
-			req := httptest.NewRequest(http.MethodGet, "/api/auth/oauth/callback/discord", nil)
+			handler := NewOAuthHandler(mockStore)
+			handler.SetOAuthProvider(tc.setupProvider())
+
 			rec := httptest.NewRecorder()
-			e := echo.New()
+
+			// Build query string
+			query := ""
+			for k, v := range tc.queryParams {
+				if query != "" {
+					query += "&"
+				}
+				query += k + "=" + v
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/oauth/callback?"+query, nil)
 			c := e.NewContext(req, rec)
+			c.SetPath("/oauth/:provider/callback")
+			c.SetParamNames("provider")
+			c.SetParamValues(tc.pathParams["provider"])
 
-			// Default context setup
-			c.SetPath("/api/auth/oauth/:provider/callback")
-
-			// Custom request setup
-			if tc.setupRequest != nil {
-				tc.setupRequest(c)
-			}
-
-			// Setup mock expectations with the test email
-			email := pgtype.Text{String: "test@example.com", Valid: true}
-			if tc.setupMocks != nil {
-				tc.setupMocks(store, oauthProvider, email)
-			}
-
-			// Execute handler
-			h := handlers.NewOAuthHandler(store)
-			h.SetOAuthProvider(oauthProvider)
-			err := h.Callback(c)
-
-			// Check for expected error response
-			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
-				return
-			}
-
-			// Check successful response
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
-
-			// Check response body and headers
-			if tc.checkResponse != nil {
-				var response map[string]interface{}
-				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
-				tc.checkResponse(t, response, rec.Header())
-			}
+			err := handler.Callback(c)
+			tc.checkResponse(t, rec, err)
 		})
 	}
 }

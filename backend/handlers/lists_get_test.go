@@ -14,6 +14,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -75,7 +76,7 @@ func TestGetList(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid list ID",
+			expectedError: "Invalid list ID",
 		},
 		{
 			name: "User Not a Member",
@@ -96,8 +97,8 @@ func TestGetList(t *testing.T) {
 						{UserID: list.AuthorID, CharacterName: "AuthorCharacter"},
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "user is not a member of this list",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "User is not a member of this list",
 		},
 		{
 			name: "List Not Found",
@@ -111,7 +112,7 @@ func TestGetList(t *testing.T) {
 					Return(db.List{}, sql.ErrNoRows)
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "list not found",
+			expectedError: "List not found",
 		},
 		{
 			name: "Error Getting List Members",
@@ -130,7 +131,7 @@ func TestGetList(t *testing.T) {
 					Return(nil, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get list members",
+			expectedError: "Failed to get list members",
 		},
 		{
 			name: "Error Getting Soul Cores",
@@ -156,7 +157,7 @@ func TestGetList(t *testing.T) {
 					Return(nil, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get soul cores",
+			expectedError: "Failed to get soul cores",
 		},
 		{
 			name: "Empty List (No Members or Soulcores)",
@@ -169,8 +170,7 @@ func TestGetList(t *testing.T) {
 					GetList(gomock.Any(), list.ID).
 					Return(list, nil)
 
-					// Only the current user is a member
-					// Only the current user is a member
+				// Only the current user is a member
 				store.EXPECT().
 					GetListMembers(gomock.Any(), list.ID).
 					Return([]db.GetListMembersRow{
@@ -234,10 +234,10 @@ func TestGetList(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
@@ -300,7 +300,7 @@ func TestGetListPreview(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid share code",
+			expectedError: "Invalid share code",
 		},
 		{
 			name: "List Not Found",
@@ -313,7 +313,7 @@ func TestGetListPreview(t *testing.T) {
 					Return(db.List{}, sql.ErrNoRows)
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "list not found",
+			expectedError: "List not found",
 		},
 		{
 			name: "Error Getting Members",
@@ -330,7 +330,7 @@ func TestGetListPreview(t *testing.T) {
 					Return(nil, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get list members",
+			expectedError: "Failed to get list members",
 		},
 		{
 			name: "Empty List (No Members)",
@@ -397,10 +397,10 @@ func TestGetListPreview(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 

@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -12,6 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
@@ -39,11 +42,19 @@ func NewUsersHandler(store db.Store, emailService services.EmailServiceInterface
 func (h *UsersHandler) Login(c echo.Context) error {
 	var req LoginRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return apperror.ValidationError("Invalid request body", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "body",
+				Reason: "Invalid JSON format",
+			})
 	}
 
 	if req.Email == "" || req.Password == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
+		return apperror.ValidationError("Email and password are required", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "credentials",
+				Reason: "Missing required fields",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -55,18 +66,32 @@ func (h *UsersHandler) Login(c echo.Context) error {
 	user, err := h.store.GetUserByEmail(ctx, email)
 	if err != nil {
 		log.Printf("Failed to get user by email: %v", err)
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid email or password")
+		return apperror.AuthorizationError("Invalid email or password", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetUserByEmail",
+				Table:     "users",
+			}).
+			Wrap(err)
 	}
 
 	// Check password
 	if !user.Password.Valid || !auth.CheckPasswordHash(req.Password, user.Password.String) {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid email or password")
+		return apperror.AuthorizationError("Invalid email or password", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "password",
+				Reason: "Incorrect password",
+			})
 	}
 
 	// Generate token
 	token, err := auth.GenerateToken(user.ID.String(), true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+		return apperror.InternalError("Failed to generate token", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "token",
+				Reason: "Token generation failed",
+			}).
+			Wrap(err)
 	}
 
 	// Set token in X-Auth-Token header
@@ -82,11 +107,19 @@ func (h *UsersHandler) Login(c echo.Context) error {
 func (h *UsersHandler) Signup(c echo.Context) error {
 	var req SignupRequest
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return apperror.ValidationError("Invalid request body", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "body",
+				Reason: "Invalid JSON format",
+			})
 	}
 
 	if req.Email == "" || req.Password == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "email and password are required")
+		return apperror.ValidationError("Email and password are required", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "credentials",
+				Reason: "Missing required fields",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -98,13 +131,22 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 
 	existingUser, getUserErr := h.store.GetUserByEmail(ctx, email)
 	if getUserErr == nil && !existingUser.IsAnonymous {
-		return echo.NewHTTPError(http.StatusConflict, "email already in use")
+		return apperror.ValidationError("Email already in use", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "email",
+				Reason: "Email already registered",
+			})
 	}
 
 	// Hash password
 	hashedPassword, err := auth.HashPassword(req.Password)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to process password")
+		return apperror.InternalError("Failed to process password", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "password",
+				Reason: "Password hashing failed",
+			}).
+			Wrap(err)
 	}
 
 	var password pgtype.Text
@@ -132,7 +174,12 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		// Migrate existing anonymous user
 		userID, parseErr := uuid.Parse(*existingUserID)
 		if parseErr != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID format")
+			return apperror.ValidationError("Invalid user ID format", parseErr).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "user_id",
+					Value:  *existingUserID,
+					Reason: "Invalid UUID format",
+				})
 		}
 
 		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
@@ -144,7 +191,12 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		})
 		if err != nil {
 			log.Printf("Failed to migrate anonymous user: %v", err)
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to migrate user")
+			return apperror.DatabaseError("Failed to migrate user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "MigrateAnonymousUser",
+					Table:     "users",
+				}).
+				Wrap(err)
 		}
 	} else if getUserErr == nil && existingUser.IsAnonymous {
 		// Update existing anonymous user found by email
@@ -157,7 +209,12 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		})
 		if err != nil {
 			log.Printf("Failed to migrate existing user: %v", err)
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to update user")
+			return apperror.DatabaseError("Failed to update user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "MigrateAnonymousUser",
+					Table:     "users",
+				}).
+				Wrap(err)
 		}
 	} else {
 		// Create new user
@@ -169,14 +226,24 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		})
 		if err != nil {
 			log.Printf("Failed to create user: %v", err)
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+			return apperror.DatabaseError("Failed to create user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "CreateUser",
+					Table:     "users",
+				}).
+				Wrap(err)
 		}
 	}
 
 	// Generate new token
 	token, err := auth.GenerateToken(user.ID.String(), true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+		return apperror.InternalError("Failed to generate token", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "token",
+				Reason: "Token generation failed",
+			}).
+			Wrap(err)
 	}
 
 	// Send verification email
@@ -199,29 +266,53 @@ func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 
 	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+		return apperror.ValidationError("Invalid user ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  c.Param("user_id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
 	authedUserIDStr, ok := c.Get("user_id").(string)
 	if !ok {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
 	}
 
 	authedUserID, err := uuid.Parse(authedUserIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  authedUserIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Only allow users to view their own characters
 	if requestedUserID != authedUserID {
-		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' characters")
+		return apperror.AuthorizationError("Cannot access other users' characters", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  requestedUserID.String(),
+				Reason: "Access denied to other user's characters",
+			})
 	}
 
 	characters, err := h.store.GetCharactersByUserID(ctx, requestedUserID)
 	if err != nil {
 		log.Printf("Error getting characters for user %s: %v", requestedUserID, err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get characters")
+		return apperror.DatabaseError("Failed to get characters", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharactersByUserID",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
 
 	return c.JSON(http.StatusOK, characters)
@@ -229,32 +320,55 @@ func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 
 // GetUserLists returns all lists where the user is either an author or a member
 func (h *UsersHandler) GetUserLists(c echo.Context) error {
-
 	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+		return apperror.ValidationError("Invalid user ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  c.Param("user_id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
 	authedUserIDStr, ok := c.Get("user_id").(string)
 	if !ok {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
 	}
 
 	authedUserID, err := uuid.Parse(authedUserIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  authedUserIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Only allow users to view their own lists
 	if requestedUserID != authedUserID {
-		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' lists")
+		return apperror.AuthorizationError("Cannot access other users' lists", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  requestedUserID.String(),
+				Reason: "Access denied to other user's lists",
+			})
 	}
 
 	ctx := c.Request().Context()
 	lists, err := h.store.GetUserLists(ctx, requestedUserID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get lists")
+		return apperror.DatabaseError("Failed to get lists", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetUserLists",
+				Table:     "lists",
+			}).
+			Wrap(err)
 	}
 
 	return c.JSON(http.StatusOK, lists)
@@ -264,14 +378,32 @@ func (h *UsersHandler) GetUserLists(c echo.Context) error {
 func (h *UsersHandler) GetCharacter(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return apperror.ValidationError("Invalid character ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "id",
+				Value:  c.Param("id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -279,12 +411,30 @@ func (h *UsersHandler) GetCharacter(c echo.Context) error {
 	// Get character details
 	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "id",
+					Value:  characterID.String(),
+					Reason: "Character does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get character", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacter",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
 
 	// Verify character belongs to user
 	if character.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return apperror.AuthorizationError("Character does not belong to user", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userID.String(),
+				Reason: "Access denied to other user's character",
+			})
 	}
 
 	return c.JSON(http.StatusOK, character)
@@ -294,14 +444,32 @@ func (h *UsersHandler) GetCharacter(c echo.Context) error {
 func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return apperror.ValidationError("Invalid character ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "id",
+				Value:  c.Param("id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -309,16 +477,40 @@ func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 	// Verify character belongs to user
 	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "id",
+					Value:  characterID.String(),
+					Reason: "Character does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get character", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacter",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
+
 	if character.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return apperror.AuthorizationError("Character does not belong to user", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userID.String(),
+				Reason: "Access denied to other user's character",
+			})
 	}
 
 	// Get unlocked soulcores
 	soulcores, err := h.store.GetCharacterSoulcores(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character soulcores")
+		return apperror.DatabaseError("Failed to get character soulcores", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacterSoulcores",
+				Table:     "character_soulcores",
+			}).
+			Wrap(err)
 	}
 
 	return c.JSON(http.StatusOK, soulcores)
@@ -328,19 +520,42 @@ func (h *UsersHandler) GetCharacterSoulcores(c echo.Context) error {
 func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return apperror.ValidationError("Invalid character ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "id",
+				Value:  c.Param("id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	creatureID, err := uuid.Parse(c.Param("creature_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid creature ID")
+		return apperror.ValidationError("Invalid creature ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "creature_id",
+				Value:  c.Param("creature_id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -348,10 +563,29 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 	// Verify character belongs to user
 	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "id",
+					Value:  characterID.String(),
+					Reason: "Character does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get character", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacter",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
+
 	if character.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return apperror.AuthorizationError("Character does not belong to user", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userID.String(),
+				Reason: "Access denied to other user's character",
+			})
 	}
 
 	// Remove the soulcore
@@ -360,7 +594,12 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 		CreatureID:  creatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to remove soul core")
+		return apperror.DatabaseError("Failed to remove soul core", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "RemoveCharacterSoulcore",
+				Table:     "character_soulcores",
+			}).
+			Wrap(err)
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -370,21 +609,43 @@ func (h *UsersHandler) RemoveCharacterSoulcore(c echo.Context) error {
 func (h *UsersHandler) AddCharacterSoulcore(c echo.Context) error {
 	characterID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid character ID")
+		return apperror.ValidationError("Invalid character ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "id",
+				Value:  c.Param("id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	var req struct {
 		CreatureID uuid.UUID `json:"creature_id"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return apperror.ValidationError("Invalid request body", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "body",
+				Reason: "Invalid JSON format",
+			})
 	}
 
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -392,10 +653,29 @@ func (h *UsersHandler) AddCharacterSoulcore(c echo.Context) error {
 	// Verify character belongs to user
 	character, err := h.store.GetCharacter(ctx, characterID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get character")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "id",
+					Value:  characterID.String(),
+					Reason: "Character does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get character", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacter",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
+
 	if character.UserID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "character does not belong to user")
+		return apperror.AuthorizationError("Character does not belong to user", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userID.String(),
+				Reason: "Access denied to other user's character",
+			})
 	}
 
 	// Add the soulcore to the character
@@ -404,7 +684,12 @@ func (h *UsersHandler) AddCharacterSoulcore(c echo.Context) error {
 		CreatureID:  req.CreatureID,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to add soul core")
+		return apperror.DatabaseError("Failed to add soul core", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "AddCharacterSoulcore",
+				Table:     "character_soulcores",
+			}).
+			Wrap(err)
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -413,17 +698,35 @@ func (h *UsersHandler) AddCharacterSoulcore(c echo.Context) error {
 // GetPendingSuggestions returns all characters with pending soulcore suggestions
 func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
 
 	suggestions, err := h.store.GetPendingSuggestionsForUser(ctx, userID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get pending suggestions")
+		return apperror.DatabaseError("Failed to get pending suggestions", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetPendingSuggestionsForUser",
+				Table:     "suggestions",
+			}).
+			Wrap(err)
 	}
 
 	return c.JSON(http.StatusOK, suggestions)
@@ -433,12 +736,22 @@ func (h *UsersHandler) GetPendingSuggestions(c echo.Context) error {
 func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 	userID, err := uuid.Parse(c.QueryParam("user_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+		return apperror.ValidationError("Invalid user ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  c.QueryParam("user_id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	token, err := uuid.Parse(c.QueryParam("token"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid verification token")
+		return apperror.ValidationError("Invalid verification token", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "token",
+				Value:  c.QueryParam("token"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -449,7 +762,13 @@ func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 	})
 	if err != nil {
 		log.Printf("Failed to verify email: %v", err)
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid or expired verification token")
+		return apperror.ValidationError("Invalid or expired verification token", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "token",
+				Value:  token.String(),
+				Reason: "Token verification failed",
+			}).
+			Wrap(err)
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -459,23 +778,42 @@ func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 func (h *UsersHandler) GetUser(c echo.Context) error {
 	requestedUserID, err := uuid.Parse(c.Param("user_id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
+		return apperror.ValidationError("Invalid user ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  c.Param("user_id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
 	authedUserIDStr, ok := c.Get("user_id").(string)
 	if !ok {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user authentication")
+		return apperror.AuthorizationError("Invalid user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
 	}
 
 	authedUserID, err := uuid.Parse(authedUserIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  authedUserIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Only allow users to view their own details
 	if requestedUserID != authedUserID {
-		return echo.NewHTTPError(http.StatusForbidden, "cannot access other users' details")
+		return apperror.AuthorizationError("Cannot access other users' details", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  requestedUserID.String(),
+				Reason: "Access denied to other user's details",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -483,7 +821,20 @@ func (h *UsersHandler) GetUser(c echo.Context) error {
 	// Get user details using the queries object
 	user, err := h.store.GetUserByID(ctx, requestedUserID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get user details")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("User not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "user_id",
+					Value:  requestedUserID.String(),
+					Reason: "User does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get user details", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetUserByID",
+				Table:     "users",
+			}).
+			Wrap(err)
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{

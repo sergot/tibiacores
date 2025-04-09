@@ -17,6 +17,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -41,6 +42,7 @@ func TestCreateList(t *testing.T) {
 				})
 				require.NoError(t, err)
 				c.Set("has_email", true)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Verify character exists and belongs to user
@@ -90,6 +92,7 @@ func TestCreateList(t *testing.T) {
 					"world":          "Secura",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Check if character name is already taken - single consolidated check
@@ -231,7 +234,7 @@ func TestCreateList(t *testing.T) {
 					}, nil)
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "character_name and world are required for first list",
+			expectedError: "Character name and world are required for first list",
 		},
 		{
 			name: "Error Creating Anonymous User",
@@ -259,13 +262,14 @@ func TestCreateList(t *testing.T) {
 			name: "Invalid Request Body",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				body.WriteString("{invalid json")
+				body.WriteString("invalid json")
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// No mocks needed
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "Missing List Name",
@@ -276,12 +280,13 @@ func TestCreateList(t *testing.T) {
 					"world":          "Antica",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// No mocks needed
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "name is required",
+			expectedError: "Name is required",
 		},
 		{
 			name: "Character Already Registered",
@@ -293,6 +298,7 @@ func TestCreateList(t *testing.T) {
 					"world":          "Antica",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Return an existing character owned by another user
@@ -305,8 +311,8 @@ func TestCreateList(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusConflict,
-			expectedError: "character name is already registered",
+			expectedCode:  http.StatusBadRequest,
+			expectedError: "Character name is already registered",
 		},
 		{
 			name: "Character Not Found",
@@ -318,6 +324,7 @@ func TestCreateList(t *testing.T) {
 					"name":         "My List",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Character not found
@@ -326,7 +333,7 @@ func TestCreateList(t *testing.T) {
 					Return(db.Character{}, sql.ErrNoRows)
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "character not found",
+			expectedError: "Character not found",
 		},
 		{
 			name: "Character Belongs to Different User",
@@ -338,6 +345,7 @@ func TestCreateList(t *testing.T) {
 					"name":         "My List",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Return character belonging to different user
@@ -350,29 +358,35 @@ func TestCreateList(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "character does not belong to user",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "Character does not belong to user",
 		},
 		{
 			name: "Error Creating List",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
-				characterID := uuid.New()
 				body.Reset()
 				err := json.NewEncoder(body).Encode(map[string]interface{}{
-					"character_id": characterID,
-					"name":         "My List",
+					"character_name": "NewCharacter",
+					"name":           "New List",
+					"world":          "Secura",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
-				// Verify character exists and belongs to user
+				// Check if character name is already taken
 				store.EXPECT().
-					GetCharacter(gomock.Any(), gomock.Any()).
+					GetCharacterByName(gomock.Any(), "NewCharacter").
+					Return(db.Character{}, sql.ErrNoRows)
+
+				// Create character
+				store.EXPECT().
+					CreateCharacter(gomock.Any(), gomock.Any()).
 					Return(db.Character{
 						ID:     uuid.New(),
 						UserID: userID,
-						Name:   "TestCharacter",
-						World:  "Antica",
+						Name:   "NewCharacter",
+						World:  "Secura",
 					}, nil)
 
 				// Error creating list
@@ -381,38 +395,44 @@ func TestCreateList(t *testing.T) {
 					Return(db.List{}, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to create list",
+			expectedError: "Failed to create list",
 		},
 		{
 			name: "Error Adding Character to List",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
-				characterID := uuid.New()
 				body.Reset()
 				err := json.NewEncoder(body).Encode(map[string]interface{}{
-					"character_id": characterID,
-					"name":         "My List",
+					"character_name": "NewCharacter",
+					"name":           "New List",
+					"world":          "Secura",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
-				// Verify character exists and belongs to user
+				// Check if character name is already taken
 				store.EXPECT().
-					GetCharacter(gomock.Any(), gomock.Any()).
+					GetCharacterByName(gomock.Any(), "NewCharacter").
+					Return(db.Character{}, sql.ErrNoRows)
+
+				// Create character
+				store.EXPECT().
+					CreateCharacter(gomock.Any(), gomock.Any()).
 					Return(db.Character{
 						ID:     uuid.New(),
 						UserID: userID,
-						Name:   "TestCharacter",
-						World:  "Antica",
+						Name:   "NewCharacter",
+						World:  "Secura",
 					}, nil)
 
-				// Create list using character's world
+				// Create list
 				store.EXPECT().
 					CreateList(gomock.Any(), gomock.Any()).
 					Return(db.List{
 						ID:        uuid.New(),
 						AuthorID:  userID,
-						Name:      "My List",
-						World:     "Antica",
+						Name:      "New List",
+						World:     "Secura",
 						ShareCode: uuid.New(),
 						CreatedAt: pgtype.Timestamptz{Valid: true, Time: time.Now()},
 						UpdatedAt: pgtype.Timestamptz{Valid: true, Time: time.Now()},
@@ -424,7 +444,7 @@ func TestCreateList(t *testing.T) {
 					Return(errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to add character to list",
+			expectedError: "Failed to add character to list",
 		},
 		{
 			name: "Error Creating Character",
@@ -432,10 +452,11 @@ func TestCreateList(t *testing.T) {
 				body.Reset()
 				err := json.NewEncoder(body).Encode(map[string]interface{}{
 					"character_name": "NewCharacter",
-					"name":           "My List",
-					"world":          "Antica",
+					"name":           "New List",
+					"world":          "Secura",
 				})
 				require.NoError(t, err)
+				c.Set("user_id", uuid.New().String())
 			},
 			setupMocks: func(store *mockdb.MockStore, userID uuid.UUID) {
 				// Check if character name is already taken
@@ -449,48 +470,56 @@ func TestCreateList(t *testing.T) {
 					Return(db.Character{}, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to create character",
+			expectedError: "Failed to create character",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Setup
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
 			store := mockdb.NewMockStore(ctrl)
-			userID := uuid.New()
+			handler := handlers.NewListsHandler(store)
 
-			// Create HTTP request with empty body initially
+			// Create a new Echo instance
+			e := echo.New()
 			reqBody := bytes.NewBuffer([]byte(`{}`))
-			req := httptest.NewRequest(http.MethodPost, "/api/lists", reqBody)
+			req := httptest.NewRequest(http.MethodPost, "/lists", reqBody)
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
-			e := echo.New()
 			c := e.NewContext(req, rec)
 
-			// Default context setup - authenticated user
-			c.Set("user_id", userID.String())
-
-			// Custom request setup if needed
+			// Set up request body and context
 			if tc.setupRequest != nil {
 				tc.setupRequest(c, reqBody)
 			}
 
-			// Setup mock expectations
-			tc.setupMocks(store, userID)
+			// Set up mocks
+			if tc.setupMocks != nil {
+				// Get user ID from context for mocks
+				userIDStr := c.Get("user_id")
+				var userID uuid.UUID
+				if userIDStr != nil {
+					var err error
+					userID, err = uuid.Parse(userIDStr.(string))
+					require.NoError(t, err)
+				} else {
+					userID = uuid.New()
+				}
+				tc.setupMocks(store, userID)
+			}
 
-			// Execute handler
-			h := handlers.NewListsHandler(store)
-			err := h.CreateList(c)
+			// Execute the handler
+			err := handler.CreateList(c)
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Error(t, err)
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Equal(t, tc.expectedError, appErr.Message)
 				return
 			}
 
@@ -498,10 +527,11 @@ func TestCreateList(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tc.expectedCode, rec.Code)
 
-			// Check response body
+			var response handlers.CreateListResponse
+			err = json.NewDecoder(rec.Body).Decode(&response)
+			require.NoError(t, err)
+
 			if tc.checkResponse != nil {
-				var response handlers.CreateListResponse
-				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, &response)
 			}
 		})
@@ -795,7 +825,7 @@ func TestJoinList(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
+			expectedCode:  http.StatusUnauthorized,
 			expectedError: "character does not belong to user",
 		},
 		{
@@ -974,10 +1004,11 @@ func TestJoinList(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Error(t, err)
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Equal(t, tc.expectedError, appErr.Message)
 				return
 			}
 

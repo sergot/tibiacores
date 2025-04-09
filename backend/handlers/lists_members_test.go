@@ -13,6 +13,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -22,7 +23,7 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 		name          string
 		setupRequest  func(c echo.Context)
 		setupMocks    func(store *mockdb.MockStore, listID uuid.UUID, userID uuid.UUID)
-		expectedCode  int
+		expectedCode  string
 		expectedError string
 		checkResponse func(t *testing.T, response []db.GetListMembersWithUnlocksRow)
 	}{
@@ -55,7 +56,7 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 						},
 					}, nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: "success",
 			checkResponse: func(t *testing.T, response []db.GetListMembersWithUnlocksRow) {
 				require.Len(t, response, 1)
 				require.Equal(t, "TestCharacter", response[0].CharacterName)
@@ -72,8 +73,8 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid list ID",
+			expectedCode:  "validation_error",
+			expectedError: "Invalid list ID",
 		},
 		{
 			name: "Invalid User ID Format",
@@ -83,8 +84,8 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, userID uuid.UUID) {
 				// No mocks needed for this case
 			},
-			expectedCode:  http.StatusUnauthorized,
-			expectedError: "invalid user ID format",
+			expectedCode:  "authorization_error",
+			expectedError: "Invalid user ID format",
 		},
 		{
 			name: "User Not a Member",
@@ -100,8 +101,8 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 					}).
 					Return(false, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "user is not a member of this list",
+			expectedCode:  "authorization_error",
+			expectedError: "User is not a member of this list",
 		},
 		{
 			name: "Database Error Getting Members",
@@ -122,8 +123,8 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 					GetListMembersWithUnlocks(gomock.Any(), listID).
 					Return(nil, errors.New("database error"))
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get list members",
+			expectedCode:  "database_error",
+			expectedError: "Failed to get list members",
 		},
 	}
 
@@ -164,16 +165,17 @@ func TestGetListMembersWithUnlocks(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
+				require.Error(t, err)
+				appErr, ok := err.(*apperror.AppError)
 				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Equal(t, tc.expectedCode, appErr.Code)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
 			// Check successful response
 			require.NoError(t, err)
-			require.Equal(t, tc.expectedCode, rec.Code)
+			require.Equal(t, http.StatusOK, rec.Code)
 
 			// Check response body
 			if tc.checkResponse != nil {

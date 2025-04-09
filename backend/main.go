@@ -13,6 +13,8 @@ import (
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	customMiddleware "github.com/sergot/tibiacores/backend/middleware"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
@@ -144,6 +146,14 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339} ${id} ${remote_ip} ${method} ${uri} ${status} ${latency_human}\n",
 	}))
+
+	// Custom error handling middleware
+	e.Use(customMiddleware.RecoverWithConfig())
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		// Use our custom error response handler
+		httpErr := apperror.ErrorResponse(err)
+		_ = c.JSON(httpErr.Code, httpErr.Message)
+	}
 
 	emailService, err := services.NewEmailService()
 	if err != nil {
