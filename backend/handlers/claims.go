@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
-	"log"
+	"errors"
 	"net/http"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
@@ -41,7 +43,11 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		CharacterName string `json:"character_name"`
 	}
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return apperror.ValidationError("Invalid request body", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "body",
+				Reason: "Invalid JSON format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -49,13 +55,30 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	// First check if character exists in TibiaData API
 	tibiaChar, err := h.TibiaData.GetCharacter(req.CharacterName)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "character not found in Tibia")
+		return apperror.NotFoundError("Character not found in Tibia", err).
+			WithDetails(&apperror.ExternalServiceErrorDetails{
+				Service:   "TibiaData",
+				Operation: "GetCharacter",
+			}).
+			Wrap(err)
 	}
 
 	// Check if character exists in our database
 	character, err := h.store.GetCharacterByName(ctx, tibiaChar.Name)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "character is not registered in any list yet")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character is not registered in any list yet", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "GetCharacterByName",
+					Table:     "characters",
+				})
+		}
+		return apperror.DatabaseError("Failed to check character in database", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacterByName",
+				Table:     "characters",
+			}).
+			Wrap(err)
 	}
 
 	// Get or create user
@@ -66,20 +89,35 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		// User is authenticated, parse their ID
 		userID, err = uuid.Parse(userIDStr)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+			return apperror.AuthorizationError("Invalid user ID format", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "user_id",
+					Value:  userIDStr,
+					Reason: "Invalid UUID format",
+				})
 		}
 	} else {
 		// Create new anonymous user account
 		newUser, err := h.store.CreateAnonymousUser(ctx, uuid.New())
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to create user")
+			return apperror.DatabaseError("Failed to create user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "CreateAnonymousUser",
+					Table:     "users",
+				}).
+				Wrap(err)
 		}
 		userID = newUser.ID
 
 		// Generate token
 		token, err = auth.GenerateToken(userID.String(), false)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
+			return apperror.InternalError("Failed to generate authentication token", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "token",
+					Reason: "Token generation failed",
+				}).
+				Wrap(err)
 		}
 
 		c.Response().Header().Set("X-Auth-Token", token)
@@ -101,7 +139,12 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	// Generate random verification code
 	verificationBytes := make([]byte, 16)
 	if _, err := rand.Read(verificationBytes); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate verification code")
+		return apperror.InternalError("Failed to generate verification code", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "verification_code",
+				Reason: "Random number generation failed",
+			}).
+			Wrap(err)
 	}
 	verificationCode := "TIBIACORES-" + hex.EncodeToString(verificationBytes)
 
@@ -112,7 +155,12 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		VerificationCode: verificationCode,
 	})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "failed to create claim")
+		return apperror.DatabaseError("Failed to create claim", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "CreateCharacterClaim",
+				Table:     "character_claims",
+			}).
+			Wrap(err)
 	}
 
 	resp := StartClaimResponse{
@@ -127,17 +175,34 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 
 // CheckClaim checks the status of a character claim
 func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
-	log.Println("CheckClaim called")
 	claimID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid claim ID")
+		return apperror.ValidationError("Invalid claim ID", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "claim_id",
+				Value:  c.Param("id"),
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	// Get authenticated user ID from context
-	userIDStr := c.Get("user_id").(string)
+	userIDStr, ok := c.Get("user_id").(string)
+	if !ok {
+		return apperror.AuthorizationError("Missing user authentication", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Reason: "Not found in context",
+			})
+	}
+
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user ID format")
+		return apperror.AuthorizationError("Invalid user ID format", err).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "user_id",
+				Value:  userIDStr,
+				Reason: "Invalid UUID format",
+			})
 	}
 
 	ctx := c.Request().Context()
@@ -145,12 +210,29 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 	// Get claim by claim ID
 	claim, err := h.store.GetClaimByID(ctx, claimID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "claim not found")
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Claim not found", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "GetClaimByID",
+					Table:     "character_claims",
+				})
+		}
+		return apperror.DatabaseError("Failed to retrieve claim", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetClaimByID",
+				Table:     "character_claims",
+			}).
+			Wrap(err)
 	}
 
 	// Verify the claim belongs to the user
 	if claim.ClaimerID != userID {
-		return echo.NewHTTPError(http.StatusForbidden, "claim does not belong to user")
+		return apperror.AuthorizationError("Claim does not belong to this user", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "claimer_id",
+				Value:  userID.String(),
+				Reason: "Claim belongs to different user",
+			})
 	}
 
 	// If claim is pending, verify it
@@ -158,7 +240,12 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 		// Check TibiaData API for verification code
 		verified, err := h.TibiaData.VerifyCharacterClaim(claim.CharacterName, claim.VerificationCode)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "failed to verify claim")
+			return apperror.ExternalServiceError("Failed to verify claim with Tibia Data service", err).
+				WithDetails(&apperror.ExternalServiceErrorDetails{
+					Service:   "TibiaData",
+					Operation: "VerifyCharacterClaim",
+				}).
+				Wrap(err)
 		}
 
 		if verified {
@@ -169,14 +256,24 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 				Status:      "approved",
 			})
 			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, "failed to update claim status")
+				return apperror.DatabaseError("Failed to update claim status", err).
+					WithDetails(&apperror.DatabaseErrorDetails{
+						Operation: "UpdateClaimStatus",
+						Table:     "character_claims",
+					}).
+					Wrap(err)
 			}
 
 			// First deactivate any existing list memberships
 			err = h.store.DeactivateCharacterListMemberships(ctx, claim.CharacterID)
 			if err != nil {
-				log.Printf("Failed to deactivate list memberships for character %s: %v", claim.CharacterName, err)
-				// Continue anyway as this is not critical
+				// Log the error but continue as this is not critical
+				apperror.DatabaseError("Failed to deactivate list memberships", err).
+					WithDetails(&apperror.DatabaseErrorDetails{
+						Operation: "DeactivateCharacterListMemberships",
+						Table:     "list_characters",
+					}).
+					LogError()
 			}
 
 			// Update character owner
@@ -185,7 +282,12 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 				UserID: claim.ClaimerID,
 			})
 			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, "failed to update character owner")
+				return apperror.DatabaseError("Failed to update character owner", err).
+					WithDetails(&apperror.DatabaseErrorDetails{
+						Operation: "UpdateCharacterOwner",
+						Table:     "characters",
+					}).
+					Wrap(err)
 			}
 
 			return c.JSON(http.StatusOK, map[string]interface{}{
@@ -205,24 +307,46 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 
 // ProcessPendingClaims processes all pending claims that are due for check
 func (h *ClaimsHandler) ProcessPendingClaims() error {
-	log.Println("Processing pending claims")
 	ctx := context.Background()
 
 	pendingClaims, err := h.store.GetPendingClaimsToCheck(ctx)
 	if err != nil {
-		return err
+		return apperror.DatabaseError("Failed to fetch pending claims", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetPendingClaimsToCheck",
+				Table:     "character_claims",
+			}).
+			Wrap(err)
 	}
 
 	for _, claim := range pendingClaims {
 		// Get character
 		character, err := h.store.GetCharacter(ctx, claim.CharacterID)
 		if err != nil {
+			apperror.DatabaseError("Failed to get character for claim", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "GetCharacter",
+					Table:     "characters",
+				}).
+				WithContext(apperror.ErrorContext{
+					Operation: "ProcessPendingClaims",
+				}).
+				LogError()
 			continue
 		}
 
 		// Check TibiaData API for verification code
 		verified, err := h.TibiaData.VerifyCharacterClaim(character.Name, claim.VerificationCode)
 		if err != nil {
+			apperror.ExternalServiceError("Failed to verify claim with external service", err).
+				WithDetails(&apperror.ExternalServiceErrorDetails{
+					Service:   "TibiaData",
+					Operation: "VerifyCharacterClaim",
+				}).
+				WithContext(apperror.ErrorContext{
+					Operation: "ProcessPendingClaims",
+				}).
+				LogError()
 			continue
 		}
 
@@ -240,25 +364,34 @@ func (h *ClaimsHandler) ProcessPendingClaims() error {
 			Status:      status,
 		})
 		if err != nil {
+			apperror.DatabaseError("Failed to update claim status", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "UpdateClaimStatus",
+					Table:     "character_claims",
+				}).
+				WithContext(apperror.ErrorContext{
+					Operation: "ProcessPendingClaims",
+				}).
+				LogError()
 			continue
 		}
 
-		// If claim is approved, update character owner and deactivate list memberships
 		if status == "approved" {
-			// First deactivate any existing list memberships
-			err = h.store.DeactivateCharacterListMemberships(ctx, character.ID)
-			if err != nil {
-				log.Printf("Failed to deactivate list memberships for character %s: %v", character.Name, err)
-				// Continue anyway as this is not critical
-			}
-
-			// Then update the character owner
+			// Update character owner
 			_, err = h.store.UpdateCharacterOwner(ctx, db.UpdateCharacterOwnerParams{
-				ID:     character.ID,
+				ID:     claim.CharacterID,
 				UserID: claim.ClaimerID,
 			})
 			if err != nil {
-				continue
+				apperror.DatabaseError("Failed to update character owner", err).
+					WithDetails(&apperror.DatabaseErrorDetails{
+						Operation: "UpdateCharacterOwner",
+						Table:     "characters",
+					}).
+					WithContext(apperror.ErrorContext{
+						Operation: "ProcessPendingClaims",
+					}).
+					LogError()
 			}
 		}
 	}

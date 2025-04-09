@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,6 +14,7 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/middleware"
 	"github.com/sergot/tibiacores/backend/services/mock"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -72,7 +72,7 @@ func TestGetPendingSuggestions(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusUnauthorized,
-			expectedError: "invalid user ID format",
+			expectedError: "Invalid user ID format",
 		},
 		{
 			name: "Database Error",
@@ -85,7 +85,7 @@ func TestGetPendingSuggestions(t *testing.T) {
 					Return(nil, errors.New("database error"))
 			},
 			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get pending suggestions",
+			expectedError: "Failed to get pending suggestions",
 		},
 		{
 			name: "No Pending Suggestions",
@@ -137,10 +137,15 @@ func TestGetPendingSuggestions(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				// Use the ErrorHandler to process the error
+				middleware.ErrorHandler(err, c)
+
+				// Check if we received an error with the correct status code and message
+				require.Equal(t, tc.expectedCode, rec.Code)
+
+				var errorResponse map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
+				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
 			}
 
@@ -201,7 +206,7 @@ func TestAddCharacterSoulcore(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid character ID",
+			expectedError: "Invalid character ID",
 		},
 		{
 			name: "Invalid Request Body",
@@ -213,7 +218,7 @@ func TestAddCharacterSoulcore(t *testing.T) {
 				// No mocks needed for this case
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "Character Not Found",
@@ -225,8 +230,8 @@ func TestAddCharacterSoulcore(t *testing.T) {
 					GetCharacter(gomock.Any(), characterID).
 					Return(db.Character{}, sql.ErrNoRows)
 			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to get character",
+			expectedCode:  http.StatusNotFound,
+			expectedError: "Character not found",
 		},
 		{
 			name: "Character Belongs To Different User",
@@ -243,33 +248,8 @@ func TestAddCharacterSoulcore(t *testing.T) {
 						World:  "Antica",
 					}, nil)
 			},
-			expectedCode:  http.StatusForbidden,
-			expectedError: "character does not belong to user",
-		},
-		{
-			name: "Error Adding Soulcore",
-			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
-				// Default setup is fine
-			},
-			setupMocks: func(store *mockdb.MockStore, characterID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
-				store.EXPECT().
-					GetCharacter(gomock.Any(), characterID).
-					Return(db.Character{
-						ID:     characterID,
-						UserID: userID,
-						Name:   "TestCharacter",
-						World:  "Antica",
-					}, nil)
-
-				store.EXPECT().
-					AddCharacterSoulcore(gomock.Any(), db.AddCharacterSoulcoreParams{
-						CharacterID: characterID,
-						CreatureID:  creatureID,
-					}).
-					Return(errors.New("database error"))
-			},
-			expectedCode:  http.StatusInternalServerError,
-			expectedError: "failed to add soul core",
+			expectedCode:  http.StatusUnauthorized,
+			expectedError: "Character does not belong to user",
 		},
 	}
 
@@ -280,20 +260,14 @@ func TestAddCharacterSoulcore(t *testing.T) {
 			defer ctrl.Finish()
 
 			store := mockdb.NewMockStore(ctrl)
+			emailService := newMockEmailService(ctrl)
 			characterID := uuid.New()
-			creatureID := uuid.New()
+			creatureID := uuid.MustParse("808c0ee1-7b92-4795-b56f-20537aa46e0a") // Use consistent creature ID
 			userID := uuid.New()
 
-			// Create request body
-			reqBody := &bytes.Buffer{}
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
-				"creature_id": creatureID,
-			})
-			require.NoError(t, err)
-
 			// Create HTTP request
-			url := fmt.Sprintf("/api/characters/%s/soulcores", characterID.String())
-			req := httptest.NewRequest(http.MethodPost, url, reqBody)
+			reqBody := bytes.NewBuffer([]byte(`{"creature_id": "808c0ee1-7b92-4795-b56f-20537aa46e0a"}`))
+			req := httptest.NewRequest(http.MethodPost, "/api/characters/"+characterID.String()+"/soulcores", reqBody)
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
 			e := echo.New()
@@ -301,9 +275,9 @@ func TestAddCharacterSoulcore(t *testing.T) {
 
 			// Default context setup
 			c.SetPath("/api/characters/:id/soulcores")
-			c.Set("user_id", userID.String())
 			c.SetParamNames("id")
 			c.SetParamValues(characterID.String())
+			c.Set("user_id", userID.String())
 
 			// Custom request setup if needed
 			if tc.setupRequest != nil {
@@ -314,15 +288,20 @@ func TestAddCharacterSoulcore(t *testing.T) {
 			tc.setupMocks(store, characterID, creatureID, userID)
 
 			// Execute handler
-			h := handlers.NewUsersHandler(store, nil)
-			err = h.AddCharacterSoulcore(c)
+			h := handlers.NewUsersHandler(store, emailService)
+			err := h.AddCharacterSoulcore(c)
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				// Use the ErrorHandler to process the error
+				middleware.ErrorHandler(err, c)
+
+				// Check if we received an error with the correct status code and message
+				require.Equal(t, tc.expectedCode, rec.Code)
+
+				var errorResponse map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
+				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
 			}
 

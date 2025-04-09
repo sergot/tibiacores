@@ -17,6 +17,8 @@ import (
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
 	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/middleware"
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 	"github.com/sergot/tibiacores/backend/services"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -172,7 +174,7 @@ func TestStartClaim(t *testing.T) {
 				// No mocks needed
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid request body",
+			expectedError: "Invalid request body",
 		},
 		{
 			name: "Character Not Found in Tibia",
@@ -189,7 +191,7 @@ func TestStartClaim(t *testing.T) {
 				}
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "character not found in Tibia",
+			expectedError: "Character not found in Tibia",
 		},
 	}
 
@@ -232,10 +234,15 @@ func TestStartClaim(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				// Use the ErrorHandler to process the error
+				middleware.ErrorHandler(err, c)
+
+				// Check if we received an error with the correct status code and message
+				require.Equal(t, tc.expectedCode, rec.Code)
+
+				var errorResponse map[string]interface{}
+				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
+				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
 			}
 
@@ -329,7 +336,7 @@ func TestCheckClaim(t *testing.T) {
 				// No mocks needed
 			},
 			expectedCode:  http.StatusBadRequest,
-			expectedError: "invalid claim ID",
+			expectedError: "Invalid claim ID",
 		},
 		{
 			name: "Claim Not Found",
@@ -342,7 +349,7 @@ func TestCheckClaim(t *testing.T) {
 					Return(db.GetClaimByIDRow{}, sql.ErrNoRows)
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "claim not found",
+			expectedError: "Claim not found",
 		},
 	}
 
@@ -387,10 +394,11 @@ func TestCheckClaim(t *testing.T) {
 
 			// Check for expected error response
 			if tc.expectedError != "" {
-				httpError, ok := err.(*echo.HTTPError)
-				require.True(t, ok)
-				require.Equal(t, tc.expectedCode, httpError.Code)
-				require.Contains(t, httpError.Message, tc.expectedError)
+				require.Error(t, err)
+				var appErr *apperror.AppError
+				require.ErrorAs(t, err, &appErr)
+				require.Equal(t, tc.expectedCode, appErr.StatusCode)
+				require.Contains(t, appErr.Message, tc.expectedError)
 				return
 			}
 
