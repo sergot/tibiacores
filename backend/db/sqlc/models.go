@@ -82,8 +82,9 @@ type CharacterSoulcoreSuggestion struct {
 }
 
 type CharactersSoulcore struct {
-	CharacterID uuid.UUID `json:"character_id"`
-	CreatureID  uuid.UUID `json:"creature_id"`
+	CharacterID uuid.UUID          `json:"character_id"`
+	CreatureID  uuid.UUID          `json:"creature_id"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
 }
 
 type Creature struct {

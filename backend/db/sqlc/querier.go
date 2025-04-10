@@ -19,7 +19,7 @@ type Querier interface {
 	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
 	CreateCharacterClaim(ctx context.Context, arg CreateCharacterClaimParams) (CharacterClaim, error)
 	CreateList(ctx context.Context, arg CreateListParams) (List, error)
-	CreateSoulcoreSuggestions(ctx context.Context, arg CreateSoulcoreSuggestionsParams) error
+	CreateSoulcoreSuggestion(ctx context.Context, arg CreateSoulcoreSuggestionParams) error
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeactivateCharacterListMemberships(ctx context.Context, characterID uuid.UUID) error
 	DeleteSoulcoreSuggestion(ctx context.Context, arg DeleteSoulcoreSuggestionParams) error
