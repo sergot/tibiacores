@@ -78,6 +78,13 @@
         </div>
       </div>
 
+      <!-- Soul Core Suggestions Section -->
+      <SoulcoreSuggestions
+        :character-id="characterId"
+        @suggestion-accepted="loadUnlockedCores"
+        class="bg-white shadow rounded-lg overflow-hidden"
+      />
+
       <!-- Soul Cores Section -->
       <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
@@ -151,13 +158,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Soul Core Suggestions Section -->
-      <SoulcoreSuggestions
-        :character-id="characterId"
-        @suggestion-accepted="loadUnlockedCores"
-        class="bg-white shadow rounded-lg overflow-hidden"
-      />
     </div>
   </div>
 </template>
