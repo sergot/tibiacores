@@ -117,6 +117,22 @@ func TestAddSoulcore(t *testing.T) {
 			},
 			expectedCode:  "database_error",
 			expectedError: "Failed to add soul core",
+		}, {
+			name: "Invalid Status Value",
+			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
+				reqBody.Reset()
+				// Need to access the current test's creatureID parameter here
+				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+					"creature_id": "invalid-status", // This will cause the handler to fail
+					"status":      "invalid-status", // Invalid status value
+				})
+				require.NoError(t, err)
+			},
+			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				// No mocks expected as validation should fail before DB calls
+			},
+			expectedCode:  "validation_error",
+			expectedError: "Invalid request body",
 		},
 	}
 
@@ -370,6 +386,38 @@ func TestRemoveSoulcore(t *testing.T) {
 			},
 			expectedCode:  "authorization_error",
 			expectedError: "Only the list owner or the user who added the soulcore can remove it",
+		},
+		{
+			name: "Error Getting List",
+			setupRequest: func(c echo.Context) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, listID uuid.UUID, creatureID uuid.UUID, userID uuid.UUID) {
+				store.EXPECT().
+					IsUserListMember(gomock.Any(), db.IsUserListMemberParams{
+						ListID: listID,
+						UserID: userID,
+					}).
+					Return(true, nil)
+
+				store.EXPECT().
+					GetListSoulcore(gomock.Any(), db.GetListSoulcoreParams{
+						ListID:     listID,
+						CreatureID: creatureID,
+					}).
+					Return(db.GetListSoulcoreRow{
+						ListID:        listID,
+						CreatureID:    creatureID,
+						AddedByUserID: uuid.New(),
+						Status:        db.SoulcoreStatusObtained,
+					}, nil)
+
+				store.EXPECT().
+					GetList(gomock.Any(), listID).
+					Return(db.List{}, errors.New("database error"))
+			},
+			expectedCode:  "database_error",
+			expectedError: "Failed to get list details",
 		},
 		{
 			name: "Database Error",

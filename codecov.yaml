@@ -10,7 +10,7 @@ coverage:
         threshold: 1%
 
 ignore:
-  - "backend/main.go"
+  - "backend/cmd/server/main.go"
   - "backend/db/**/*"
   - "backend/services/mock/**/*"
   
