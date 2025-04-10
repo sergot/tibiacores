@@ -1,19 +1,6 @@
--- name: CreateSoulcoreSuggestions :exec
-WITH list_members AS (
-    SELECT DISTINCT c.id as character_id, ls.creature_id, l.id as list_id
-    FROM lists_users lu
-    JOIN characters c ON c.user_id = lu.user_id
-    JOIN lists l ON l.id = lu.list_id
-    JOIN lists_soulcores ls ON ls.list_id = l.id
-    WHERE l.id = $1 AND ls.creature_id = $2 AND ls.status = 'unlocked'
-    AND NOT EXISTS (
-        SELECT 1 FROM characters_soulcores cs 
-        WHERE cs.character_id = c.id AND cs.creature_id = ls.creature_id
-    )
-)
+-- name: CreateSoulcoreSuggestion :exec
 INSERT INTO character_soulcore_suggestions (character_id, creature_id, list_id)
-SELECT character_id, creature_id, list_id
-FROM list_members
+VALUES ($1, $2, $3)
 ON CONFLICT DO NOTHING;
 
 -- name: GetCharacterSuggestions :many

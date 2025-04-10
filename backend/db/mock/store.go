@@ -145,18 +145,18 @@ func (mr *MockStoreMockRecorder) CreateList(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateList", reflect.TypeOf((*MockStore)(nil).CreateList), ctx, arg)
 }
 
-// CreateSoulcoreSuggestions mocks base method.
-func (m *MockStore) CreateSoulcoreSuggestions(ctx context.Context, arg db.CreateSoulcoreSuggestionsParams) error {
+// CreateSoulcoreSuggestion mocks base method.
+func (m *MockStore) CreateSoulcoreSuggestion(ctx context.Context, arg db.CreateSoulcoreSuggestionParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateSoulcoreSuggestions", ctx, arg)
+	ret := m.ctrl.Call(m, "CreateSoulcoreSuggestion", ctx, arg)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreateSoulcoreSuggestions indicates an expected call of CreateSoulcoreSuggestions.
-func (mr *MockStoreMockRecorder) CreateSoulcoreSuggestions(ctx, arg any) *gomock.Call {
+// CreateSoulcoreSuggestion indicates an expected call of CreateSoulcoreSuggestion.
+func (mr *MockStoreMockRecorder) CreateSoulcoreSuggestion(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSoulcoreSuggestions", reflect.TypeOf((*MockStore)(nil).CreateSoulcoreSuggestions), ctx, arg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSoulcoreSuggestion", reflect.TypeOf((*MockStore)(nil).CreateSoulcoreSuggestion), ctx, arg)
 }
 
 // CreateUser mocks base method.

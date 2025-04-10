@@ -12,32 +12,20 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createSoulcoreSuggestions = `-- name: CreateSoulcoreSuggestions :exec
-WITH list_members AS (
-    SELECT DISTINCT c.id as character_id, ls.creature_id, l.id as list_id
-    FROM lists_users lu
-    JOIN characters c ON c.user_id = lu.user_id
-    JOIN lists l ON l.id = lu.list_id
-    JOIN lists_soulcores ls ON ls.list_id = l.id
-    WHERE l.id = $1 AND ls.creature_id = $2 AND ls.status = 'unlocked'
-    AND NOT EXISTS (
-        SELECT 1 FROM characters_soulcores cs 
-        WHERE cs.character_id = c.id AND cs.creature_id = ls.creature_id
-    )
-)
+const createSoulcoreSuggestion = `-- name: CreateSoulcoreSuggestion :exec
 INSERT INTO character_soulcore_suggestions (character_id, creature_id, list_id)
-SELECT character_id, creature_id, list_id
-FROM list_members
+VALUES ($1, $2, $3)
 ON CONFLICT DO NOTHING
 `
 
-type CreateSoulcoreSuggestionsParams struct {
-	ID         uuid.UUID `json:"id"`
-	CreatureID uuid.UUID `json:"creature_id"`
+type CreateSoulcoreSuggestionParams struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	CreatureID  uuid.UUID `json:"creature_id"`
+	ListID      uuid.UUID `json:"list_id"`
 }
 
-func (q *Queries) CreateSoulcoreSuggestions(ctx context.Context, arg CreateSoulcoreSuggestionsParams) error {
-	_, err := q.db.Exec(ctx, createSoulcoreSuggestions, arg.ID, arg.CreatureID)
+func (q *Queries) CreateSoulcoreSuggestion(ctx context.Context, arg CreateSoulcoreSuggestionParams) error {
+	_, err := q.db.Exec(ctx, createSoulcoreSuggestion, arg.CharacterID, arg.CreatureID, arg.ListID)
 	return err
 }
 

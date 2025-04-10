@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -135,15 +135,54 @@ func (h *ListsHandler) UpdateSoulcoreStatus(c echo.Context) error {
 			})
 	}
 
-	// If the status is being set to unlocked, create suggestions for all members
 	if req.Status == "unlocked" {
-		err = h.store.CreateSoulcoreSuggestions(ctx, db.CreateSoulcoreSuggestionsParams{
-			ID:         listID,
-			CreatureID: req.CreatureID,
-		})
+		members, err := h.store.GetListMembersWithUnlocks(ctx, listID)
 		if err != nil {
-			// Don't fail the request if suggestions creation fails
-			log.Printf("Failed to create soulcore suggestions: %v", err)
+			appErr := apperror.DatabaseError("Failed to get list members", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "GetListMembersWithUnlocks",
+					Table:     "lists_users",
+				})
+			appErr.LogError()
+		} else {
+			for _, member := range members {
+				if !member.IsActive {
+					continue
+				}
+
+				if member.UserID == soulcore.AddedByUserID {
+					err = h.store.AddCharacterSoulcore(ctx, db.AddCharacterSoulcoreParams{
+						CharacterID: member.CharacterID,
+						CreatureID:  req.CreatureID,
+					})
+					if err != nil {
+						if !isUniqueConstraintViolation(err) {
+							appErr := apperror.DatabaseError("Failed to add soulcore to character", err).
+								WithDetails(&apperror.DatabaseErrorDetails{
+									Operation: "AddCharacterSoulcore",
+									Table:     "characters_soulcores",
+								})
+							appErr.LogError()
+						}
+					}
+				} else {
+					err = h.store.CreateSoulcoreSuggestion(ctx, db.CreateSoulcoreSuggestionParams{
+						CharacterID: member.CharacterID,
+						CreatureID:  req.CreatureID,
+						ListID:      listID,
+					})
+					if err != nil {
+						if !isUniqueConstraintViolation(err) {
+							appErr := apperror.DatabaseError("Failed to create soulcore suggestion", err).
+								WithDetails(&apperror.DatabaseErrorDetails{
+									Operation: "CreateSoulcoreSuggestion",
+									Table:     "character_soulcore_suggestions",
+								})
+							appErr.LogError()
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -356,4 +395,10 @@ func (h *ListsHandler) RemoveSoulcore(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusOK)
+}
+
+// isUniqueConstraintViolation checks if an error is from a database unique constraint violation
+func isUniqueConstraintViolation(err error) bool {
+	return err != nil && strings.Contains(strings.ToLower(err.Error()), "unique constraint") ||
+		strings.Contains(strings.ToLower(err.Error()), "duplicate key")
 }
