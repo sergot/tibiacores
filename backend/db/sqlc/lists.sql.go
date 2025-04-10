@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -211,13 +212,13 @@ GROUP BY u.id, c.id, c.name, lu.active, mu.unlocked_creatures
 `
 
 type GetListMembersWithUnlocksRow struct {
-	UserID            uuid.UUID `json:"user_id"`
-	CharacterID       uuid.UUID `json:"character_id"`
-	CharacterName     string    `json:"character_name"`
-	UnlockedCreatures []byte    `json:"unlocked_creatures"`
-	ObtainedCount     int64     `json:"obtained_count"`
-	UnlockedCount     int64     `json:"unlocked_count"`
-	IsActive          bool      `json:"is_active"`
+	UserID            uuid.UUID       `json:"user_id"`
+	CharacterID       uuid.UUID       `json:"character_id"`
+	CharacterName     string          `json:"character_name"`
+	UnlockedCreatures json.RawMessage `json:"unlocked_creatures"`
+	ObtainedCount     int64           `json:"obtained_count"`
+	UnlockedCount     int64           `json:"unlocked_count"`
+	IsActive          bool            `json:"is_active"`
 }
 
 func (q *Queries) GetListMembersWithUnlocks(ctx context.Context, listID uuid.UUID) ([]GetListMembersWithUnlocksRow, error) {
