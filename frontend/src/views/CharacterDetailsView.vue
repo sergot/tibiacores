@@ -219,14 +219,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
 const characterId = route.params.id as string
 

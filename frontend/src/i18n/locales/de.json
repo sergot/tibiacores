@@ -128,12 +128,17 @@
     "confirmDelete": {
       "cancel": "Abbrechen"
     },
+    "copied": "Kopiert!",
+    "copyLink": "Link Kopieren",
     "information": {
       "level": "Level",
       "name": "Name",
       "vocation": "Beruf",
       "world": "Welt"
     },
+    "shareButton": "Charakter teilen",
+    "shareCharacter": "Charakter teilen",
+    "shareCharacterDescription": "Teile die Seelenkerne dieses Charakters mit anderen, indem du den Link unten kopierst.",
     "soulcores": {
       "addButton": "Seelenkern hinzufügen",
       "empty": "Noch keine Seelenkerne freigeschaltet",
@@ -145,9 +150,19 @@
       "title": "Seelenkerne",
       "total": "Seelenkerne gesamt"
     },
-    "shareButton": "Charakter teilen",
-    "shareLinkCopied": "Teil-Link in die Zwischenablage kopiert!",
     "title": "Charakter-Details"
+  },
+  "cookieConsent": {
+    "acceptAll": "Alle akzeptieren",
+    "categories": {
+      "analytics": "Analytics-Cookies",
+      "necessary": "Notwendige Cookies (erforderlich)",
+      "preferences": "Präferenz-Cookies"
+    },
+    "description": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern. Durch die weitere Nutzung dieser Website stimmen Sie der Verwendung von Cookies zu.",
+    "privacyPolicy": "Datenschutzerklärung",
+    "savePreferences": "Einstellungen speichern",
+    "title": "Cookie-Einstellungen"
   },
   "createList": {
     "form": {
@@ -174,6 +189,23 @@
       "message": "E-Mail wird verifiziert...",
       "redirect": "Weiterleitung zum Profil...",
       "success": "E-Mail erfolgreich verifiziert!"
+    }
+  },
+  "home": {
+    "about": {
+      "description": "TibiaCores ist Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen. Erstellen Sie Charaktere, bauen Sie Sammlungen auf und teilen Sie sie mit Freunden. Treten Sie bestehenden Listen über Teilungscodes oder direkte Links bei.",
+      "title": "Über TibiaCores"
+    },
+    "subtitle": "Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen",
+    "title": "Willkommen bei TibiaCores",
+    "yourLists": {
+      "loading": "Lade Ihre Listen...",
+      "noLists": {
+        "subtitle": "Verwenden Sie die Formulare oben, um zu beginnen!",
+        "title": "Sie haben noch keine Listen erstellt oder sind keiner beigetreten."
+      },
+      "refresh": "Aktualisieren",
+      "title": "Ihre Listen"
     }
   },
   "joinList": {
@@ -210,6 +242,12 @@
     "status": "Status",
     "totalProgress": "Gesamtfortschritt",
     "xpBoostProgress": "EP-Boost-Fortschritt (200)"
+  },
+  "listTag": {
+    "goToList": "Zur Liste gehen",
+    "loadingMembers": "Mitglieder werden geladen...",
+    "members": "{count} Mitglieder",
+    "membersList": "Mitglieder:"
   },
   "lists": {
     "title": "Listen"
@@ -250,6 +288,35 @@
       "tryAgain": "Erneut versuchen"
     }
   },
+  "privacy": {
+    "contact": {
+      "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support@tibiacores.com.",
+      "title": "Kontakt"
+    },
+    "cookies": {
+      "content": "Wir verwenden Cookies und ähnliche Tracking-Technologien, um Ihr Erlebnis zu verbessern und wichtige Funktionen bereitzustellen. Hier sind die Arten von Cookies, die wir verwenden:",
+      "title": "Cookies und Tracking",
+      "types": {
+        "analytics": "Analytics-Cookies zum Verständnis Ihrer App-Nutzung",
+        "necessary": "Notwendige Cookies für grundlegende Funktionalität und Sicherheit",
+        "preferences": "Präferenz-Cookies zur Speicherung Ihrer Einstellungen"
+      }
+    },
+    "data": {
+      "content": "Wir sammeln nur die minimal notwendigen personenbezogenen Daten, die für die Bereitstellung unserer Dienste erforderlich sind. Dies umfasst Ihre E-Mail-Adresse für die Authentifizierung und alle Daten, die Sie freiwillig beim Erstellen oder Beitreten zu Seelenkern-Listen angeben.",
+      "title": "Datenerfassung"
+    },
+    "introduction": {
+      "content": "Bei TibiaCores nehmen wir Ihre Privatsphäre ernst. Diese Datenschutzerklärung erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen, wenn Sie unsere Anwendung nutzen.",
+      "title": "Einführung"
+    },
+    "lastUpdated": "Zuletzt aktualisiert: März 2025",
+    "security": {
+      "content": "Wir implementieren branchenübliche Sicherheitsmaßnahmen zum Schutz Ihrer Daten. Alle Daten werden während der Übertragung und im Ruhezustand verschlüsselt. Wir überprüfen und aktualisieren regelmäßig unsere Sicherheitspraktiken, um sicherzustellen, dass Ihre Informationen sicher bleiben.",
+      "title": "Sicherheit"
+    },
+    "title": "Datenschutzerklärung"
+  },
   "profile": {
     "characters": {
       "empty": "Du hast noch keine Charaktere beansprucht",
@@ -257,8 +324,8 @@
     },
     "email": {
       "status": {
-        "verified": "Deine E-Mail ist verifiziert",
-        "notVerified": "Deine E-Mail ist nicht verifiziert"
+        "notVerified": "Deine E-Mail ist nicht verifiziert",
+        "verified": "Deine E-Mail ist verifiziert"
       },
       "title": "E-Mail-Einstellungen"
     },
@@ -267,6 +334,30 @@
     },
     "subtitle": "Verwalte dein Konto und deine Charaktere",
     "title": "Dein Profil"
+  },
+  "publicCharacter": {
+    "loading": "Lade Charakterprofil...",
+    "notFound": {
+      "description": "Der gesuchte Charakter existiert nicht oder ist nicht öffentlich.",
+      "title": "Charakter nicht gefunden"
+    },
+    "soulCores": {
+      "empty": "Noch keine Seelenkerne freigeschaltet",
+      "title": "Freigeschaltete Seelenkerne",
+      "unlocked": "Freigeschaltet"
+    },
+    "stats": {
+      "total": {
+        "cores": "{current}/{total} Seelenkerne",
+        "percentage": "{percentage}%",
+        "title": "Gesamtfortschritt"
+      },
+      "xpBoost": {
+        "cores": "{current}/{target} Seelenkerne",
+        "percentage": "{percentage}%",
+        "title": "XP-Boost Fortschritt"
+      }
+    }
   },
   "registerSuggestion": {
     "completeButton": "Registrierung Abschließen",
@@ -279,100 +370,11 @@
     "title": "Registrierung Abschließen"
   },
   "soulcoreSuggestions": {
-    "title": "Seelenkern-Vorschläge",
-    "fromList": "Von Liste",
     "accept": "Akzeptieren",
     "dismiss": "Ablehnen",
-    "unknownList": "Unbekannte Liste",
-    "noSuggestions": "Keine Vorschläge verfügbar"
-  },
-  "listTag": {
-    "members": "{count} Mitglieder",
-    "goToList": "Zur Liste gehen",
-    "loadingMembers": "Mitglieder werden geladen...",
-    "membersList": "Mitglieder:"
-  },
-  "home": {
-    "title": "Willkommen bei TibiaCores",
-    "subtitle": "Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen",
-    "yourLists": {
-      "title": "Ihre Listen",
-      "refresh": "Aktualisieren",
-      "loading": "Lade Ihre Listen...",
-      "noLists": {
-        "title": "Sie haben noch keine Listen erstellt oder sind keiner beigetreten.",
-        "subtitle": "Verwenden Sie die Formulare oben, um zu beginnen!"
-      }
-    },
-    "about": {
-      "title": "Über TibiaCores",
-      "description": "TibiaCores ist Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen. Erstellen Sie Charaktere, bauen Sie Sammlungen auf und teilen Sie sie mit Freunden. Treten Sie bestehenden Listen über Teilungscodes oder direkte Links bei."
-    }
-  },
-  "cookieConsent": {
-    "title": "Cookie-Einstellungen",
-    "description": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern. Durch die weitere Nutzung dieser Website stimmen Sie der Verwendung von Cookies zu.",
-    "privacyPolicy": "Datenschutzerklärung",
-    "acceptAll": "Alle akzeptieren",
-    "savePreferences": "Einstellungen speichern",
-    "categories": {
-      "necessary": "Notwendige Cookies (erforderlich)",
-      "preferences": "Präferenz-Cookies",
-      "analytics": "Analytics-Cookies"
-    }
-  },
-  "privacy": {
-    "title": "Datenschutzerklärung",
-    "lastUpdated": "Zuletzt aktualisiert: März 2025",
-    "introduction": {
-      "title": "Einführung",
-      "content": "Bei TibiaCores nehmen wir Ihre Privatsphäre ernst. Diese Datenschutzerklärung erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen, wenn Sie unsere Anwendung nutzen."
-    },
-    "cookies": {
-      "title": "Cookies und Tracking",
-      "content": "Wir verwenden Cookies und ähnliche Tracking-Technologien, um Ihr Erlebnis zu verbessern und wichtige Funktionen bereitzustellen. Hier sind die Arten von Cookies, die wir verwenden:",
-      "types": {
-        "necessary": "Notwendige Cookies für grundlegende Funktionalität und Sicherheit",
-        "preferences": "Präferenz-Cookies zur Speicherung Ihrer Einstellungen",
-        "analytics": "Analytics-Cookies zum Verständnis Ihrer App-Nutzung"
-      }
-    },
-    "data": {
-      "title": "Datenerfassung",
-      "content": "Wir sammeln nur die minimal notwendigen personenbezogenen Daten, die für die Bereitstellung unserer Dienste erforderlich sind. Dies umfasst Ihre E-Mail-Adresse für die Authentifizierung und alle Daten, die Sie freiwillig beim Erstellen oder Beitreten zu Seelenkern-Listen angeben."
-    },
-    "security": {
-      "title": "Sicherheit",
-      "content": "Wir implementieren branchenübliche Sicherheitsmaßnahmen zum Schutz Ihrer Daten. Alle Daten werden während der Übertragung und im Ruhezustand verschlüsselt. Wir überprüfen und aktualisieren regelmäßig unsere Sicherheitspraktiken, um sicherzustellen, dass Ihre Informationen sicher bleiben."
-    },
-    "contact": {
-      "title": "Kontakt",
-      "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support@tibiacores.com."
-    }
-  },
-  "publicCharacter": {
-    "title": "Charakterprofil",
-    "loading": "Lade Charakterprofil...",
-    "notFound": {
-      "title": "Charakter nicht gefunden",
-      "description": "Der gesuchte Charakter existiert nicht oder ist nicht öffentlich."
-    },
-    "stats": {
-      "xpBoost": {
-        "title": "XP-Boost Fortschritt",
-        "cores": "{current}/{target} Seelenkerne",
-        "percentage": "{percentage}%"
-      },
-      "total": {
-        "title": "Gesamtfortschritt",
-        "cores": "{current}/{total} Seelenkerne",
-        "percentage": "{percentage}%"
-      }
-    },
-    "soulCores": {
-      "title": "Freigeschaltete Seelenkerne",
-      "empty": "Noch keine Seelenkerne freigeschaltet",
-      "unlocked": "Freigeschaltet"
-    }
+    "fromList": "Von Liste",
+    "noSuggestions": "Keine Vorschläge verfügbar",
+    "title": "Seelenkern-Vorschläge",
+    "unknownList": "Unbekannte Liste"
   }
 }

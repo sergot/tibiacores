@@ -128,12 +128,17 @@
     "confirmDelete": {
       "cancel": "Anuluj"
     },
+    "copied": "Skopiowano!",
+    "copyLink": "Kopiuj Link",
     "information": {
       "level": "Poziom",
       "name": "Imię",
       "vocation": "Profesja",
       "world": "Świat"
     },
+    "shareButton": "Udostępnij postać",
+    "shareCharacter": "Udostępnij postać",
+    "shareCharacterDescription": "Udostępnij soul cory tej postaci innym, kopiując poniższy link.",
     "soulcores": {
       "addButton": "Dodaj soul core",
       "empty": "Brak odblokowanych soul corów",
@@ -145,9 +150,19 @@
       "title": "Soulcory",
       "total": "Razem soulcorów"
     },
-    "shareButton": "Udostępnij postać",
-    "shareLinkCopied": "Link udostępniania skopiowany do schowka!",
     "title": "Szczegóły Postaci"
+  },
+  "cookieConsent": {
+    "acceptAll": "Zaakceptuj wszystkie",
+    "categories": {
+      "analytics": "Pliki cookie analityczne",
+      "necessary": "Niezbędne pliki cookie (wymagane)",
+      "preferences": "Pliki cookie preferencji"
+    },
+    "description": "Używamy plików cookie, aby poprawić Twoje doświadczenia. Kontynuując korzystanie z tej strony, zgadzasz się na używanie plików cookie.",
+    "privacyPolicy": "Polityka prywatności",
+    "savePreferences": "Zapisz preferencje",
+    "title": "Ustawienia plików cookie"
   },
   "createList": {
     "form": {
@@ -174,6 +189,23 @@
       "message": "Weryfikacja twojego emaila...",
       "redirect": "Przekierowywanie do profilu...",
       "success": "Email zweryfikowany pomyślnie!"
+    }
+  },
+  "home": {
+    "about": {
+      "description": "TibiaCores to Twoja aplikacja do zarządzania i udostępniania list soul corów. Twórz postacie, buduj kolekcje i udostępniaj je znajomym. Dołączaj do istniejących list za pomocą kodów udostępniania lub bezpośrednich linków.",
+      "title": "O TibiaCores"
+    },
+    "subtitle": "Twoja aplikacja do zarządzania i udostępniania list soul corów",
+    "title": "Witaj w TibiaCores",
+    "yourLists": {
+      "loading": "Ładowanie Twoich list...",
+      "noLists": {
+        "subtitle": "Użyj formularzy powyżej, aby zacząć!",
+        "title": "Nie utworzyłeś jeszcze żadnych list ani nie dołączyłeś do żadnej."
+      },
+      "refresh": "Odśwież",
+      "title": "Twoje Listy"
     }
   },
   "joinList": {
@@ -210,6 +242,12 @@
     "status": "Status",
     "totalProgress": "Całkowity Postęp",
     "xpBoostProgress": "Postęp do maks. XP boosta (200)"
+  },
+  "listTag": {
+    "goToList": "Przejdź do listy",
+    "loadingMembers": "Ładowanie członków...",
+    "members": "{count} członków",
+    "membersList": "Członkowie:"
   },
   "lists": {
     "title": "Listy"
@@ -250,6 +288,35 @@
       "tryAgain": "Spróbuj ponownie"
     }
   },
+  "privacy": {
+    "contact": {
+      "content": "Jeśli masz jakiekolwiek pytania dotyczące naszej Polityki Prywatności lub sposobu, w jaki przetwarzamy Twoje dane, skontaktuj się z nami pod adresem support@tibiacores.com.",
+      "title": "Kontakt"
+    },
+    "cookies": {
+      "content": "Używamy plików cookie i podobnych technologii śledzenia, aby poprawić Twoje doświadczenie i zapewnić niezbędną funkcjonalność. Oto rodzaje plików cookie, których używamy:",
+      "title": "Pliki Cookie i Śledzenie",
+      "types": {
+        "analytics": "Pliki cookie analityczne do zrozumienia, jak korzystasz z naszej aplikacji",
+        "necessary": "Niezbędne pliki cookie do podstawowej funkcjonalności i bezpieczeństwa",
+        "preferences": "Pliki cookie preferencji do zapamiętywania Twoich ustawień"
+      }
+    },
+    "data": {
+      "content": "Zbieramy minimalne dane osobowe niezbędne do świadczenia naszych usług. Obejmuje to Twój adres e-mail do uwierzytelniania oraz wszelkie dane, które dobrowolnie podajesz podczas tworzenia lub dołączania do list rdzeni duszy.",
+      "title": "Zbieranie Danych"
+    },
+    "introduction": {
+      "content": "W TibiaCores poważnie traktujemy Twoją prywatność. Niniejsza Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane osobowe podczas korzystania z naszej aplikacji.",
+      "title": "Wprowadzenie"
+    },
+    "lastUpdated": "Ostatnia aktualizacja: Marzec 2025",
+    "security": {
+      "content": "Wdrażamy standardowe w branży środki bezpieczeństwa, aby chronić Twoje dane. Wszystkie dane są szyfrowane podczas przesyłania i przechowywania. Regularnie przeglądamy i aktualizujemy nasze praktyki bezpieczeństwa, aby zapewnić bezpieczeństwo Twoich informacji.",
+      "title": "Bezpieczeństwo"
+    },
+    "title": "Polityka Prywatności"
+  },
   "profile": {
     "characters": {
       "empty": "Nie masz jeszcze żadnych roszczeń do postaci",
@@ -257,8 +324,8 @@
     },
     "email": {
       "status": {
-        "verified": "Twój e-mail jest zweryfikowany",
-        "notVerified": "Twój e-mail nie jest zweryfikowany"
+        "notVerified": "Twój e-mail nie jest zweryfikowany",
+        "verified": "Twój e-mail jest zweryfikowany"
       },
       "title": "Ustawienia E-mail"
     },
@@ -267,6 +334,30 @@
     },
     "subtitle": "Zarządzaj swoim kontem i postaciami",
     "title": "Twój Profil"
+  },
+  "publicCharacter": {
+    "loading": "Ładowanie profilu postaci...",
+    "notFound": {
+      "description": "Szukana postać nie istnieje lub nie jest publiczna.",
+      "title": "Postać nie znaleziona"
+    },
+    "soulCores": {
+      "empty": "Brak odblokowanych soul corów",
+      "title": "Odblokowane soul cory",
+      "unlocked": "Odblokowany"
+    },
+    "stats": {
+      "total": {
+        "cores": "{current}/{total} soul corów",
+        "percentage": "{percentage}%",
+        "title": "Całkowity postęp"
+      },
+      "xpBoost": {
+        "cores": "{current}/{target} soul corów",
+        "percentage": "{percentage}%",
+        "title": "Postęp do maks. boost XP"
+      }
+    }
   },
   "registerSuggestion": {
     "completeButton": "Dokończ rejestrację",
@@ -279,100 +370,11 @@
     "title": "Dokończ rejestrację"
   },
   "soulcoreSuggestions": {
-    "title": "Sugestie Soul Corów",
-    "fromList": "Z listy",
     "accept": "Akceptuj",
     "dismiss": "Odrzuć",
-    "unknownList": "Nieznana lista",
-    "noSuggestions": "Brak dostępnych sugestii"
-  },
-  "listTag": {
-    "members": "{count} członków",
-    "goToList": "Przejdź do listy",
-    "loadingMembers": "Ładowanie członków...",
-    "membersList": "Członkowie:"
-  },
-  "home": {
-    "title": "Witaj w TibiaCores",
-    "subtitle": "Twoja aplikacja do zarządzania i udostępniania list soul corów",
-    "yourLists": {
-      "title": "Twoje Listy",
-      "refresh": "Odśwież",
-      "loading": "Ładowanie Twoich list...",
-      "noLists": {
-        "title": "Nie utworzyłeś jeszcze żadnych list ani nie dołączyłeś do żadnej.",
-        "subtitle": "Użyj formularzy powyżej, aby zacząć!"
-      }
-    },
-    "about": {
-      "title": "O TibiaCores",
-      "description": "TibiaCores to Twoja aplikacja do zarządzania i udostępniania list soul corów. Twórz postacie, buduj kolekcje i udostępniaj je znajomym. Dołączaj do istniejących list za pomocą kodów udostępniania lub bezpośrednich linków."
-    }
-  },
-  "cookieConsent": {
-    "title": "Ustawienia plików cookie",
-    "description": "Używamy plików cookie, aby poprawić Twoje doświadczenia. Kontynuując korzystanie z tej strony, zgadzasz się na używanie plików cookie.",
-    "privacyPolicy": "Polityka prywatności",
-    "acceptAll": "Zaakceptuj wszystkie",
-    "savePreferences": "Zapisz preferencje",
-    "categories": {
-      "necessary": "Niezbędne pliki cookie (wymagane)",
-      "preferences": "Pliki cookie preferencji",
-      "analytics": "Pliki cookie analityczne"
-    }
-  },
-  "privacy": {
-    "title": "Polityka Prywatności",
-    "lastUpdated": "Ostatnia aktualizacja: Marzec 2025",
-    "introduction": {
-      "title": "Wprowadzenie",
-      "content": "W TibiaCores poważnie traktujemy Twoją prywatność. Niniejsza Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane osobowe podczas korzystania z naszej aplikacji."
-    },
-    "cookies": {
-      "title": "Pliki Cookie i Śledzenie",
-      "content": "Używamy plików cookie i podobnych technologii śledzenia, aby poprawić Twoje doświadczenie i zapewnić niezbędną funkcjonalność. Oto rodzaje plików cookie, których używamy:",
-      "types": {
-        "necessary": "Niezbędne pliki cookie do podstawowej funkcjonalności i bezpieczeństwa",
-        "preferences": "Pliki cookie preferencji do zapamiętywania Twoich ustawień",
-        "analytics": "Pliki cookie analityczne do zrozumienia, jak korzystasz z naszej aplikacji"
-      }
-    },
-    "data": {
-      "title": "Zbieranie Danych",
-      "content": "Zbieramy minimalne dane osobowe niezbędne do świadczenia naszych usług. Obejmuje to Twój adres e-mail do uwierzytelniania oraz wszelkie dane, które dobrowolnie podajesz podczas tworzenia lub dołączania do list rdzeni duszy."
-    },
-    "security": {
-      "title": "Bezpieczeństwo",
-      "content": "Wdrażamy standardowe w branży środki bezpieczeństwa, aby chronić Twoje dane. Wszystkie dane są szyfrowane podczas przesyłania i przechowywania. Regularnie przeglądamy i aktualizujemy nasze praktyki bezpieczeństwa, aby zapewnić bezpieczeństwo Twoich informacji."
-    },
-    "contact": {
-      "title": "Kontakt",
-      "content": "Jeśli masz jakiekolwiek pytania dotyczące naszej Polityki Prywatności lub sposobu, w jaki przetwarzamy Twoje dane, skontaktuj się z nami pod adresem support@tibiacores.com."
-    }
-  },
-  "publicCharacter": {
-    "title": "Profil Postaci",
-    "loading": "Ładowanie profilu postaci...",
-    "notFound": {
-      "title": "Postać nie znaleziona",
-      "description": "Szukana postać nie istnieje lub nie jest publiczna."
-    },
-    "stats": {
-      "xpBoost": {
-        "title": "Postęp do maks. boost XP",
-        "cores": "{current}/{target} soul corów",
-        "percentage": "{percentage}%"
-      },
-      "total": {
-        "title": "Całkowity postęp",
-        "cores": "{current}/{total} soul corów",
-        "percentage": "{percentage}%"
-      }
-    },
-    "soulCores": {
-      "title": "Odblokowane soul cory",
-      "empty": "Brak odblokowanych soul corów",
-      "unlocked": "Odblokowany"
-    }
+    "fromList": "Z listy",
+    "noSuggestions": "Brak dostępnych sugestii",
+    "title": "Sugestie Soul Corów",
+    "unknownList": "Nieznana lista"
   }
 }

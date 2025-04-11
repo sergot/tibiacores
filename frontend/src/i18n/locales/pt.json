@@ -128,12 +128,17 @@
     "confirmDelete": {
       "cancel": "Cancelar"
     },
+    "copied": "Copiado!",
+    "copyLink": "Copiar Link",
     "information": {
       "level": "Nível",
       "name": "Nome",
       "vocation": "Vocação",
       "world": "Mundo"
     },
+    "shareButton": "Compartilhar Personagem",
+    "shareCharacter": "Compartilhar Personagem",
+    "shareCharacterDescription": "Compartilhe os núcleos de alma deste personagem com outros copiando o link abaixo.",
     "soulcores": {
       "addButton": "Adicionar Núcleo de Alma",
       "empty": "Ainda não há núcleos de alma desbloqueados",
@@ -145,9 +150,19 @@
       "title": "Núcleos de Alma",
       "total": "Total de Núcleos de Alma"
     },
-    "shareButton": "Compartilhar Personagem",
-    "shareLinkCopied": "Link de compartilhamento copiado para a área de transferência!",
     "title": "Detalhes do Personagem"
+  },
+  "cookieConsent": {
+    "acceptAll": "Aceitar todas",
+    "categories": {
+      "analytics": "Cookies de análise",
+      "necessary": "Cookies necessárias (obrigatórias)",
+      "preferences": "Cookies de preferências"
+    },
+    "description": "Utilizamos cookies para melhorar sua experiência. Ao continuar visitando este site, você concorda com o uso de cookies.",
+    "privacyPolicy": "Política de privacidade",
+    "savePreferences": "Salvar preferências",
+    "title": "Configurações de cookies"
   },
   "createList": {
     "form": {
@@ -174,6 +189,23 @@
       "message": "Verificando seu email...",
       "redirect": "Redirecionando para o perfil...",
       "success": "Email verificado com sucesso!"
+    }
+  },
+  "home": {
+    "about": {
+      "description": "TibiaCores é sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma. Crie personagens, construa coleções e compartilhe com amigos. Entre em listas existentes usando códigos de compartilhamento ou links diretos.",
+      "title": "Sobre o TibiaCores"
+    },
+    "subtitle": "Sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma",
+    "title": "Bem-vindo ao TibiaCores",
+    "yourLists": {
+      "loading": "Carregando suas listas...",
+      "noLists": {
+        "subtitle": "Use os formulários acima para começar!",
+        "title": "Você ainda não criou ou entrou em nenhuma lista."
+      },
+      "refresh": "Atualizar",
+      "title": "Suas Listas"
     }
   },
   "joinList": {
@@ -210,6 +242,12 @@
     "status": "Status",
     "totalProgress": "Progresso Total",
     "xpBoostProgress": "Progresso do Boost de XP (200)"
+  },
+  "listTag": {
+    "goToList": "Ir para a lista",
+    "loadingMembers": "Carregando membros...",
+    "members": "{count} membros",
+    "membersList": "Membros:"
   },
   "lists": {
     "title": "Listas"
@@ -250,6 +288,35 @@
       "tryAgain": "Tentar Novamente"
     }
   },
+  "privacy": {
+    "contact": {
+      "content": "Se você tiver alguma dúvida sobre nossa Política de Privacidade ou como lidamos com seus dados, entre em contato conosco em support@tibiacores.com.",
+      "title": "Contato"
+    },
+    "cookies": {
+      "content": "Usamos cookies e tecnologias de rastreamento similares para melhorar sua experiência e fornecer funcionalidade essencial. Aqui estão os tipos de cookies que utilizamos:",
+      "title": "Cookies e Rastreamento",
+      "types": {
+        "analytics": "Cookies de análise para entender como você usa nosso aplicativo",
+        "necessary": "Cookies necessários para funcionalidade básica e segurança",
+        "preferences": "Cookies de preferências para lembrar suas configurações"
+      }
+    },
+    "data": {
+      "content": "Coletamos o mínimo de informações pessoais necessárias para fornecer nossos serviços. Isso inclui seu endereço de e-mail para autenticação e quaisquer dados que você forneça voluntariamente ao criar ou ingressar em listas de núcleos de alma.",
+      "title": "Coleta de Dados"
+    },
+    "introduction": {
+      "content": "Na TibiaCores, levamos sua privacidade a sério. Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações pessoais quando você usa nossa aplicação.",
+      "title": "Introdução"
+    },
+    "lastUpdated": "Última atualização: Março 2025",
+    "security": {
+      "content": "Implementamos medidas de segurança padrão da indústria para proteger seus dados. Todos os dados são criptografados em trânsito e em repouso. Revisamos e atualizamos regularmente nossas práticas de segurança para garantir que suas informações permaneçam seguras.",
+      "title": "Segurança"
+    },
+    "title": "Política de Privacidade"
+  },
   "profile": {
     "characters": {
       "empty": "Você ainda não reivindicou nenhum personagem",
@@ -268,6 +335,30 @@
     "subtitle": "Gerencie sua conta e personagens",
     "title": "Seu Perfil"
   },
+  "publicCharacter": {
+    "loading": "Carregando perfil do personagem...",
+    "notFound": {
+      "description": "O personagem que você está procurando não existe ou não é público.",
+      "title": "Personagem não encontrado"
+    },
+    "soulCores": {
+      "empty": "Nenhum núcleo desbloqueado ainda",
+      "title": "Núcleos Desbloqueados",
+      "unlocked": "Desbloqueado"
+    },
+    "stats": {
+      "total": {
+        "cores": "{current}/{total} Núcleos",
+        "percentage": "{percentage}%",
+        "title": "Progresso Total"
+      },
+      "xpBoost": {
+        "cores": "{current}/{target} Núcleos",
+        "percentage": "{percentage}%",
+        "title": "Progresso do Bônus de XP"
+      }
+    }
+  },
   "registerSuggestion": {
     "completeButton": "Completar Cadastro",
     "features": {
@@ -279,100 +370,11 @@
     "title": "Complete Seu Cadastro"
   },
   "soulcoreSuggestions": {
-    "title": "Sugestões de Soul Core",
-    "fromList": "Da lista",
     "accept": "Aceitar",
     "dismiss": "Dispensar",
-    "unknownList": "Lista desconhecida",
-    "noSuggestions": "Nenhuma sugestão disponível"
-  },
-  "listTag": {
-    "members": "{count} membros",
-    "goToList": "Ir para a lista",
-    "loadingMembers": "Carregando membros...",
-    "membersList": "Membros:"
-  },
-  "home": {
-    "title": "Bem-vindo ao TibiaCores",
-    "subtitle": "Sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma",
-    "yourLists": {
-      "title": "Suas Listas",
-      "refresh": "Atualizar",
-      "loading": "Carregando suas listas...",
-      "noLists": {
-        "title": "Você ainda não criou ou entrou em nenhuma lista.",
-        "subtitle": "Use os formulários acima para começar!"
-      }
-    },
-    "about": {
-      "title": "Sobre o TibiaCores",
-      "description": "TibiaCores é sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma. Crie personagens, construa coleções e compartilhe com amigos. Entre em listas existentes usando códigos de compartilhamento ou links diretos."
-    }
-  },
-  "cookieConsent": {
-    "title": "Configurações de cookies",
-    "description": "Utilizamos cookies para melhorar sua experiência. Ao continuar visitando este site, você concorda com o uso de cookies.",
-    "privacyPolicy": "Política de privacidade",
-    "acceptAll": "Aceitar todas",
-    "savePreferences": "Salvar preferências",
-    "categories": {
-      "necessary": "Cookies necessárias (obrigatórias)",
-      "preferences": "Cookies de preferências",
-      "analytics": "Cookies de análise"
-    }
-  },
-  "privacy": {
-    "title": "Política de Privacidade",
-    "lastUpdated": "Última atualização: Março 2025",
-    "introduction": {
-      "title": "Introdução",
-      "content": "Na TibiaCores, levamos sua privacidade a sério. Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações pessoais quando você usa nossa aplicação."
-    },
-    "cookies": {
-      "title": "Cookies e Rastreamento",
-      "content": "Usamos cookies e tecnologias de rastreamento similares para melhorar sua experiência e fornecer funcionalidade essencial. Aqui estão os tipos de cookies que utilizamos:",
-      "types": {
-        "necessary": "Cookies necessários para funcionalidade básica e segurança",
-        "preferences": "Cookies de preferências para lembrar suas configurações",
-        "analytics": "Cookies de análise para entender como você usa nosso aplicativo"
-      }
-    },
-    "data": {
-      "title": "Coleta de Dados",
-      "content": "Coletamos o mínimo de informações pessoais necessárias para fornecer nossos serviços. Isso inclui seu endereço de e-mail para autenticação e quaisquer dados que você forneça voluntariamente ao criar ou ingressar em listas de núcleos de alma."
-    },
-    "security": {
-      "title": "Segurança",
-      "content": "Implementamos medidas de segurança padrão da indústria para proteger seus dados. Todos os dados são criptografados em trânsito e em repouso. Revisamos e atualizamos regularmente nossas práticas de segurança para garantir que suas informações permaneçam seguras."
-    },
-    "contact": {
-      "title": "Contato",
-      "content": "Se você tiver alguma dúvida sobre nossa Política de Privacidade ou como lidamos com seus dados, entre em contato conosco em support@tibiacores.com."
-    }
-  },
-  "publicCharacter": {
-    "title": "Perfil do Personagem",
-    "loading": "Carregando perfil do personagem...",
-    "notFound": {
-      "title": "Personagem não encontrado",
-      "description": "O personagem que você está procurando não existe ou não é público."
-    },
-    "stats": {
-      "xpBoost": {
-        "title": "Progresso do Bônus de XP",
-        "cores": "{current}/{target} Núcleos",
-        "percentage": "{percentage}%"
-      },
-      "total": {
-        "title": "Progresso Total",
-        "cores": "{current}/{total} Núcleos",
-        "percentage": "{percentage}%"
-      }
-    },
-    "soulCores": {
-      "title": "Núcleos Desbloqueados",
-      "empty": "Nenhum núcleo desbloqueado ainda",
-      "unlocked": "Desbloqueado"
-    }
+    "fromList": "Da lista",
+    "noSuggestions": "Nenhuma sugestão disponível",
+    "title": "Sugestões de Soul Core",
+    "unknownList": "Lista desconhecida"
   }
 }

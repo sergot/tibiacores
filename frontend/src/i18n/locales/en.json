@@ -128,12 +128,17 @@
     "confirmDelete": {
       "cancel": "Cancel"
     },
+    "copied": "Copied!",
+    "copyLink": "Copy Link",
     "information": {
       "level": "Level",
       "name": "Name",
       "vocation": "Vocation",
       "world": "World"
     },
+    "shareButton": "Share Character",
+    "shareCharacter": "Share Character",
+    "shareCharacterDescription": "Share this character's soul cores with others by copying the link below.",
     "soulcores": {
       "addButton": "Add Soul Core",
       "empty": "No soul cores unlocked yet",
@@ -145,12 +150,19 @@
       "title": "Soul Cores",
       "total": "Total Soul Cores"
     },
-    "shareButton": "Share Character",
-    "shareCharacter": "Share Character",
-    "shareCharacterDescription": "Share this character's soul cores with others by copying the link below.",
-    "copied": "Copied!",
-    "copyLink": "Copy Link",
     "title": "Character Details"
+  },
+  "cookieConsent": {
+    "acceptAll": "Accept All",
+    "categories": {
+      "analytics": "Analytics cookies",
+      "necessary": "Necessary cookies (required)",
+      "preferences": "Preferences cookies"
+    },
+    "description": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+    "privacyPolicy": "Privacy Policy",
+    "savePreferences": "Save Preferences",
+    "title": "Cookie Settings"
   },
   "createList": {
     "form": {
@@ -177,6 +189,23 @@
       "message": "Verifying your email...",
       "redirect": "Redirecting to profile...",
       "success": "Email verified successfully!"
+    }
+  },
+  "home": {
+    "about": {
+      "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build your collections, and share them with friends. Join existing lists using share codes or direct links.",
+      "title": "About TibiaCores"
+    },
+    "subtitle": "Your companion app for managing and sharing soul core lists",
+    "title": "Welcome to TibiaCores",
+    "yourLists": {
+      "loading": "Loading your lists...",
+      "noLists": {
+        "subtitle": "Use the forms above to get started!",
+        "title": "You haven't created or joined any lists yet."
+      },
+      "refresh": "Refresh",
+      "title": "Your Lists"
     }
   },
   "joinList": {
@@ -213,6 +242,12 @@
     "status": "Status",
     "totalProgress": "Total Progress",
     "xpBoostProgress": "XP Boost Progress (200)"
+  },
+  "listTag": {
+    "goToList": "Go to list",
+    "loadingMembers": "Loading members...",
+    "members": "{count} members",
+    "membersList": "Members:"
   },
   "lists": {
     "title": "Lists"
@@ -253,6 +288,35 @@
       "tryAgain": "Try Again"
     }
   },
+  "privacy": {
+    "contact": {
+      "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support@tibiacores.com.",
+      "title": "Contact Us"
+    },
+    "cookies": {
+      "content": "We use cookies and similar tracking technologies to enhance your experience and provide essential functionality. Here are the types of cookies we use:",
+      "title": "Cookies and Tracking",
+      "types": {
+        "analytics": "Analytics cookies to understand how you use our app",
+        "necessary": "Necessary cookies for basic functionality and security",
+        "preferences": "Preference cookies to remember your settings"
+      }
+    },
+    "data": {
+      "content": "We collect minimal personal information necessary to provide our services. This includes your email address for authentication and any data you voluntarily provide when creating or joining soul core lists.",
+      "title": "Data Collection"
+    },
+    "introduction": {
+      "content": "At TibiaCores, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our application.",
+      "title": "Introduction"
+    },
+    "lastUpdated": "Last updated: March 2025",
+    "security": {
+      "content": "We implement industry-standard security measures to protect your data. All data is encrypted in transit and at rest. We regularly review and update our security practices to ensure your information remains safe.",
+      "title": "Security"
+    },
+    "title": "Privacy Policy"
+  },
   "profile": {
     "characters": {
       "empty": "You haven't claimed any characters yet",
@@ -260,8 +324,8 @@
     },
     "email": {
       "status": {
-        "verified": "Your email is verified",
-        "notVerified": "Your email is not verified"
+        "notVerified": "Your email is not verified",
+        "verified": "Your email is verified"
       },
       "title": "Email Settings"
     },
@@ -270,6 +334,30 @@
     },
     "subtitle": "Manage your account and characters",
     "title": "Your Profile"
+  },
+  "publicCharacter": {
+    "loading": "Loading character profile...",
+    "notFound": {
+      "description": "The character you're looking for doesn't exist or is not public.",
+      "title": "Character not found"
+    },
+    "soulCores": {
+      "empty": "No soul cores unlocked yet",
+      "title": "Unlocked Soul Cores",
+      "unlocked": "Unlocked"
+    },
+    "stats": {
+      "total": {
+        "cores": "{current}/{total} Cores",
+        "percentage": "{percentage}%",
+        "title": "Total Progress"
+      },
+      "xpBoost": {
+        "cores": "{current}/{target} Cores",
+        "percentage": "{percentage}%",
+        "title": "XP Boost Progress"
+      }
+    }
   },
   "registerSuggestion": {
     "completeButton": "Complete Registration",
@@ -282,100 +370,11 @@
     "title": "Complete Your Registration"
   },
   "soulcoreSuggestions": {
-    "title": "Soul Core Suggestions",
-    "fromList": "From list",
     "accept": "Accept",
     "dismiss": "Dismiss",
-    "unknownList": "Unknown List",
-    "noSuggestions": "No suggestions available"
-  },
-  "listTag": {
-    "members": "{count} members",
-    "goToList": "Go to list",
-    "loadingMembers": "Loading members...",
-    "membersList": "Members:"
-  },
-  "home": {
-    "title": "Welcome to TibiaCores",
-    "subtitle": "Your companion app for managing and sharing soul core lists",
-    "yourLists": {
-      "title": "Your Lists",
-      "refresh": "Refresh",
-      "loading": "Loading your lists...",
-      "noLists": {
-        "title": "You haven't created or joined any lists yet.",
-        "subtitle": "Use the forms above to get started!"
-      }
-    },
-    "about": {
-      "title": "About TibiaCores",
-      "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build your collections, and share them with friends. Join existing lists using share codes or direct links."
-    }
-  },
-  "cookieConsent": {
-    "title": "Cookie Settings",
-    "description": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
-    "privacyPolicy": "Privacy Policy",
-    "acceptAll": "Accept All",
-    "savePreferences": "Save Preferences",
-    "categories": {
-      "necessary": "Necessary cookies (required)",
-      "preferences": "Preferences cookies",
-      "analytics": "Analytics cookies"
-    }
-  },
-  "privacy": {
-    "title": "Privacy Policy",
-    "lastUpdated": "Last updated: March 2025",
-    "introduction": {
-      "title": "Introduction",
-      "content": "At TibiaCores, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our application."
-    },
-    "cookies": {
-      "title": "Cookies and Tracking",
-      "content": "We use cookies and similar tracking technologies to enhance your experience and provide essential functionality. Here are the types of cookies we use:",
-      "types": {
-        "necessary": "Necessary cookies for basic functionality and security",
-        "preferences": "Preference cookies to remember your settings",
-        "analytics": "Analytics cookies to understand how you use our app"
-      }
-    },
-    "data": {
-      "title": "Data Collection",
-      "content": "We collect minimal personal information necessary to provide our services. This includes your email address for authentication and any data you voluntarily provide when creating or joining soul core lists."
-    },
-    "security": {
-      "title": "Security",
-      "content": "We implement industry-standard security measures to protect your data. All data is encrypted in transit and at rest. We regularly review and update our security practices to ensure your information remains safe."
-    },
-    "contact": {
-      "title": "Contact Us",
-      "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support@tibiacores.com."
-    }
-  },
-  "publicCharacter": {
-    "title": "Character Profile",
-    "loading": "Loading character profile...",
-    "notFound": {
-      "title": "Character not found",
-      "description": "The character you're looking for doesn't exist or is not public."
-    },
-    "stats": {
-      "xpBoost": {
-        "title": "XP Boost Progress",
-        "cores": "{current}/{target} Cores",
-        "percentage": "{percentage}%"
-      },
-      "total": {
-        "title": "Total Progress",
-        "cores": "{current}/{total} Cores",
-        "percentage": "{percentage}%"
-      }
-    },
-    "soulCores": {
-      "title": "Unlocked Soul Cores",
-      "empty": "No soul cores unlocked yet",
-      "unlocked": "Unlocked"
-    }
+    "fromList": "From list",
+    "noSuggestions": "No suggestions available",
+    "title": "Soul Core Suggestions",
+    "unknownList": "Unknown List"
   }
 }
