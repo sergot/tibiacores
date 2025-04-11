@@ -135,16 +135,18 @@
       "world": "Mundo"
     },
     "soulcores": {
-      "addButton": "Adicionar Soul Core",
-      "empty": "Nenhuma soul core desbloqueada ainda",
+      "addButton": "Adicionar Núcleo de Alma",
+      "empty": "Ainda não há núcleos de alma desbloqueados",
       "filters": {
-        "search": "Pesquisar criaturas"
+        "search": "Buscar criaturas"
       },
-      "loading": "Carregando soul cores...",
+      "loading": "Carregando núcleos de alma...",
       "removeButton": "Remover",
-      "title": "Soul Cores",
-      "total": "Total de Soul Cores"
+      "title": "Núcleos de Alma",
+      "total": "Total de Núcleos de Alma"
     },
+    "shareButton": "Compartilhar Personagem",
+    "shareLinkCopied": "Link de compartilhamento copiado para a área de transferência!",
     "title": "Detalhes do Personagem"
   },
   "createList": {
@@ -346,6 +348,31 @@
     "contact": {
       "title": "Contato",
       "content": "Se você tiver alguma dúvida sobre nossa Política de Privacidade ou como lidamos com seus dados, entre em contato conosco em support@tibiacores.com."
+    }
+  },
+  "publicCharacter": {
+    "title": "Perfil do Personagem",
+    "loading": "Carregando perfil do personagem...",
+    "notFound": {
+      "title": "Personagem não encontrado",
+      "description": "O personagem que você está procurando não existe ou não é público."
+    },
+    "stats": {
+      "xpBoost": {
+        "title": "Progresso do Bônus de XP",
+        "cores": "{current}/{target} Núcleos",
+        "percentage": "{percentage}%"
+      },
+      "total": {
+        "title": "Progresso Total",
+        "cores": "{current}/{total} Núcleos",
+        "percentage": "{percentage}%"
+      }
+    },
+    "soulCores": {
+      "title": "Núcleos Desbloqueados",
+      "empty": "Nenhum núcleo desbloqueado ainda",
+      "unlocked": "Desbloqueado"
     }
   }
 }

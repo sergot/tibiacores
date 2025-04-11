@@ -12,6 +12,7 @@ import ListDetailView from '@/views/ListDetailView.vue'
 import JoinListView from '@/views/JoinListView.vue'
 import CharacterDetailsView from '@/views/CharacterDetailsView.vue'
 import PrivacyView from '@/views/PrivacyView.vue'
+import PublicCharacterView from '@/views/PublicCharacterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,6 +71,11 @@ const router = createRouter({
       name: 'character-details',
       component: CharacterDetailsView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/characters/public/:name',
+      name: 'public-character',
+      component: PublicCharacterView,
     },
     {
       path: '/verify-email',

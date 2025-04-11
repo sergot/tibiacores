@@ -145,6 +145,8 @@
       "title": "Soulcory",
       "total": "Razem soulcorów"
     },
+    "shareButton": "Udostępnij postać",
+    "shareLinkCopied": "Link udostępniania skopiowany do schowka!",
     "title": "Szczegóły Postaci"
   },
   "createList": {
@@ -346,6 +348,31 @@
     "contact": {
       "title": "Kontakt",
       "content": "Jeśli masz jakiekolwiek pytania dotyczące naszej Polityki Prywatności lub sposobu, w jaki przetwarzamy Twoje dane, skontaktuj się z nami pod adresem support@tibiacores.com."
+    }
+  },
+  "publicCharacter": {
+    "title": "Profil Postaci",
+    "loading": "Ładowanie profilu postaci...",
+    "notFound": {
+      "title": "Postać nie znaleziona",
+      "description": "Szukana postać nie istnieje lub nie jest publiczna."
+    },
+    "stats": {
+      "xpBoost": {
+        "title": "Postęp do maks. boost XP",
+        "cores": "{current}/{target} soul corów",
+        "percentage": "{percentage}%"
+      },
+      "total": {
+        "title": "Całkowity postęp",
+        "cores": "{current}/{total} soul corów",
+        "percentage": "{percentage}%"
+      }
+    },
+    "soulCores": {
+      "title": "Odblokowane soul cory",
+      "empty": "Brak odblokowanych soul corów",
+      "unlocked": "Odblokowany"
     }
   }
 }

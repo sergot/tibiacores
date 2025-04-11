@@ -34,6 +34,12 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+// CharacterPreview represents a character with their unlocked soulcores
+type CharacterPreview struct {
+	Character     db.Character                  `json:"character"`
+	UnlockedCores []db.GetCharacterSoulcoresRow `json:"unlocked_cores"`
+}
+
 func NewUsersHandler(store db.Store, emailService services.EmailServiceInterface) *UsersHandler {
 	return &UsersHandler{store: store, emailService: emailService}
 }
@@ -840,5 +846,55 @@ func (h *UsersHandler) GetUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"email":          user.Email.String,
 		"email_verified": user.EmailVerified,
+	})
+}
+
+// GetCharacterPublic returns character details including their unlocked soulcores
+func (h *UsersHandler) GetCharacterPublic(c echo.Context) error {
+	characterName := c.Param("name")
+	if characterName == "" {
+		return apperror.ValidationError("Character name is required", nil).
+			WithDetails(&apperror.ValidationErrorDetails{
+				Field:  "name",
+				Reason: "Character name cannot be empty",
+			})
+	}
+
+	ctx := c.Request().Context()
+
+	// Get character details by name
+	character, err := h.store.GetCharacterByName(ctx, characterName)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return apperror.NotFoundError("Character not found", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "name",
+					Value:  characterName,
+					Reason: "Character does not exist",
+				})
+		}
+		return apperror.DatabaseError("Failed to get character", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacterByName",
+				Table:     "characters",
+			}).
+			Wrap(err)
+	}
+
+	// Get unlocked soulcores
+	soulcores, err := h.store.GetCharacterSoulcores(ctx, character.ID)
+	if err != nil {
+		return apperror.DatabaseError("Failed to get character soulcores", err).
+			WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GetCharacterSoulcores",
+				Table:     "character_soulcores",
+			}).
+			Wrap(err)
+	}
+
+	// Return combined response
+	return c.JSON(http.StatusOK, CharacterPreview{
+		Character:     character,
+		UnlockedCores: soulcores,
 	})
 }

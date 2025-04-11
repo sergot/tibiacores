@@ -131,7 +131,7 @@
     "information": {
       "level": "Level",
       "name": "Name",
-      "vocation": "Berufung",
+      "vocation": "Beruf",
       "world": "Welt"
     },
     "soulcores": {
@@ -143,9 +143,11 @@
       "loading": "Lade Seelenkerne...",
       "removeButton": "Entfernen",
       "title": "Seelenkerne",
-      "total": "Gesamte Seelenkerne"
+      "total": "Seelenkerne gesamt"
     },
-    "title": "Charakterdetails"
+    "shareButton": "Charakter teilen",
+    "shareLinkCopied": "Teil-Link in die Zwischenablage kopiert!",
+    "title": "Charakter-Details"
   },
   "createList": {
     "form": {
@@ -346,6 +348,31 @@
     "contact": {
       "title": "Kontakt",
       "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support@tibiacores.com."
+    }
+  },
+  "publicCharacter": {
+    "title": "Charakterprofil",
+    "loading": "Lade Charakterprofil...",
+    "notFound": {
+      "title": "Charakter nicht gefunden",
+      "description": "Der gesuchte Charakter existiert nicht oder ist nicht öffentlich."
+    },
+    "stats": {
+      "xpBoost": {
+        "title": "XP-Boost Fortschritt",
+        "cores": "{current}/{target} Seelenkerne",
+        "percentage": "{percentage}%"
+      },
+      "total": {
+        "title": "Gesamtfortschritt",
+        "cores": "{current}/{total} Seelenkerne",
+        "percentage": "{percentage}%"
+      }
+    },
+    "soulCores": {
+      "title": "Freigeschaltete Seelenkerne",
+      "empty": "Noch keine Seelenkerne freigeschaltet",
+      "unlocked": "Freigeschaltet"
     }
   }
 }

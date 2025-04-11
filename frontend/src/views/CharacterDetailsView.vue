@@ -18,26 +18,47 @@
               <h1 class="text-3xl font-bold text-gray-900">{{ character.name }}</h1>
               <p class="mt-1 text-lg text-gray-600">{{ character.world }}</p>
             </div>
-            <router-link
-              to="/profile"
-              class="text-gray-600 hover:text-gray-900 flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div class="flex items-center space-x-4">
+              <button
+                @click="showShareDialog = true"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              <span>{{ t('profile.title') }}</span>
-            </router-link>
+                <svg
+                  class="h-5 w-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
+                </svg>
+                {{ t('characterDetails.shareButton') }}
+              </button>
+              <router-link
+                to="/profile"
+                class="text-gray-600 hover:text-gray-900 flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                <span>{{ t('profile.title') }}</span>
+              </router-link>
+            </div>
           </div>
         </div>
 
@@ -158,19 +179,54 @@
           </div>
         </div>
       </div>
+
+      <!-- Share Dialog -->
+      <div
+        v-if="showShareDialog"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
+        @click="showShareDialog = false"
+      >
+        <div class="bg-white rounded-xl p-6 max-w-lg w-full" @click.stop>
+          <h3 class="text-xl font-semibold mb-4">{{ t('characterDetails.shareCharacter') }}</h3>
+          <p class="text-gray-600 mb-4">
+            {{ t('characterDetails.shareCharacterDescription') }}
+          </p>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              readonly
+              :value="shareUrl"
+              class="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
+            />
+            <button
+              @click="copyShareUrl"
+              class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <span
+                v-if="showCopiedMessage"
+                class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+              >
+                {{ t('characterDetails.copied') }}
+              </span>
+              {{ t('characterDetails.copyLink') }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const characterId = route.params.id as string
 
@@ -191,6 +247,11 @@ const totalCreatures = ref(0)
 const loading = ref(true)
 const selectedCreatureName = ref('')
 const creatures = ref<Array<{ id: string; name: string }>>([])
+const showShareDialog = ref(false)
+const showCopiedMessage = ref(false)
+const shareUrl = computed(() => {
+  return `${window.location.origin}/characters/public/${character.value?.name}`
+})
 
 const getSelectedCreature = computed(() => {
   return creatures.value.find((c) => c.name === selectedCreatureName.value)
@@ -261,6 +322,18 @@ const addSoulcore = async () => {
     selectedCreatureName.value = ''
   } catch (err) {
     console.error('Failed to add soul core:', err)
+  }
+}
+
+const copyShareUrl = async () => {
+  try {
+    await navigator.clipboard.writeText(shareUrl.value)
+    showCopiedMessage.value = true
+    setTimeout(() => {
+      showCopiedMessage.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy URL:', err)
   }
 }
 

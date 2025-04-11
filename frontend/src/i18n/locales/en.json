@@ -145,6 +145,11 @@
       "title": "Soul Cores",
       "total": "Total Soul Cores"
     },
+    "shareButton": "Share Character",
+    "shareCharacter": "Share Character",
+    "shareCharacterDescription": "Share this character's soul cores with others by copying the link below.",
+    "copied": "Copied!",
+    "copyLink": "Copy Link",
     "title": "Character Details"
   },
   "createList": {
@@ -346,6 +351,31 @@
     "contact": {
       "title": "Contact Us",
       "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support@tibiacores.com."
+    }
+  },
+  "publicCharacter": {
+    "title": "Character Profile",
+    "loading": "Loading character profile...",
+    "notFound": {
+      "title": "Character not found",
+      "description": "The character you're looking for doesn't exist or is not public."
+    },
+    "stats": {
+      "xpBoost": {
+        "title": "XP Boost Progress",
+        "cores": "{current}/{target} Cores",
+        "percentage": "{percentage}%"
+      },
+      "total": {
+        "title": "Total Progress",
+        "cores": "{current}/{total} Cores",
+        "percentage": "{percentage}%"
+      }
+    },
+    "soulCores": {
+      "title": "Unlocked Soul Cores",
+      "empty": "No soul cores unlocked yet",
+      "unlocked": "Unlocked"
     }
   }
 }

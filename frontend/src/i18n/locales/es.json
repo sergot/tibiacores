@@ -145,6 +145,8 @@
       "title": "Núcleos de Alma",
       "total": "Total de Núcleos de Alma"
     },
+    "shareButton": "Compartir Personaje",
+    "shareLinkCopied": "¡Enlace de compartir copiado al portapapeles!",
     "title": "Detalles del Personaje"
   },
   "createList": {
@@ -346,6 +348,31 @@
     "contact": {
       "title": "Contáctenos",
       "content": "Si tiene alguna pregunta sobre nuestra Política de Privacidad o cómo manejamos sus datos, por favor contáctenos en support@tibiacores.com."
+    }
+  },
+  "publicCharacter": {
+    "title": "Perfil del Personaje",
+    "loading": "Cargando perfil del personaje...",
+    "notFound": {
+      "title": "Personaje no encontrado",
+      "description": "El personaje que buscas no existe o no es público."
+    },
+    "stats": {
+      "xpBoost": {
+        "title": "Progreso del Bono de XP",
+        "cores": "{current}/{target} Núcleos",
+        "percentage": "{percentage}%"
+      },
+      "total": {
+        "title": "Progreso Total",
+        "cores": "{current}/{total} Núcleos",
+        "percentage": "{percentage}%"
+      }
+    },
+    "soulCores": {
+      "title": "Núcleos Desbloqueados",
+      "empty": "Aún no hay núcleos desbloqueados",
+      "unlocked": "Desbloqueado"
     }
   }
 }
