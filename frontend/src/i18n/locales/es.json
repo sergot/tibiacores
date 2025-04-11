@@ -128,12 +128,17 @@
     "confirmDelete": {
       "cancel": "Cancelar"
     },
+    "copied": "¡Copiado!",
+    "copyLink": "Copiar Enlace",
     "information": {
       "level": "Nivel",
       "name": "Nombre",
       "vocation": "Vocación",
       "world": "Mundo"
     },
+    "shareButton": "Compartir Personaje",
+    "shareCharacter": "Compartir Personaje",
+    "shareCharacterDescription": "Comparte los núcleos de alma de este personaje con otros copiando el enlace a continuación.",
     "soulcores": {
       "addButton": "Agregar Núcleo de Alma",
       "empty": "Aún no hay núcleos de alma desbloqueados",
@@ -146,6 +151,18 @@
       "total": "Total de Núcleos de Alma"
     },
     "title": "Detalles del Personaje"
+  },
+  "cookieConsent": {
+    "acceptAll": "Aceptar todas",
+    "categories": {
+      "analytics": "Cookies de análisis",
+      "necessary": "Cookies necesarias (obligatorias)",
+      "preferences": "Cookies de preferencias"
+    },
+    "description": "Utilizamos cookies para mejorar su experiencia. Al continuar visitando este sitio, acepta nuestro uso de cookies.",
+    "privacyPolicy": "Política de privacidad",
+    "savePreferences": "Guardar preferencias",
+    "title": "Configuración de cookies"
   },
   "createList": {
     "form": {
@@ -172,6 +189,23 @@
       "message": "Verificando tu email...",
       "redirect": "Redirigiendo al perfil...",
       "success": "¡Email verificado exitosamente!"
+    }
+  },
+  "home": {
+    "about": {
+      "description": "TibiaCores es tu aplicación compañera para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes usando códigos de compartir o enlaces directos.",
+      "title": "Acerca de TibiaCores"
+    },
+    "subtitle": "Tu aplicación compañera para gestionar y compartir listas de núcleos de alma",
+    "title": "Bienvenido a TibiaCores",
+    "yourLists": {
+      "loading": "Cargando tus listas...",
+      "noLists": {
+        "subtitle": "¡Usa los formularios de arriba para comenzar!",
+        "title": "Aún no has creado ni te has unido a ninguna lista."
+      },
+      "refresh": "Actualizar",
+      "title": "Tus Listas"
     }
   },
   "joinList": {
@@ -208,6 +242,12 @@
     "status": "Estado",
     "totalProgress": "Progreso Total",
     "xpBoostProgress": "Progreso de Impulso de EXP (200)"
+  },
+  "listTag": {
+    "goToList": "Ir a la lista",
+    "loadingMembers": "Cargando miembros...",
+    "members": "{count} miembros",
+    "membersList": "Miembros:"
   },
   "lists": {
     "title": "Listas"
@@ -248,6 +288,35 @@
       "tryAgain": "Intentar de nuevo"
     }
   },
+  "privacy": {
+    "contact": {
+      "content": "Si tiene alguna pregunta sobre nuestra Política de Privacidad o cómo manejamos sus datos, por favor contáctenos en support@tibiacores.com.",
+      "title": "Contáctenos"
+    },
+    "cookies": {
+      "content": "Utilizamos cookies y tecnologías de seguimiento similares para mejorar su experiencia y proporcionar funcionalidad esencial. Estos son los tipos de cookies que utilizamos:",
+      "title": "Cookies y Seguimiento",
+      "types": {
+        "analytics": "Cookies de análisis para entender cómo utiliza nuestra aplicación",
+        "necessary": "Cookies necesarias para la funcionalidad básica y la seguridad",
+        "preferences": "Cookies de preferencias para recordar sus configuraciones"
+      }
+    },
+    "data": {
+      "content": "Recopilamos la mínima información personal necesaria para proporcionar nuestros servicios. Esto incluye su dirección de correo electrónico para autenticación y cualquier dato que proporcione voluntariamente al crear o unirse a listas de núcleos de alma.",
+      "title": "Recopilación de Datos"
+    },
+    "introduction": {
+      "content": "En TibiaCores, tomamos su privacidad muy en serio. Esta Política de Privacidad explica cómo recopilamos, utilizamos y protegemos su información personal cuando utiliza nuestra aplicación.",
+      "title": "Introducción"
+    },
+    "lastUpdated": "Última actualización: Marzo 2025",
+    "security": {
+      "content": "Implementamos medidas de seguridad estándar de la industria para proteger sus datos. Todos los datos están encriptados en tránsito y en reposo. Revisamos y actualizamos regularmente nuestras prácticas de seguridad para garantizar que su información permanezca segura.",
+      "title": "Seguridad"
+    },
+    "title": "Política de Privacidad"
+  },
   "profile": {
     "characters": {
       "empty": "Aún no has reclamado ningún personaje",
@@ -255,8 +324,8 @@
     },
     "email": {
       "status": {
-        "verified": "Tu correo electrónico está verificado",
-        "notVerified": "Tu correo electrónico no está verificado"
+        "notVerified": "Tu correo electrónico no está verificado",
+        "verified": "Tu correo electrónico está verificado"
       },
       "title": "Configuración de Correo Electrónico"
     },
@@ -265,6 +334,30 @@
     },
     "subtitle": "Administra tu cuenta y personajes",
     "title": "Tu Perfil"
+  },
+  "publicCharacter": {
+    "loading": "Cargando perfil del personaje...",
+    "notFound": {
+      "description": "El personaje que buscas no existe o no es público.",
+      "title": "Personaje no encontrado"
+    },
+    "soulCores": {
+      "empty": "Aún no hay núcleos desbloqueados",
+      "title": "Núcleos Desbloqueados",
+      "unlocked": "Desbloqueado"
+    },
+    "stats": {
+      "total": {
+        "cores": "{current}/{total} Núcleos",
+        "percentage": "{percentage}%",
+        "title": "Progreso Total"
+      },
+      "xpBoost": {
+        "cores": "{current}/{target} Núcleos",
+        "percentage": "{percentage}%",
+        "title": "Progreso del Bono de XP"
+      }
+    }
   },
   "registerSuggestion": {
     "completeButton": "Completar Registro",
@@ -277,75 +370,11 @@
     "title": "Completa Tu Registro"
   },
   "soulcoreSuggestions": {
-    "title": "Sugerencias de Núcleo del Alma",
-    "fromList": "De la lista",
     "accept": "Aceptar",
     "dismiss": "Rechazar",
-    "unknownList": "Lista desconocida",
-    "noSuggestions": "No hay sugerencias disponibles"
-  },
-  "listTag": {
-    "members": "{count} miembros",
-    "goToList": "Ir a la lista",
-    "loadingMembers": "Cargando miembros...",
-    "membersList": "Miembros:"
-  },
-  "home": {
-    "title": "Bienvenido a TibiaCores",
-    "subtitle": "Tu aplicación compañera para gestionar y compartir listas de núcleos de alma",
-    "yourLists": {
-      "title": "Tus Listas",
-      "refresh": "Actualizar",
-      "loading": "Cargando tus listas...",
-      "noLists": {
-        "title": "Aún no has creado ni te has unido a ninguna lista.",
-        "subtitle": "¡Usa los formularios de arriba para comenzar!"
-      }
-    },
-    "about": {
-      "title": "Acerca de TibiaCores",
-      "description": "TibiaCores es tu aplicación compañera para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes usando códigos de compartir o enlaces directos."
-    }
-  },
-  "cookieConsent": {
-    "title": "Configuración de cookies",
-    "description": "Utilizamos cookies para mejorar su experiencia. Al continuar visitando este sitio, acepta nuestro uso de cookies.",
-    "privacyPolicy": "Política de privacidad",
-    "acceptAll": "Aceptar todas",
-    "savePreferences": "Guardar preferencias",
-    "categories": {
-      "necessary": "Cookies necesarias (obligatorias)",
-      "preferences": "Cookies de preferencias",
-      "analytics": "Cookies de análisis"
-    }
-  },
-  "privacy": {
-    "title": "Política de Privacidad",
-    "lastUpdated": "Última actualización: Marzo 2025",
-    "introduction": {
-      "title": "Introducción",
-      "content": "En TibiaCores, tomamos su privacidad muy en serio. Esta Política de Privacidad explica cómo recopilamos, utilizamos y protegemos su información personal cuando utiliza nuestra aplicación."
-    },
-    "cookies": {
-      "title": "Cookies y Seguimiento",
-      "content": "Utilizamos cookies y tecnologías de seguimiento similares para mejorar su experiencia y proporcionar funcionalidad esencial. Estos son los tipos de cookies que utilizamos:",
-      "types": {
-        "necessary": "Cookies necesarias para la funcionalidad básica y la seguridad",
-        "preferences": "Cookies de preferencias para recordar sus configuraciones",
-        "analytics": "Cookies de análisis para entender cómo utiliza nuestra aplicación"
-      }
-    },
-    "data": {
-      "title": "Recopilación de Datos",
-      "content": "Recopilamos la mínima información personal necesaria para proporcionar nuestros servicios. Esto incluye su dirección de correo electrónico para autenticación y cualquier dato que proporcione voluntariamente al crear o unirse a listas de núcleos de alma."
-    },
-    "security": {
-      "title": "Seguridad",
-      "content": "Implementamos medidas de seguridad estándar de la industria para proteger sus datos. Todos los datos están encriptados en tránsito y en reposo. Revisamos y actualizamos regularmente nuestras prácticas de seguridad para garantizar que su información permanezca segura."
-    },
-    "contact": {
-      "title": "Contáctenos",
-      "content": "Si tiene alguna pregunta sobre nuestra Política de Privacidad o cómo manejamos sus datos, por favor contáctenos en support@tibiacores.com."
-    }
+    "fromList": "De la lista",
+    "noSuggestions": "No hay sugerencias disponibles",
+    "title": "Sugerencias de Núcleo del Alma",
+    "unknownList": "Lista desconocida"
   }
 }

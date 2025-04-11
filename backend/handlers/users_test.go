@@ -2108,3 +2108,165 @@ func TestSignup(t *testing.T) {
 		})
 	}
 }
+
+func TestGetCharacterPublic(t *testing.T) {
+	testCases := []struct {
+		name          string
+		setupRequest  func(c echo.Context)
+		setupMocks    func(store *mockdb.MockStore, characterName string, character db.Character)
+		expectedCode  int
+		expectedError string
+		checkResponse func(t *testing.T, response handlers.CharacterPreview)
+	}{
+		{
+			name: "Success",
+			setupRequest: func(c echo.Context) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterName string, character db.Character) {
+				// Get character by name
+				store.EXPECT().
+					GetCharacterByName(gomock.Any(), characterName).
+					Return(character, nil)
+
+				// Get character soulcores
+				store.EXPECT().
+					GetCharacterSoulcores(gomock.Any(), character.ID).
+					Return([]db.GetCharacterSoulcoresRow{
+						{
+							CharacterID:  character.ID,
+							CreatureID:   uuid.New(),
+							CreatureName: "Dragon",
+						},
+						{
+							CharacterID:  character.ID,
+							CreatureID:   uuid.New(),
+							CreatureName: "Giant Spider",
+						},
+					}, nil)
+			},
+			expectedCode: http.StatusOK,
+			checkResponse: func(t *testing.T, response handlers.CharacterPreview) {
+				require.Equal(t, "TestCharacter", response.Character.Name)
+				require.Equal(t, "Antica", response.Character.World)
+				require.Equal(t, 2, len(response.UnlockedCores))
+				require.Equal(t, "Dragon", response.UnlockedCores[0].CreatureName)
+				require.Equal(t, "Giant Spider", response.UnlockedCores[1].CreatureName)
+			},
+		},
+		{
+			name: "Empty Character Name",
+			setupRequest: func(c echo.Context) {
+				c.SetParamValues("")
+			},
+			setupMocks: func(store *mockdb.MockStore, characterName string, character db.Character) {
+				// No mocks needed for this case
+			},
+			expectedCode:  http.StatusBadRequest,
+			expectedError: "Character name is required",
+		},
+		{
+			name: "Character Not Found",
+			setupRequest: func(c echo.Context) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterName string, character db.Character) {
+				store.EXPECT().
+					GetCharacterByName(gomock.Any(), characterName).
+					Return(db.Character{}, sql.ErrNoRows)
+			},
+			expectedCode:  http.StatusNotFound,
+			expectedError: "Character not found",
+		},
+		{
+			name: "Database Error",
+			setupRequest: func(c echo.Context) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterName string, character db.Character) {
+				store.EXPECT().
+					GetCharacterByName(gomock.Any(), characterName).
+					Return(db.Character{}, errors.New("database error"))
+			},
+			expectedCode:  http.StatusInternalServerError,
+			expectedError: "Failed to get character",
+		},
+		{
+			name: "Error Getting Soulcores",
+			setupRequest: func(c echo.Context) {
+				// Default setup is fine
+			},
+			setupMocks: func(store *mockdb.MockStore, characterName string, character db.Character) {
+				store.EXPECT().
+					GetCharacterByName(gomock.Any(), characterName).
+					Return(character, nil)
+
+				store.EXPECT().
+					GetCharacterSoulcores(gomock.Any(), character.ID).
+					Return(nil, errors.New("database error"))
+			},
+			expectedCode:  http.StatusInternalServerError,
+			expectedError: "Failed to get character soulcores",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			emailService := newMockEmailService(ctrl)
+			handler := handlers.NewUsersHandler(store, emailService)
+
+			// Create test character
+			character := db.Character{
+				ID:     uuid.New(),
+				Name:   "TestCharacter",
+				World:  "Antica",
+				UserID: uuid.New(),
+			}
+
+			// Setup request
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			c.SetPath("/characters/public/:name")
+			c.SetParamNames("name")
+			c.SetParamValues("TestCharacter")
+
+			// Apply test case specific setup
+			if tc.setupRequest != nil {
+				tc.setupRequest(c)
+			}
+
+			// Setup mocks
+			if tc.setupMocks != nil {
+				tc.setupMocks(store, "TestCharacter", character)
+			}
+
+			// Execute test
+			err := handler.GetCharacterPublic(c)
+
+			// Check error
+			if tc.expectedError != "" {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), tc.expectedError)
+				return
+			}
+			require.NoError(t, err)
+
+			// Check response code
+			require.Equal(t, tc.expectedCode, rec.Code)
+
+			// Check response body
+			if tc.checkResponse != nil {
+				var response handlers.CharacterPreview
+				err = json.Unmarshal(rec.Body.Bytes(), &response)
+				require.NoError(t, err)
+				tc.checkResponse(t, response)
+			}
+		})
+	}
+}
