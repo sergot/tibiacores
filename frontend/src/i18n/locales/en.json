@@ -289,5 +289,63 @@
     "goToList": "Go to list",
     "loadingMembers": "Loading members...",
     "membersList": "Members:"
+  },
+  "home": {
+    "title": "Welcome to TibiaCores",
+    "subtitle": "Your companion app for managing and sharing soul core lists",
+    "yourLists": {
+      "title": "Your Lists",
+      "refresh": "Refresh",
+      "loading": "Loading your lists...",
+      "noLists": {
+        "title": "You haven't created or joined any lists yet.",
+        "subtitle": "Use the forms above to get started!"
+      }
+    },
+    "about": {
+      "title": "About TibiaCores",
+      "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build your collections, and share them with friends. Join existing lists using share codes or direct links."
+    }
+  },
+  "cookieConsent": {
+    "title": "Cookie Settings",
+    "description": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+    "privacyPolicy": "Privacy Policy",
+    "acceptAll": "Accept All",
+    "savePreferences": "Save Preferences",
+    "categories": {
+      "necessary": "Necessary cookies (required)",
+      "preferences": "Preferences cookies",
+      "analytics": "Analytics cookies"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: March 2025",
+    "introduction": {
+      "title": "Introduction",
+      "content": "At TibiaCores, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our application."
+    },
+    "cookies": {
+      "title": "Cookies and Tracking",
+      "content": "We use cookies and similar tracking technologies to enhance your experience and provide essential functionality. Here are the types of cookies we use:",
+      "types": {
+        "necessary": "Necessary cookies for basic functionality and security",
+        "preferences": "Preference cookies to remember your settings",
+        "analytics": "Analytics cookies to understand how you use our app"
+      }
+    },
+    "data": {
+      "title": "Data Collection",
+      "content": "We collect minimal personal information necessary to provide our services. This includes your email address for authentication and any data you voluntarily provide when creating or joining soul core lists."
+    },
+    "security": {
+      "title": "Security",
+      "content": "We implement industry-standard security measures to protect your data. All data is encrypted in transit and at rest. We regularly review and update our security practices to ensure your information remains safe."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support@tibiacores.com."
+    }
   }
 }

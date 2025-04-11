@@ -1,15 +1,17 @@
 /// <reference types="vite/client" />
 
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import CharacterClaimView from '../views/CharacterClaimView.vue'
-import SignUpView from '../views/SignUpView.vue'
-import SignInView from '../views/SignInView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import CreateListView from '../views/CreateListView.vue'
-import ListDetailView from '../views/ListDetailView.vue'
-import JoinListView from '../views/JoinListView.vue'
-import CharacterDetailsView from '../views/CharacterDetailsView.vue'
+import { useAnalytics } from '@/composables/useAnalytics'
+import HomeView from '@/views/HomeView.vue'
+import CharacterClaimView from '@/views/CharacterClaimView.vue'
+import SignUpView from '@/views/SignUpView.vue'
+import SignInView from '@/views/SignInView.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import CreateListView from '@/views/CreateListView.vue'
+import ListDetailView from '@/views/ListDetailView.vue'
+import JoinListView from '@/views/JoinListView.vue'
+import CharacterDetailsView from '@/views/CharacterDetailsView.vue'
+import PrivacyView from '@/views/PrivacyView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -84,7 +86,18 @@ const router = createRouter({
       name: 'oauth-initiate',
       component: () => import('../views/OAuthInitiateView.vue'),
     },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: PrivacyView,
+    },
   ],
+})
+
+// Track page views
+router.afterEach((to) => {
+  const { trackPageView } = useAnalytics()
+  trackPageView(to.path)
 })
 
 export default router

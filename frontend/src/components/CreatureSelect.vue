@@ -75,7 +75,7 @@ const filteredCreatures = computed(() => {
         (sc) =>
           sc.creature_id === creature.id && (sc.status === 'obtained' || sc.status === 'unlocked'),
       ),
-      unlockStats: getUnlockInfo(creature)
+      unlockStats: getUnlockInfo(creature),
     }))
     .sort((a, b) => {
       // Sort obtained creatures to the bottom
@@ -155,14 +155,20 @@ onBeforeUnmount(() => {
         :style="{
           left: `${$el?.getBoundingClientRect().left}px`,
           top: `${$el?.getBoundingClientRect().bottom + 4}px`,
-          width: `${$el?.getBoundingClientRect().width}px`
+          width: `${$el?.getBoundingClientRect().width}px`,
         }"
       >
         <div class="max-h-64 overflow-y-auto">
           <div
             v-for="(creature, index) in filteredCreatures"
             :key="creature.id"
-            @click="!creature.isObtained && (searchInput = creature.name, emit('update:modelValue', creature.name), isOpen = false, selectedIndex = -1)"
+            @click="
+              !creature.isObtained &&
+              ((searchInput = creature.name),
+              emit('update:modelValue', creature.name),
+              (isOpen = false),
+              (selectedIndex = -1))
+            "
             class="p-2 group relative"
             :class="{
               'cursor-pointer text-sm': true,
@@ -174,13 +180,14 @@ onBeforeUnmount(() => {
             <div class="flex items-center justify-between gap-2">
               <span>{{ creature.name }}</span>
               <div class="flex items-center gap-2">
-                <div v-if="creature.unlockStats?.unlocked_count"
-                     class="group/tooltip relative">
-                  <span class="px-2 py-0.5 text-xs font-medium rounded-full"
+                <div v-if="creature.unlockStats?.unlocked_count" class="group/tooltip relative">
+                  <span
+                    class="px-2 py-0.5 text-xs font-medium rounded-full"
                     :class="{
                       'bg-purple-100 text-purple-800': !creature.isObtained,
-                      'bg-gray-100 text-gray-600': creature.isObtained
-                    }">
+                      'bg-gray-100 text-gray-600': creature.isObtained,
+                    }"
+                  >
                     {{ creature.unlockStats.unlocked_count }} unlocked
                   </span>
                   <div class="fixed z-[100] left-0 top-0 w-full h-0 pointer-events-none">
@@ -188,20 +195,28 @@ onBeforeUnmount(() => {
                       class="invisible group-hover/tooltip:visible group-active/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 group-active/tooltip:opacity-100 transition-opacity absolute z-50 w-48 p-2 bg-white rounded-lg shadow-lg border border-gray-200 pointer-events-auto"
                       :style="{
                         left: isMobile ? '1rem' : `${$el?.getBoundingClientRect().right + 8}px`,
-                        top: isMobile ? `${$el?.getBoundingClientRect().bottom + 8}px` : `${$el?.getBoundingClientRect().top}px`,
-                        maxWidth: 'calc(100vw - 2rem)'
+                        top: isMobile
+                          ? `${$el?.getBoundingClientRect().bottom + 8}px`
+                          : `${$el?.getBoundingClientRect().top}px`,
+                        maxWidth: 'calc(100vw - 2rem)',
                       }"
                     >
-                      <div class="font-medium text-gray-700 border-b border-gray-100 pb-1 mb-1">Characters who unlocked</div>
-                      <div v-for="member in creature.unlockStats.unlocked_by"
-                           :key="member.character_name"
-                           class="text-sm py-1">
+                      <div class="font-medium text-gray-700 border-b border-gray-100 pb-1 mb-1">
+                        Characters who unlocked
+                      </div>
+                      <div
+                        v-for="member in creature.unlockStats.unlocked_by"
+                        :key="member.character_name"
+                        class="text-sm py-1"
+                      >
                         <span class="text-gray-600">{{ member.character_name }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <span v-if="creature.isObtained" class="text-xs text-gray-500">(already obtained)</span>
+                <span v-if="creature.isObtained" class="text-xs text-gray-500"
+                  >(already obtained)</span
+                >
               </div>
             </div>
           </div>

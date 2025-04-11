@@ -3,6 +3,7 @@
     <SiteNavbar />
     <router-view></router-view>
     <SiteFooter />
+    <CookieConsent />
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import { useUserStore } from './stores/user'
 import { useSuggestionsStore } from './stores/suggestions'
 import SiteNavbar from './components/SiteNavbar.vue'
 import SiteFooter from './components/SiteFooter.vue'
+import CookieConsent from './components/CookieConsent.vue'
 
 const userStore = useUserStore()
 const suggestionsStore = useSuggestionsStore()
