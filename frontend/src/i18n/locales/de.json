@@ -289,5 +289,63 @@
     "goToList": "Zur Liste gehen",
     "loadingMembers": "Mitglieder werden geladen...",
     "membersList": "Mitglieder:"
+  },
+  "home": {
+    "title": "Willkommen bei TibiaCores",
+    "subtitle": "Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen",
+    "yourLists": {
+      "title": "Ihre Listen",
+      "refresh": "Aktualisieren",
+      "loading": "Lade Ihre Listen...",
+      "noLists": {
+        "title": "Sie haben noch keine Listen erstellt oder sind keiner beigetreten.",
+        "subtitle": "Verwenden Sie die Formulare oben, um zu beginnen!"
+      }
+    },
+    "about": {
+      "title": "Über TibiaCores",
+      "description": "TibiaCores ist Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen. Erstellen Sie Charaktere, bauen Sie Sammlungen auf und teilen Sie sie mit Freunden. Treten Sie bestehenden Listen über Teilungscodes oder direkte Links bei."
+    }
+  },
+  "cookieConsent": {
+    "title": "Cookie-Einstellungen",
+    "description": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern. Durch die weitere Nutzung dieser Website stimmen Sie der Verwendung von Cookies zu.",
+    "privacyPolicy": "Datenschutzerklärung",
+    "acceptAll": "Alle akzeptieren",
+    "savePreferences": "Einstellungen speichern",
+    "categories": {
+      "necessary": "Notwendige Cookies (erforderlich)",
+      "preferences": "Präferenz-Cookies",
+      "analytics": "Analytics-Cookies"
+    }
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdated": "Zuletzt aktualisiert: März 2025",
+    "introduction": {
+      "title": "Einführung",
+      "content": "Bei TibiaCores nehmen wir Ihre Privatsphäre ernst. Diese Datenschutzerklärung erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen, wenn Sie unsere Anwendung nutzen."
+    },
+    "cookies": {
+      "title": "Cookies und Tracking",
+      "content": "Wir verwenden Cookies und ähnliche Tracking-Technologien, um Ihr Erlebnis zu verbessern und wichtige Funktionen bereitzustellen. Hier sind die Arten von Cookies, die wir verwenden:",
+      "types": {
+        "necessary": "Notwendige Cookies für grundlegende Funktionalität und Sicherheit",
+        "preferences": "Präferenz-Cookies zur Speicherung Ihrer Einstellungen",
+        "analytics": "Analytics-Cookies zum Verständnis Ihrer App-Nutzung"
+      }
+    },
+    "data": {
+      "title": "Datenerfassung",
+      "content": "Wir sammeln nur die minimal notwendigen personenbezogenen Daten, die für die Bereitstellung unserer Dienste erforderlich sind. Dies umfasst Ihre E-Mail-Adresse für die Authentifizierung und alle Daten, die Sie freiwillig beim Erstellen oder Beitreten zu Seelenkern-Listen angeben."
+    },
+    "security": {
+      "title": "Sicherheit",
+      "content": "Wir implementieren branchenübliche Sicherheitsmaßnahmen zum Schutz Ihrer Daten. Alle Daten werden während der Übertragung und im Ruhezustand verschlüsselt. Wir überprüfen und aktualisieren regelmäßig unsere Sicherheitspraktiken, um sicherzustellen, dass Ihre Informationen sicher bleiben."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support@tibiacores.com."
+    }
   }
 }

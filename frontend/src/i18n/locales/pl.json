@@ -289,5 +289,63 @@
     "goToList": "Przejdź do listy",
     "loadingMembers": "Ładowanie członków...",
     "membersList": "Członkowie:"
+  },
+  "home": {
+    "title": "Witaj w TibiaCores",
+    "subtitle": "Twoja aplikacja do zarządzania i udostępniania list soul corów",
+    "yourLists": {
+      "title": "Twoje Listy",
+      "refresh": "Odśwież",
+      "loading": "Ładowanie Twoich list...",
+      "noLists": {
+        "title": "Nie utworzyłeś jeszcze żadnych list ani nie dołączyłeś do żadnej.",
+        "subtitle": "Użyj formularzy powyżej, aby zacząć!"
+      }
+    },
+    "about": {
+      "title": "O TibiaCores",
+      "description": "TibiaCores to Twoja aplikacja do zarządzania i udostępniania list soul corów. Twórz postacie, buduj kolekcje i udostępniaj je znajomym. Dołączaj do istniejących list za pomocą kodów udostępniania lub bezpośrednich linków."
+    }
+  },
+  "cookieConsent": {
+    "title": "Ustawienia plików cookie",
+    "description": "Używamy plików cookie, aby poprawić Twoje doświadczenia. Kontynuując korzystanie z tej strony, zgadzasz się na używanie plików cookie.",
+    "privacyPolicy": "Polityka prywatności",
+    "acceptAll": "Zaakceptuj wszystkie",
+    "savePreferences": "Zapisz preferencje",
+    "categories": {
+      "necessary": "Niezbędne pliki cookie (wymagane)",
+      "preferences": "Pliki cookie preferencji",
+      "analytics": "Pliki cookie analityczne"
+    }
+  },
+  "privacy": {
+    "title": "Polityka Prywatności",
+    "lastUpdated": "Ostatnia aktualizacja: Marzec 2025",
+    "introduction": {
+      "title": "Wprowadzenie",
+      "content": "W TibiaCores poważnie traktujemy Twoją prywatność. Niniejsza Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane osobowe podczas korzystania z naszej aplikacji."
+    },
+    "cookies": {
+      "title": "Pliki Cookie i Śledzenie",
+      "content": "Używamy plików cookie i podobnych technologii śledzenia, aby poprawić Twoje doświadczenie i zapewnić niezbędną funkcjonalność. Oto rodzaje plików cookie, których używamy:",
+      "types": {
+        "necessary": "Niezbędne pliki cookie do podstawowej funkcjonalności i bezpieczeństwa",
+        "preferences": "Pliki cookie preferencji do zapamiętywania Twoich ustawień",
+        "analytics": "Pliki cookie analityczne do zrozumienia, jak korzystasz z naszej aplikacji"
+      }
+    },
+    "data": {
+      "title": "Zbieranie Danych",
+      "content": "Zbieramy minimalne dane osobowe niezbędne do świadczenia naszych usług. Obejmuje to Twój adres e-mail do uwierzytelniania oraz wszelkie dane, które dobrowolnie podajesz podczas tworzenia lub dołączania do list rdzeni duszy."
+    },
+    "security": {
+      "title": "Bezpieczeństwo",
+      "content": "Wdrażamy standardowe w branży środki bezpieczeństwa, aby chronić Twoje dane. Wszystkie dane są szyfrowane podczas przesyłania i przechowywania. Regularnie przeglądamy i aktualizujemy nasze praktyki bezpieczeństwa, aby zapewnić bezpieczeństwo Twoich informacji."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "content": "Jeśli masz jakiekolwiek pytania dotyczące naszej Polityki Prywatności lub sposobu, w jaki przetwarzamy Twoje dane, skontaktuj się z nami pod adresem support@tibiacores.com."
+    }
   }
 }

@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tibiacores.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /oauth/
+Disallow: /signin
+Disallow: /signup 

@@ -289,5 +289,63 @@
     "goToList": "Ir a la lista",
     "loadingMembers": "Cargando miembros...",
     "membersList": "Miembros:"
+  },
+  "home": {
+    "title": "Bienvenido a TibiaCores",
+    "subtitle": "Tu aplicación compañera para gestionar y compartir listas de núcleos de alma",
+    "yourLists": {
+      "title": "Tus Listas",
+      "refresh": "Actualizar",
+      "loading": "Cargando tus listas...",
+      "noLists": {
+        "title": "Aún no has creado ni te has unido a ninguna lista.",
+        "subtitle": "¡Usa los formularios de arriba para comenzar!"
+      }
+    },
+    "about": {
+      "title": "Acerca de TibiaCores",
+      "description": "TibiaCores es tu aplicación compañera para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes usando códigos de compartir o enlaces directos."
+    }
+  },
+  "cookieConsent": {
+    "title": "Configuración de cookies",
+    "description": "Utilizamos cookies para mejorar su experiencia. Al continuar visitando este sitio, acepta nuestro uso de cookies.",
+    "privacyPolicy": "Política de privacidad",
+    "acceptAll": "Aceptar todas",
+    "savePreferences": "Guardar preferencias",
+    "categories": {
+      "necessary": "Cookies necesarias (obligatorias)",
+      "preferences": "Cookies de preferencias",
+      "analytics": "Cookies de análisis"
+    }
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: Marzo 2025",
+    "introduction": {
+      "title": "Introducción",
+      "content": "En TibiaCores, tomamos su privacidad muy en serio. Esta Política de Privacidad explica cómo recopilamos, utilizamos y protegemos su información personal cuando utiliza nuestra aplicación."
+    },
+    "cookies": {
+      "title": "Cookies y Seguimiento",
+      "content": "Utilizamos cookies y tecnologías de seguimiento similares para mejorar su experiencia y proporcionar funcionalidad esencial. Estos son los tipos de cookies que utilizamos:",
+      "types": {
+        "necessary": "Cookies necesarias para la funcionalidad básica y la seguridad",
+        "preferences": "Cookies de preferencias para recordar sus configuraciones",
+        "analytics": "Cookies de análisis para entender cómo utiliza nuestra aplicación"
+      }
+    },
+    "data": {
+      "title": "Recopilación de Datos",
+      "content": "Recopilamos la mínima información personal necesaria para proporcionar nuestros servicios. Esto incluye su dirección de correo electrónico para autenticación y cualquier dato que proporcione voluntariamente al crear o unirse a listas de núcleos de alma."
+    },
+    "security": {
+      "title": "Seguridad",
+      "content": "Implementamos medidas de seguridad estándar de la industria para proteger sus datos. Todos los datos están encriptados en tránsito y en reposo. Revisamos y actualizamos regularmente nuestras prácticas de seguridad para garantizar que su información permanezca segura."
+    },
+    "contact": {
+      "title": "Contáctenos",
+      "content": "Si tiene alguna pregunta sobre nuestra Política de Privacidad o cómo manejamos sus datos, por favor contáctenos en support@tibiacores.com."
+    }
   }
 }

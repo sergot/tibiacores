@@ -6,9 +6,11 @@ import RegisterSuggestion from '../components/RegisterSuggestion.vue'
 import { useUserStore } from '../stores/user'
 import { useListsStore } from '../stores/lists'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
 const listsStore = useListsStore()
+const { t } = useI18n()
 
 onMounted(() => {
   if (userStore.isAuthenticated) {
@@ -21,9 +23,9 @@ onMounted(() => {
   <div class="w-full">
     <main class="max-w-6xl mx-auto px-8 py-8">
       <div class="text-center mb-8">
-        <h1 class="text-4xl mb-2">Welcome to TibiaCores</h1>
+        <h1 class="text-4xl mb-2">{{ t('home.title') }}</h1>
         <p class="text-xl text-gray-600">
-          Your companion app for managing and sharing soul core lists
+          {{ t('home.subtitle') }}
         </p>
       </div>
 
@@ -38,7 +40,7 @@ onMounted(() => {
 
       <div v-if="userStore.isAuthenticated" class="mb-8 p-8 rounded-xl bg-white shadow-md">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-3xl font-semibold text-gray-800">Your Lists</h2>
+          <h2 class="text-3xl font-semibold text-gray-800">{{ t('home.yourLists.title') }}</h2>
           <button
             @click="listsStore.fetchUserLists()"
             class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-100 transition-all duration-200 flex items-center gap-2"
@@ -57,7 +59,7 @@ onMounted(() => {
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Refresh
+            {{ t('home.yourLists.refresh') }}
           </button>
         </div>
 
@@ -65,7 +67,7 @@ onMounted(() => {
           <div
             class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"
           ></div>
-          <p class="text-gray-600 font-medium">Loading your lists...</p>
+          <p class="text-gray-600 font-medium">{{ t('home.yourLists.loading') }}</p>
         </div>
 
         <div v-else-if="listsStore.error" class="text-center py-12">
@@ -75,7 +77,7 @@ onMounted(() => {
               @click="listsStore.fetchUserLists()"
               class="px-6 py-2.5 text-sm font-medium bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
             >
-              Try again
+              {{ t('home.yourLists.refresh') }}
             </button>
           </div>
         </div>
@@ -83,9 +85,9 @@ onMounted(() => {
         <div v-else-if="!listsStore.hasLists" class="text-center py-12">
           <div class="bg-gray-50 rounded-lg p-8 max-w-md mx-auto">
             <p class="text-gray-700 font-medium mb-2">
-              You haven't created or joined any lists yet.
+              {{ t('home.yourLists.noLists.title') }}
             </p>
-            <p class="text-gray-500">Use the forms above to get started!</p>
+            <p class="text-gray-500">{{ t('home.yourLists.noLists.subtitle') }}</p>
           </div>
         </div>
 
@@ -165,11 +167,9 @@ onMounted(() => {
       </div>
 
       <div class="mt-8 p-6 rounded-lg bg-white text-center">
-        <h2 class="mb-4 text-2xl">About TibiaCores</h2>
+        <h2 class="mb-4 text-2xl">{{ t('home.about.title') }}</h2>
         <p class="text-gray-600 leading-relaxed">
-          TibiaCores is your companion app for managing and sharing soul core lists. Create characters,
-          build your collections, and share them with friends. Join existing lists using share codes
-          or direct links.
+          {{ t('home.about.description') }}
         </p>
       </div>
     </main>
