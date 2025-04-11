@@ -3,8 +3,8 @@ import { useUserStore } from '@/stores/user'
 
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void
-    dataLayer: any[]
+    gtag: (...args: unknown[]) => void
+    dataLayer: unknown[]
   }
 }
 
@@ -20,8 +20,8 @@ export function useAnalytics() {
     document.head.appendChild(script)
 
     window.dataLayer = window.dataLayer || []
-    window.gtag = function gtag() {
-      window.dataLayer.push(arguments)
+    window.gtag = function gtag(...args: unknown[]) {
+      window.dataLayer.push(args)
     }
     window.gtag('js', new Date())
     window.gtag('config', measurementId, {
@@ -39,7 +39,7 @@ export function useAnalytics() {
   }
 
   // Track custom event
-  const trackEvent = (name: string, params?: Record<string, any>) => {
+  const trackEvent = (name: string, params?: Record<string, unknown>) => {
     if (!isEnabled.value) return
     window.gtag('event', name, {
       ...params,
