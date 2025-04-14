@@ -32,10 +32,12 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	oauthHandler := handlers.NewOAuthHandler(store)
 	claimsHandler := handlers.NewClaimsHandler(store)
 	creaturesHandler := handlers.NewCreaturesHandler(store)
+	charactersHandler := handlers.NewCharactersHandler(store)
 
 	// Public endpoints
 	api.GET("/creatures", creaturesHandler.GetCreatures)
 	api.GET("/characters/public/:name", usersHandler.GetCharacterPublic)
+	api.GET("/highscores", charactersHandler.GetHighscores)
 
 	// Start background claim checker
 	go func() {

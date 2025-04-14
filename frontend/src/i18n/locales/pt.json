@@ -202,19 +202,38 @@
   },
   "home": {
     "about": {
-      "description": "TibiaCores é sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma. Crie personagens, construa coleções e compartilhe com amigos. Entre em listas existentes usando códigos de compartilhamento ou links diretos.",
+      "description": "TibiaCores é seu aplicativo complementar para gerenciar e compartilhar listas de soul cores. Crie personagens, construa coleções e compartilhe-as com amigos. Junte-se a listas existentes através de códigos de compartilhamento ou links diretos.",
       "title": "Sobre o TibiaCores"
     },
-    "subtitle": "Sua aplicação companheira para gerenciar e compartilhar listas de núcleos de alma",
+    "subtitle": "Seu aplicativo complementar para gerenciar e compartilhar listas de soul cores",
     "title": "Bem-vindo ao TibiaCores",
     "yourLists": {
       "loading": "Carregando suas listas...",
       "noLists": {
         "subtitle": "Use os formulários acima para começar!",
-        "title": "Você ainda não criou ou entrou em nenhuma lista."
+        "title": "Você ainda não criou nenhuma lista ou se juntou a alguma."
       },
       "refresh": "Atualizar",
       "title": "Suas Listas"
+    }
+  },
+  "highscores": {
+    "title": "Ranking",
+    "subtitle": "Personagens com mais soul cores desbloqueados",
+    "columns": {
+      "rank": "Posição",
+      "name": "Nome do Personagem",
+      "world": "Mundo",
+      "cores": "Soul Cores"
+    },
+    "empty": "Nenhum personagem encontrado",
+    "error": {
+      "title": "Falha ao carregar o ranking",
+      "description": "Ocorreu um erro ao carregar o ranking. Por favor, tente novamente.",
+      "retry": "Tentar novamente"
+    },
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total} personagens"
     }
   },
   "joinList": {
@@ -263,6 +282,7 @@
   },
   "nav": {
     "about": "Sobre",
+    "highscores": "Ranking",
     "logout": {
       "warning": {
         "cancel": "Cancelar",

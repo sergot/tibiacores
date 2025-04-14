@@ -147,7 +147,7 @@ func (q *Queries) GetCharacterClaim(ctx context.Context, arg GetCharacterClaimPa
 }
 
 const getCharacterSoulcores = `-- name: GetCharacterSoulcores :many
-SELECT cs.character_id, cs.creature_id, c.name as creature_name
+SELECT cs.character_id, cs.creature_id, c.name as creature_name, c.difficulty
 FROM characters_soulcores cs
 JOIN creatures c ON c.id = cs.creature_id
 WHERE cs.character_id = $1
@@ -155,9 +155,10 @@ ORDER BY c.name
 `
 
 type GetCharacterSoulcoresRow struct {
-	CharacterID  uuid.UUID `json:"character_id"`
-	CreatureID   uuid.UUID `json:"creature_id"`
-	CreatureName string    `json:"creature_name"`
+	CharacterID  uuid.UUID   `json:"character_id"`
+	CreatureID   uuid.UUID   `json:"creature_id"`
+	CreatureName string      `json:"creature_name"`
+	Difficulty   pgtype.Int4 `json:"difficulty"`
 }
 
 func (q *Queries) GetCharacterSoulcores(ctx context.Context, characterID uuid.UUID) ([]GetCharacterSoulcoresRow, error) {
@@ -169,7 +170,12 @@ func (q *Queries) GetCharacterSoulcores(ctx context.Context, characterID uuid.UU
 	items := []GetCharacterSoulcoresRow{}
 	for rows.Next() {
 		var i GetCharacterSoulcoresRow
-		if err := rows.Scan(&i.CharacterID, &i.CreatureID, &i.CreatureName); err != nil {
+		if err := rows.Scan(
+			&i.CharacterID,
+			&i.CreatureID,
+			&i.CreatureName,
+			&i.Difficulty,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -248,6 +254,65 @@ func (q *Queries) GetClaimByID(ctx context.Context, id uuid.UUID) (GetClaimByIDR
 		&i.CharacterName,
 	)
 	return i, err
+}
+
+const getHighscoreCharacters = `-- name: GetHighscoreCharacters :many
+WITH character_cores AS (
+    SELECT 
+        cs.character_id,
+        COUNT(cs.creature_id) as core_count
+    FROM characters_soulcores cs
+    GROUP BY cs.character_id
+)
+SELECT 
+    c.id,
+    c.name,
+    c.world,
+    COALESCE(cc.core_count, 0) as core_count,
+    COUNT(*) OVER() as total_count
+FROM characters c
+LEFT JOIN character_cores cc ON c.id = cc.character_id
+ORDER BY cc.core_count DESC NULLS LAST, c.name ASC
+LIMIT $1 OFFSET $2
+`
+
+type GetHighscoreCharactersParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+type GetHighscoreCharactersRow struct {
+	ID         uuid.UUID `json:"id"`
+	Name       string    `json:"name"`
+	World      string    `json:"world"`
+	CoreCount  int64     `json:"core_count"`
+	TotalCount int64     `json:"total_count"`
+}
+
+func (q *Queries) GetHighscoreCharacters(ctx context.Context, arg GetHighscoreCharactersParams) ([]GetHighscoreCharactersRow, error) {
+	rows, err := q.db.Query(ctx, getHighscoreCharacters, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetHighscoreCharactersRow{}
+	for rows.Next() {
+		var i GetHighscoreCharactersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.World,
+			&i.CoreCount,
+			&i.TotalCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getPendingClaimsToCheck = `-- name: GetPendingClaimsToCheck :many

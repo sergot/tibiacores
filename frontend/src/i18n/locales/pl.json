@@ -217,6 +217,25 @@
       "title": "Twoje Listy"
     }
   },
+  "highscores": {
+    "title": "Ranking",
+    "subtitle": "Postacie z największą liczbą odblokowanych soul corów",
+    "columns": {
+      "rank": "Pozycja",
+      "name": "Nazwa Postaci",
+      "world": "Świat",
+      "cores": "Soul Cory"
+    },
+    "empty": "Nie znaleziono postaci",
+    "error": {
+      "title": "Nie udało się załadować rankingu",
+      "description": "Wystąpił błąd podczas ładowania rankingu. Spróbuj ponownie.",
+      "retry": "Spróbuj ponownie"
+    },
+    "pagination": {
+      "showing": "Wyświetlanie {from} do {to} z {total} postaci"
+    }
+  },
   "joinList": {
     "form": {
       "characterName": "Nazwa Postaci",
@@ -227,7 +246,7 @@
       },
       "joining": "Dołączanie...",
       "shareCode": "Kod Udostępniania",
-      "shareCodePlaceholder": "Wpisz kod lub wklej URL",
+      "shareCodePlaceholder": "Wpisz kod udostępniania lub URL",
       "submit": "Dołącz do Listy"
     },
     "title": "Dołącz do Listy"
@@ -263,6 +282,7 @@
   },
   "nav": {
     "about": "O Nas",
+    "highscores": "Ranking",
     "logout": {
       "warning": {
         "cancel": "Anuluj",

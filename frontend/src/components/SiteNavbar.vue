@@ -82,6 +82,12 @@ onBeforeUnmount(() => {
             </RouterLink>
           </div>
           <RouterLink
+            to="/highscores"
+            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            {{ t('nav.highscores') }}
+          </RouterLink>
+          <RouterLink
             to="/about"
             class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
           >
@@ -237,6 +243,13 @@ onBeforeUnmount(() => {
             @click="isMenuOpen = false"
           >
             {{ t('nav.profile') }}
+          </RouterLink>
+          <RouterLink
+            to="/highscores"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            {{ t('nav.highscores') }}
           </RouterLink>
           <RouterLink
             to="/about"

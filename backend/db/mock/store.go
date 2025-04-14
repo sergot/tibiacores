@@ -322,6 +322,21 @@ func (mr *MockStoreMockRecorder) GetCreatures(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCreatures", reflect.TypeOf((*MockStore)(nil).GetCreatures), ctx)
 }
 
+// GetHighscoreCharacters mocks base method.
+func (m *MockStore) GetHighscoreCharacters(ctx context.Context, arg db.GetHighscoreCharactersParams) ([]db.GetHighscoreCharactersRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHighscoreCharacters", ctx, arg)
+	ret0, _ := ret[0].([]db.GetHighscoreCharactersRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetHighscoreCharacters indicates an expected call of GetHighscoreCharacters.
+func (mr *MockStoreMockRecorder) GetHighscoreCharacters(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHighscoreCharacters", reflect.TypeOf((*MockStore)(nil).GetHighscoreCharacters), ctx, arg)
+}
+
 // GetList mocks base method.
 func (m *MockStore) GetList(ctx context.Context, id uuid.UUID) (db.List, error) {
 	m.ctrl.T.Helper()

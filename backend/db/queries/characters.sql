@@ -76,3 +76,22 @@ FROM characters_soulcores cs
 JOIN creatures c ON c.id = cs.creature_id
 WHERE cs.character_id = $1
 ORDER BY c.name;
+
+-- name: GetHighscoreCharacters :many
+WITH character_cores AS (
+    SELECT 
+        cs.character_id,
+        COUNT(cs.creature_id) as core_count
+    FROM characters_soulcores cs
+    GROUP BY cs.character_id
+)
+SELECT 
+    c.id,
+    c.name,
+    c.world,
+    COALESCE(cc.core_count, 0) as core_count,
+    COUNT(*) OVER() as total_count
+FROM characters c
+LEFT JOIN character_cores cc ON c.id = cc.character_id
+ORDER BY cc.core_count DESC NULLS LAST, c.name ASC
+LIMIT $1 OFFSET $2;
