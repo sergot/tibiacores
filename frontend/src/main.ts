@@ -50,8 +50,11 @@ axios.interceptors.response.use(
       const authRoutes = ['/signin', '/signup']
       const publicRoutes = ['/characters/public/', '/about', '/privacy']
       const currentPath = router.currentRoute.value.path
-      
-      if (!authRoutes.includes(currentPath) && !publicRoutes.some(route => currentPath.startsWith(route))) {
+
+      if (
+        !authRoutes.includes(currentPath) &&
+        !publicRoutes.some((route) => currentPath.startsWith(route))
+      ) {
         router.push('/signin')
       }
     }

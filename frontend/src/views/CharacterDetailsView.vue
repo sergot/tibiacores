@@ -23,12 +23,7 @@
                 @click="showShareDialog = true"
                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <svg
-                  class="h-5 w-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -267,7 +262,7 @@ const sortOrder = ref<'asc' | 'desc'>('asc')
 
 const sortedUnlockedCores = computed(() => {
   return [...unlockedCores.value].sort((a, b) => {
-    return sortOrder.value === 'asc' 
+    return sortOrder.value === 'asc'
       ? a.creature_name.localeCompare(b.creature_name)
       : b.creature_name.localeCompare(a.creature_name)
   })
@@ -319,11 +314,11 @@ const loadUnlockedCores = async () => {
     ])
 
     const creaturesData = creaturesResponse.data as Creature[]
-    const creatureMap = new Map(creaturesData.map(c => [c.name, c]))
-    
+    const creatureMap = new Map(creaturesData.map((c) => [c.name, c]))
+
     unlockedCores.value = soulcoresResponse.data.map((core: UnlockedCoreResponse) => ({
       ...core,
-      difficulty: creatureMap.get(core.creature_name)?.difficulty ?? 0
+      difficulty: creatureMap.get(core.creature_name)?.difficulty ?? 0,
     }))
     totalCreatures.value = creaturesData.length
     creatures.value = creaturesData
@@ -368,25 +363,6 @@ const copyShareUrl = async () => {
   }
 }
 
-const getDifficultyLabel = (difficulty: number): string => {
-  switch (difficulty) {
-    case 0:
-      return t('difficulty.harmless')
-    case 1:
-      return t('difficulty.trivial')
-    case 2:
-      return t('difficulty.easy')
-    case 3:
-      return t('difficulty.medium')
-    case 4:
-      return t('difficulty.hard')
-    case 5:
-      return t('difficulty.challenging')
-    default:
-      return t('difficulty.unknown')
-  }
-}
-
 onMounted(async () => {
   try {
     await Promise.all([loadCharacterDetails(), loadUnlockedCores()])
@@ -398,5 +374,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

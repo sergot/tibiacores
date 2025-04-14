@@ -13,22 +13,36 @@
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
           <div class="px-6 py-12 border-b border-gray-200 relative overflow-hidden">
             <!-- Animated gradient background -->
-            <div 
+            <div
               class="absolute inset-0 animate-gradient-x"
               :style="{
                 '--gradient-start': `hsl(${nameHash % 360}, 80%, 80%)`,
                 '--gradient-mid': `hsl(${(nameHash + 120) % 360}, 80%, 80%)`,
                 '--gradient-end': `hsl(${(nameHash + 240) % 360}, 80%, 80%)`,
-                '--gradient-opacity': '0.3'
+                '--gradient-opacity': '0.3',
               }"
             ></div>
-            
+
             <div class="relative z-10">
               <div class="text-center">
-                <h1 class="text-4xl font-bold text-gray-900 animate-fade-in">{{ character.name }}</h1>
-                <p class="mt-2 text-xl text-gray-600 animate-fade-in-delay flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <h1 class="text-4xl font-bold text-gray-900 animate-fade-in">
+                  {{ character.name }}
+                </h1>
+                <p
+                  class="mt-2 text-xl text-gray-600 animate-fade-in-delay flex items-center justify-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   {{ character.world }}
                 </p>
@@ -40,19 +54,42 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- XP Boost Progress -->
-          <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+          <div
+            class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300"
+          >
             <div class="flex items-center mb-4">
               <div class="p-2 bg-indigo-100 rounded-lg mr-4">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <svg
+                  class="w-6 h-6 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-900">{{ t('publicCharacter.stats.xpBoost.title') }}</h3>
+              <h3 class="text-lg font-semibold text-gray-900">
+                {{ t('publicCharacter.stats.xpBoost.title') }}
+              </h3>
             </div>
             <div class="space-y-4">
               <div class="flex justify-between text-sm text-gray-600">
-                <span>{{ t('publicCharacter.stats.xpBoost.cores', { current: xpBoostProgress.current, target: xpBoostProgress.target }) }}</span>
-                <span>{{ t('publicCharacter.stats.xpBoost.percentage', { percentage: Math.round(xpBoostProgress.percentage) }) }}</span>
+                <span>{{
+                  t('publicCharacter.stats.xpBoost.cores', {
+                    current: xpBoostProgress.current,
+                    target: xpBoostProgress.target,
+                  })
+                }}</span>
+                <span>{{
+                  t('publicCharacter.stats.xpBoost.percentage', {
+                    percentage: Math.round(xpBoostProgress.percentage),
+                  })
+                }}</span>
               </div>
               <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div
@@ -64,19 +101,42 @@
           </div>
 
           <!-- Total Progress -->
-          <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+          <div
+            class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300"
+          >
             <div class="flex items-center mb-4">
               <div class="p-2 bg-green-100 rounded-lg mr-4">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  class="w-6 h-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-900">{{ t('publicCharacter.stats.total.title') }}</h3>
+              <h3 class="text-lg font-semibold text-gray-900">
+                {{ t('publicCharacter.stats.total.title') }}
+              </h3>
             </div>
             <div class="space-y-4">
               <div class="flex justify-between text-sm text-gray-600">
-                <span>{{ t('publicCharacter.stats.total.cores', { current: totalProgress.current, total: totalProgress.total }) }}</span>
-                <span>{{ t('publicCharacter.stats.total.percentage', { percentage: Math.round(totalProgress.percentage) }) }}</span>
+                <span>{{
+                  t('publicCharacter.stats.total.cores', {
+                    current: totalProgress.current,
+                    total: totalProgress.total,
+                  })
+                }}</span>
+                <span>{{
+                  t('publicCharacter.stats.total.percentage', {
+                    percentage: Math.round(totalProgress.percentage),
+                  })
+                }}</span>
               </div>
               <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div
@@ -94,17 +154,39 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div class="flex items-center">
                 <div class="p-2 bg-blue-100 rounded-lg mr-4">
-                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  <svg
+                    class="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
                   </svg>
                 </div>
-                <h2 class="text-xl font-semibold text-gray-900">{{ t('publicCharacter.soulCores.title') }}</h2>
+                <h2 class="text-xl font-semibold text-gray-900">
+                  {{ t('publicCharacter.soulCores.title') }}
+                </h2>
               </div>
               <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div class="relative w-full sm:w-64">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      class="h-5 w-5 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                   </div>
                   <input
@@ -124,8 +206,8 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th 
-                    scope="col" 
+                  <th
+                    scope="col"
                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors duration-200"
                     @click="toggleSort('name')"
                   >
@@ -134,8 +216,8 @@
                       {{ sortOrder === 'asc' ? '↑' : '↓' }}
                     </span>
                   </th>
-                  <th 
-                    scope="col" 
+                  <th
+                    scope="col"
                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors duration-200"
                     @click="toggleSort('difficulty')"
                   >
@@ -147,19 +229,23 @@
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="core in filteredCores" :key="core.creature_id" class="hover:bg-gray-50 transition-colors duration-200">
+                <tr
+                  v-for="core in filteredCores"
+                  :key="core.creature_id"
+                  class="hover:bg-gray-50 transition-colors duration-200"
+                >
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm font-medium text-gray-900">{{ core.creature_name }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <span 
+                    <span
                       class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors duration-200"
                       :class="{
                         'bg-green-100 text-green-800 hover:bg-green-200': core.difficulty <= 1,
                         'bg-blue-100 text-blue-800 hover:bg-blue-200': core.difficulty === 2,
                         'bg-yellow-100 text-yellow-800 hover:bg-yellow-200': core.difficulty === 3,
                         'bg-orange-100 text-orange-800 hover:bg-orange-200': core.difficulty === 4,
-                        'bg-red-100 text-red-800 hover:bg-red-200': core.difficulty === 5
+                        'bg-red-100 text-red-800 hover:bg-red-200': core.difficulty === 5,
                       }"
                     >
                       {{ getDifficultyLabel(core.difficulty) }}
@@ -251,7 +337,7 @@ const sortedUnlockedCores = computed(() => {
     if (sortBy.value === 'difficulty') {
       return sortOrder.value === 'desc' ? b.difficulty - a.difficulty : a.difficulty - b.difficulty
     } else {
-      return sortOrder.value === 'desc' 
+      return sortOrder.value === 'desc'
         ? b.creature_name.localeCompare(a.creature_name)
         : a.creature_name.localeCompare(b.creature_name)
     }
@@ -260,10 +346,10 @@ const sortedUnlockedCores = computed(() => {
 
 const filteredCores = computed(() => {
   if (!searchQuery.value) return sortedUnlockedCores.value
-  
+
   const query = searchQuery.value.toLowerCase()
-  return sortedUnlockedCores.value.filter(core => 
-    core.creature_name.toLowerCase().includes(query)
+  return sortedUnlockedCores.value.filter((core) =>
+    core.creature_name.toLowerCase().includes(query),
   )
 })
 
@@ -299,17 +385,19 @@ const loadCharacterDetails = async () => {
   try {
     const [characterResponse, creaturesResponse] = await Promise.all([
       axios.get(`/characters/public/${characterName}`),
-      axios.get('/creatures')
+      axios.get('/creatures'),
     ])
-    
+
     const creatures = creaturesResponse.data as Creature[]
-    const creatureMap = new Map(creatures.map(c => [c.name, c]))
-    
+    const creatureMap = new Map(creatures.map((c) => [c.name, c]))
+
     character.value = characterResponse.data.character
-    unlockedCores.value = characterResponse.data.unlocked_cores.map((core: UnlockedCoreResponse) => ({
-      ...core,
-      difficulty: creatureMap.get(core.creature_name)?.difficulty ?? 0
-    }))
+    unlockedCores.value = characterResponse.data.unlocked_cores.map(
+      (core: UnlockedCoreResponse) => ({
+        ...core,
+        difficulty: creatureMap.get(core.creature_name)?.difficulty ?? 0,
+      }),
+    )
     totalCreatures.value = creatures.length
   } catch (error) {
     console.error('Failed to load character details:', error)
@@ -329,10 +417,10 @@ onMounted(async () => {
 // Update name hash computation to be more meaningful
 const nameHash = computed(() => {
   if (!character.value) return 0
-  
+
   // Convert name to lowercase and remove spaces
   const name = character.value.name.toLowerCase().replace(/\s+/g, '')
-  
+
   // Calculate a hash that's more visually meaningful
   let hash = 0
   for (let i = 0; i < name.length; i++) {
@@ -341,7 +429,7 @@ const nameHash = computed(() => {
     const multiplier = 'aeiou'.includes(name[i]) ? 3 : 2
     hash = (hash * multiplier + char) % 360
   }
-  
+
   // Ensure the hash is positive and within a good range for colors
   return Math.abs(hash)
 })
@@ -398,93 +486,93 @@ const nameHash = computed(() => {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .text-4xl {
     font-size: 2rem;
   }
-  
+
   .text-xl {
     font-size: 1.25rem;
   }
-  
+
   .grid-cols-1 {
     grid-template-columns: 1fr;
   }
-  
+
   .px-6 {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .py-12 {
     padding-top: 2rem;
     padding-bottom: 2rem;
   }
-  
+
   .w-12 {
     width: 2.5rem;
   }
-  
+
   .h-12 {
     height: 2.5rem;
   }
-  
+
   .w-5 {
     width: 1.25rem;
   }
-  
+
   .h-5 {
     height: 1.25rem;
   }
-  
+
   .p-6 {
     padding: 1rem;
   }
-  
+
   .text-lg {
     font-size: 1rem;
   }
-  
+
   .w-6 {
     width: 1.25rem;
   }
-  
+
   .h-6 {
     height: 1.25rem;
   }
-  
+
   .px-2\.5 {
     padding-left: 0.625rem;
     padding-right: 0.625rem;
   }
-  
+
   .py-0\.5 {
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
   }
-  
+
   .text-xs {
     font-size: 0.75rem;
   }
-  
+
   .px-6 {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .py-4 {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
   }
-  
+
   .py-3 {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
   }
-  
+
   .py-8 {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
   }
 }
-</style> 
+</style>
