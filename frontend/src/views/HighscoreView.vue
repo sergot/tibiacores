@@ -143,7 +143,7 @@
                 : t('highscores.empty')
             }}
           </div>
-          <div class="flex space-x-1" v-if="pagination.totalPages > 0">
+          <div class="flex space-x-1" v-if="pagination.totalPages > 1">
             <button
               @click="goToPage(1)"
               :disabled="pagination.currentPage === 1"
