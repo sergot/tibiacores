@@ -177,6 +177,15 @@
     },
     "title": "Crear Nueva Lista"
   },
+  "difficulty": {
+    "challenging": "Desafiante",
+    "easy": "Fácil",
+    "hard": "Difícil",
+    "harmless": "Inofensivo",
+    "medium": "Medio",
+    "trivial": "Trivial",
+    "unknown": "Desconocido"
+  },
   "emailVerification": {
     "actions": {
       "backToProfile": "Volver al Perfil",
@@ -338,13 +347,18 @@
   "publicCharacter": {
     "loading": "Cargando perfil del personaje...",
     "notFound": {
-      "description": "El personaje que buscas no existe o no es público.",
+      "description": "El personaje solicitado no existe o no es público.",
       "title": "Personaje no encontrado"
     },
     "soulCores": {
-      "empty": "Aún no hay núcleos desbloqueados",
-      "title": "Núcleos Desbloqueados",
-      "unlocked": "Desbloqueado"
+      "columns": {
+        "difficulty": "Dificultad",
+        "name": "Nombre"
+      },
+      "empty": "Aún no hay núcleos de alma desbloqueados",
+      "searchPlaceholder": "Buscar núcleos...",
+      "count": "{count} núcleos encontrados",
+      "title": "Núcleos de Alma"
     },
     "stats": {
       "total": {

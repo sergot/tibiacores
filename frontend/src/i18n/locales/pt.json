@@ -167,15 +167,24 @@
   "createList": {
     "form": {
       "characterNamePlaceholder": "Digite o nome do personagem",
-      "characterNamePlaceholderAuth": "Digite novo personagem ou selecione existente",
+      "characterNamePlaceholderAuth": "Digite um novo personagem ou selecione um existente",
       "errors": {
-        "verificationFailed": "Falha ao verificar personagem"
+        "verificationFailed": "Falha ao verificar o personagem"
       },
       "loadingCharacters": "Carregando seus personagens...",
       "submit": "Criar",
       "verifying": "Verificando..."
     },
     "title": "Criar Nova Lista"
+  },
+  "difficulty": {
+    "challenging": "Desafiador",
+    "easy": "Fácil",
+    "hard": "Difícil",
+    "harmless": "Inofensivo",
+    "medium": "Médio",
+    "trivial": "Trivial",
+    "unknown": "Desconhecido"
   },
   "emailVerification": {
     "actions": {
@@ -338,13 +347,18 @@
   "publicCharacter": {
     "loading": "Carregando perfil do personagem...",
     "notFound": {
-      "description": "O personagem que você está procurando não existe ou não é público.",
+      "description": "O personagem solicitado não existe ou não é público.",
       "title": "Personagem não encontrado"
     },
     "soulCores": {
-      "empty": "Nenhum núcleo desbloqueado ainda",
-      "title": "Núcleos Desbloqueados",
-      "unlocked": "Desbloqueado"
+      "columns": {
+        "difficulty": "Dificuldade",
+        "name": "Nome"
+      },
+      "empty": "Ainda não há núcleos de alma desbloqueados",
+      "searchPlaceholder": "Buscar núcleos...",
+      "count": "{count} núcleos encontrados",
+      "title": "Núcleos de Alma"
     },
     "stats": {
       "total": {

@@ -177,6 +177,15 @@
     },
     "title": "Neue Liste Erstellen"
   },
+  "difficulty": {
+    "challenging": "Herausfordernd",
+    "easy": "Leicht",
+    "hard": "Schwer",
+    "harmless": "Harmlos",
+    "medium": "Mittel",
+    "trivial": "Trivial",
+    "unknown": "Unbekannt"
+  },
   "emailVerification": {
     "actions": {
       "backToProfile": "Zurück zum Profil",
@@ -342,9 +351,14 @@
       "title": "Charakter nicht gefunden"
     },
     "soulCores": {
+      "columns": {
+        "difficulty": "Schwierigkeit",
+        "name": "Name"
+      },
       "empty": "Noch keine Seelenkerne freigeschaltet",
-      "title": "Freigeschaltete Seelenkerne",
-      "unlocked": "Freigeschaltet"
+      "searchPlaceholder": "Seelenkerne suchen...",
+      "count": "{count} Seelenkerne gefunden",
+      "title": "Seelenkerne"
     },
     "stats": {
       "total": {

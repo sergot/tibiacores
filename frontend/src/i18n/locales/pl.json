@@ -177,6 +177,15 @@
     },
     "title": "Utwórz Nową Listę"
   },
+  "difficulty": {
+    "challenging": "Wymagający",
+    "easy": "Łatwy",
+    "hard": "Trudny",
+    "harmless": "Nieszkodliwy",
+    "medium": "Średni",
+    "trivial": "Trywialny",
+    "unknown": "Nieznany"
+  },
   "emailVerification": {
     "actions": {
       "backToProfile": "Powrót do Profilu",
@@ -339,12 +348,17 @@
     "loading": "Ładowanie profilu postaci...",
     "notFound": {
       "description": "Szukana postać nie istnieje lub nie jest publiczna.",
-      "title": "Postać nie znaleziona"
+      "title": "Nie znaleziono postaci"
     },
     "soulCores": {
+      "columns": {
+        "difficulty": "Trudność",
+        "name": "Nazwa"
+      },
       "empty": "Brak odblokowanych soul corów",
-      "title": "Odblokowane soul cory",
-      "unlocked": "Odblokowany"
+      "searchPlaceholder": "Szukaj soul corów...",
+      "count": "Znaleziono {count} soul corów",
+      "title": "Soulcory"
     },
     "stats": {
       "total": {

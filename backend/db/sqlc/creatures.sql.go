@@ -10,7 +10,7 @@ import (
 )
 
 const getCreatures = `-- name: GetCreatures :many
-SELECT id, name
+SELECT id, name, difficulty
 FROM creatures
 ORDER BY name
 `
@@ -24,7 +24,7 @@ func (q *Queries) GetCreatures(ctx context.Context) ([]Creature, error) {
 	items := []Creature{}
 	for rows.Next() {
 		var i Creature
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.Difficulty); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
