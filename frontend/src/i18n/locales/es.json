@@ -202,19 +202,38 @@
   },
   "home": {
     "about": {
-      "description": "TibiaCores es tu aplicación compañera para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes usando códigos de compartir o enlaces directos.",
+      "description": "TibiaCores es tu aplicación complementaria para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes mediante códigos compartidos o enlaces directos.",
       "title": "Acerca de TibiaCores"
     },
-    "subtitle": "Tu aplicación compañera para gestionar y compartir listas de núcleos de alma",
+    "subtitle": "Tu aplicación complementaria para gestionar y compartir listas de núcleos de alma",
     "title": "Bienvenido a TibiaCores",
     "yourLists": {
       "loading": "Cargando tus listas...",
       "noLists": {
-        "subtitle": "¡Usa los formularios de arriba para comenzar!",
-        "title": "Aún no has creado ni te has unido a ninguna lista."
+        "subtitle": "¡Usa los formularios anteriores para comenzar!",
+        "title": "Aún no has creado ninguna lista ni te has unido a ninguna."
       },
       "refresh": "Actualizar",
       "title": "Tus Listas"
+    }
+  },
+  "highscores": {
+    "title": "Clasificación",
+    "subtitle": "Personajes con más núcleos de alma desbloqueados",
+    "columns": {
+      "rank": "Posición",
+      "name": "Nombre del Personaje",
+      "world": "Mundo",
+      "cores": "Núcleos de Alma"
+    },
+    "empty": "No se encontraron personajes",
+    "error": {
+      "title": "Error al cargar la clasificación",
+      "description": "Ocurrió un error al cargar la clasificación. Por favor, inténtalo de nuevo.",
+      "retry": "Reintentar"
+    },
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total} personajes"
     }
   },
   "joinList": {
@@ -263,6 +282,7 @@
   },
   "nav": {
     "about": "Acerca de",
+    "highscores": "Clasificación",
     "logout": {
       "warning": {
         "cancel": "Cancelar",

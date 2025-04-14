@@ -31,6 +31,7 @@ type Querier interface {
 	GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]Character, error)
 	GetClaimByID(ctx context.Context, id uuid.UUID) (GetClaimByIDRow, error)
 	GetCreatures(ctx context.Context) ([]Creature, error)
+	GetHighscoreCharacters(ctx context.Context, arg GetHighscoreCharactersParams) ([]GetHighscoreCharactersRow, error)
 	GetList(ctx context.Context, id uuid.UUID) (List, error)
 	GetListByShareCode(ctx context.Context, shareCode uuid.UUID) (List, error)
 	GetListMembers(ctx context.Context, listID uuid.UUID) ([]GetListMembersRow, error)

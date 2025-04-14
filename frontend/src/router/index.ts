@@ -13,6 +13,7 @@ import JoinListView from '@/views/JoinListView.vue'
 import CharacterDetailsView from '@/views/CharacterDetailsView.vue'
 import PrivacyView from '@/views/PrivacyView.vue'
 import PublicCharacterView from '@/views/PublicCharacterView.vue'
+import HighscoreView from '@/views/HighscoreView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/highscores',
+      name: 'highscores',
+      component: HighscoreView,
     },
     {
       path: '/signin',

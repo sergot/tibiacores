@@ -217,6 +217,25 @@
       "title": "Ihre Listen"
     }
   },
+  "highscores": {
+    "title": "Bestenliste",
+    "subtitle": "Charaktere mit den meisten freigeschalteten Seelenkernen",
+    "columns": {
+      "rank": "Rang",
+      "name": "Charaktername",
+      "world": "Welt",
+      "cores": "Seelenkerne"
+    },
+    "empty": "Keine Charaktere gefunden",
+    "error": {
+      "title": "Fehler beim Laden der Bestenliste",
+      "description": "Beim Laden der Bestenliste ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "retry": "Erneut versuchen"
+    },
+    "pagination": {
+      "showing": "Zeige {from} bis {to} von {total} Charakteren"
+    }
+  },
   "joinList": {
     "form": {
       "characterName": "Charaktername",
@@ -263,6 +282,7 @@
   },
   "nav": {
     "about": "Über",
+    "highscores": "Bestenliste",
     "logout": {
       "warning": {
         "cancel": "Abbrechen",

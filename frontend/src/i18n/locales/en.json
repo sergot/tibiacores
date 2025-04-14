@@ -202,7 +202,7 @@
   },
   "home": {
     "about": {
-      "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build your collections, and share them with friends. Join existing lists using share codes or direct links.",
+      "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build collections, and share them with friends. Join existing lists via share codes or direct links.",
       "title": "About TibiaCores"
     },
     "subtitle": "Your companion app for managing and sharing soul core lists",
@@ -211,10 +211,29 @@
       "loading": "Loading your lists...",
       "noLists": {
         "subtitle": "Use the forms above to get started!",
-        "title": "You haven't created or joined any lists yet."
+        "title": "You haven't created any lists or joined any yet."
       },
       "refresh": "Refresh",
       "title": "Your Lists"
+    }
+  },
+  "highscores": {
+    "title": "Highscores",
+    "subtitle": "Characters with the most soul cores unlocked",
+    "columns": {
+      "rank": "Rank",
+      "name": "Character Name",
+      "world": "World",
+      "cores": "Soul Cores"
+    },
+    "empty": "No characters found",
+    "error": {
+      "title": "Failed to load highscores",
+      "description": "An error occurred while loading the highscores. Please try again.",
+      "retry": "Retry"
+    },
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total} characters"
     }
   },
   "joinList": {
@@ -227,7 +246,7 @@
       },
       "joining": "Joining...",
       "shareCode": "Share Code",
-      "shareCodePlaceholder": "Enter share code or paste URL",
+      "shareCodePlaceholder": "Enter share code or URL",
       "submit": "Join List"
     },
     "title": "Join List"
@@ -263,6 +282,7 @@
   },
   "nav": {
     "about": "About",
+    "highscores": "Highscores",
     "logout": {
       "warning": {
         "cancel": "Cancel",
