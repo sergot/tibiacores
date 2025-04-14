@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	mockdb "github.com/sergot/tibiacores/backend/db/mock"
 	db "github.com/sergot/tibiacores/backend/db/sqlc"
@@ -34,6 +35,10 @@ func TestGetCreatures(t *testing.T) {
 						{
 							ID:   uuid.New(),
 							Name: "Dragon",
+							Difficulty: pgtype.Int4{
+								Int32: 0,
+								Valid: false,
+							},
 						},
 					}, nil)
 			},
@@ -50,12 +55,14 @@ func TestGetCreatures(t *testing.T) {
 					GetCreatures(gomock.Any()).
 					Return([]db.Creature{
 						{
-							ID:   uuid.New(),
-							Name: "Dragon",
+							ID:         uuid.New(),
+							Name:       "Dragon",
+							Difficulty: pgtype.Int4{Int32: 2, Valid: true},
 						},
 						{
-							ID:   uuid.New(),
-							Name: "Demon",
+							ID:         uuid.New(),
+							Name:       "Demon",
+							Difficulty: pgtype.Int4{Int32: 4, Valid: true},
 						},
 					}, nil)
 			},
@@ -63,7 +70,11 @@ func TestGetCreatures(t *testing.T) {
 			checkResponse: func(t *testing.T, creatures []db.Creature, rec *httptest.ResponseRecorder) {
 				require.Len(t, creatures, 2)
 				require.Equal(t, "Dragon", creatures[0].Name)
+				require.Equal(t, int32(2), creatures[0].Difficulty.Int32)
+				require.True(t, creatures[0].Difficulty.Valid)
 				require.Equal(t, "Demon", creatures[1].Name)
+				require.Equal(t, int32(4), creatures[1].Difficulty.Int32)
+				require.True(t, creatures[1].Difficulty.Valid)
 			},
 		},
 		{

@@ -23,12 +23,7 @@
                 @click="showShareDialog = true"
                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <svg
-                  class="h-5 w-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -146,14 +141,19 @@
             <p class="text-gray-400 mt-2">{{ t('profile.lists.empty') }}</p>
           </div>
 
-          <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-if="unlockedCores.length > 0"
+            class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
             <div
-              v-for="core in unlockedCores"
+              v-for="core in sortedUnlockedCores"
               :key="core.creature_id"
               class="group relative bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-red-200"
             >
               <div class="flex justify-between items-start">
-                <h3 class="font-medium text-gray-900">{{ core.creature_name }}</h3>
+                <div class="space-y-2">
+                  <h3 class="font-medium text-gray-900">{{ core.creature_name }}</h3>
+                </div>
                 <button
                   @click="removeSoulcore(core.creature_id)"
                   class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded"
@@ -235,9 +235,19 @@ interface Character {
   world: string
 }
 
-interface UnlockedCore {
+interface UnlockedCoreResponse {
   creature_id: string
   creature_name: string
+}
+
+interface UnlockedCore extends UnlockedCoreResponse {
+  difficulty: number
+}
+
+interface Creature {
+  id: string
+  name: string
+  difficulty: number
 }
 
 const character = ref<Character | null>(null)
@@ -248,6 +258,16 @@ const selectedCreatureName = ref('')
 const creatures = ref<Array<{ id: string; name: string }>>([])
 const showShareDialog = ref(false)
 const showCopiedMessage = ref(false)
+const sortOrder = ref<'asc' | 'desc'>('asc')
+
+const sortedUnlockedCores = computed(() => {
+  return [...unlockedCores.value].sort((a, b) => {
+    return sortOrder.value === 'asc'
+      ? a.creature_name.localeCompare(b.creature_name)
+      : b.creature_name.localeCompare(a.creature_name)
+  })
+})
+
 const shareUrl = computed(() => {
   return `${window.location.origin}/characters/public/${character.value?.name}`
 })
@@ -292,9 +312,16 @@ const loadUnlockedCores = async () => {
       axios.get(`/characters/${characterId}/soulcores`),
       axios.get('/creatures'),
     ])
-    unlockedCores.value = soulcoresResponse.data
-    totalCreatures.value = creaturesResponse.data.length
-    creatures.value = creaturesResponse.data
+
+    const creaturesData = creaturesResponse.data as Creature[]
+    const creatureMap = new Map(creaturesData.map((c) => [c.name, c]))
+
+    unlockedCores.value = soulcoresResponse.data.map((core: UnlockedCoreResponse) => ({
+      ...core,
+      difficulty: creatureMap.get(core.creature_name)?.difficulty ?? 0,
+    }))
+    totalCreatures.value = creaturesData.length
+    creatures.value = creaturesData
   } catch (error) {
     console.error('Failed to load unlocked cores:', error)
   }
@@ -346,3 +373,5 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped></style>

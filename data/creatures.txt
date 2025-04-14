@@ -91,7 +91,7 @@ Lost Berserker
 Werelioness
 Lizard Dragon Priest
 Adventurer
-Nomad  (Female)
+Nomad (Female)
 Quara Raider
 Deepling Brawler
 Azure Frog
@@ -193,7 +193,7 @@ Spit Nettle
 Pirate Buccaneer
 Cult Enforcer
 Bog Frog
-Nomad  (Blue)
+Nomad (Blue)
 Rootthing Nutshell
 Nightstalker
 Ironblight
@@ -295,7 +295,7 @@ Wandering Pillar
 Poison Spider
 Massive Energy Elemental
 Draken Warmaster
-Butterfly  (Red)
+Butterfly (Red)
 Frost Dragon Hatchling
 Darklight Emitter
 Minotaur Amazon
@@ -339,7 +339,7 @@ Mantosaurus
 Firestarter
 Sandcrawler
 Dworc Fleshhunter
-Butterfly  (Purple)
+Butterfly (Purple)
 Lavaworm
 Dragon Lord Hatchling
 Bonelord
@@ -374,7 +374,7 @@ Glooth Anemone
 Lizard Magistratus
 Cow
 Wafer Paper Butterfly
-Horse  (Gray)
+Horse (Gray)
 Ancient Scarab
 Goblin Leader
 Orc Berserker
@@ -432,7 +432,7 @@ Usurper Warlock
 Lizard Templar
 Deepling Scout
 Cave Rat
-Nomad  (Basic)
+Nomad
 Skunk
 Omnivora
 Scorpion
@@ -445,7 +445,7 @@ Dark Monk
 Mammoth
 Blood Crab
 Nightfiend
-Butterfly  (Blue)
+Butterfly (Blue)
 Renegade Quara Pincher
 Glooth Brigand
 Breach Brood
@@ -524,7 +524,7 @@ Elder Forest Fury
 Young Goanna
 Adept of the Cult
 Vampire Pig
-Horse  (Brown)
+Horse (Brown)
 Nibblemaw
 Hellflayer
 Parder
@@ -737,7 +737,7 @@ Blue Djinn
 Energuardian of Tales
 Mycobiontic Beetle
 Cyclops
-Horse  (Taupe)
+Horse (Dark Brown)
 Rat
 Lancer Beetle
 Dwarf

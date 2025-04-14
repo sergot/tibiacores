@@ -71,7 +71,7 @@ WHERE c.status = 'pending'
   AND c.created_at > NOW() - INTERVAL '24 hours';
 
 -- name: GetCharacterSoulcores :many
-SELECT cs.character_id, cs.creature_id, c.name as creature_name
+SELECT cs.character_id, cs.creature_id, c.name as creature_name, c.difficulty
 FROM characters_soulcores cs
 JOIN creatures c ON c.id = cs.creature_id
 WHERE cs.character_id = $1

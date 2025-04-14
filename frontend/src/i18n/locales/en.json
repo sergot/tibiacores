@@ -177,6 +177,15 @@
     },
     "title": "Create New List"
   },
+  "difficulty": {
+    "challenging": "Challenging",
+    "easy": "Easy",
+    "hard": "Hard",
+    "harmless": "Harmless",
+    "medium": "Medium",
+    "trivial": "Trivial",
+    "unknown": "Unknown"
+  },
   "emailVerification": {
     "actions": {
       "backToProfile": "Back to Profile",
@@ -339,12 +348,17 @@
     "loading": "Loading character profile...",
     "notFound": {
       "description": "The character you're looking for doesn't exist or is not public.",
-      "title": "Character not found"
+      "title": "Character Not Found"
     },
     "soulCores": {
+      "columns": {
+        "difficulty": "Difficulty",
+        "name": "Name"
+      },
       "empty": "No soul cores unlocked yet",
-      "title": "Unlocked Soul Cores",
-      "unlocked": "Unlocked"
+      "searchPlaceholder": "Search cores...",
+      "count": "{count} cores found",
+      "title": "Soul Cores"
     },
     "stats": {
       "total": {

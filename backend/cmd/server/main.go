@@ -31,8 +31,10 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	listsHandler := handlers.NewListsHandler(store)
 	oauthHandler := handlers.NewOAuthHandler(store)
 	claimsHandler := handlers.NewClaimsHandler(store)
+	creaturesHandler := handlers.NewCreaturesHandler(store)
 
-	// Public character preview endpoint
+	// Public endpoints
+	api.GET("/creatures", creaturesHandler.GetCreatures)
 	api.GET("/characters/public/:name", usersHandler.GetCharacterPublic)
 
 	// Start background claim checker
@@ -88,9 +90,6 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 
 	protected.POST("/claims", claimsHandler.StartClaim)
 	protected.GET("/claims/:id", claimsHandler.CheckClaim)
-
-	creaturesHandler := handlers.NewCreaturesHandler(store)
-	protected.GET("/creatures", creaturesHandler.GetCreatures)
 }
 
 func main() {
