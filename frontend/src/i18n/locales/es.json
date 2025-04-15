@@ -13,7 +13,6 @@
     "contact": {
       "description": "¿Tienes preguntas o sugerencias? ¡Nos encantaría saber de ti! Puedes:",
       "discord": "Unirte a nuestro Discord: ",
-      "ingame": "Mensaje en el juego: ",
       "title": "Contacto"
     },
     "contribute": {
@@ -26,8 +25,8 @@
       "title": "Contribuir"
     },
     "donation": {
-      "description": "Tus donaciones ayudan a que TibiaCores crezca y mejore, permitiéndonos agregar nuevas funciones, mantener los servidores y proporcionar una mejor experiencia para todos los usuarios. Si deseas apoyar nuestro desarrollo, puedes enviar donaciones en el juego a:",
-      "title": "Donación"
+      "description": "Tu apoyo ayuda a que TibiaCores crezca y mejore. Puedes ayudarnos a cubrir los costos del servidor y los gastos de desarrollo a través de GitHub Sponsors o enviando donaciones dentro del juego a:",
+      "title": "Apóyanos"
     },
     "features": {
       "list": {
@@ -171,6 +170,7 @@
       "errors": {
         "verificationFailed": "Error al verificar el personaje"
       },
+      "listNamePlaceholder": "Ingresa el nombre de la lista",
       "loadingCharacters": "Cargando tus personajes...",
       "submit": "Crear",
       "verifying": "Verificando..."
@@ -200,6 +200,30 @@
       "success": "¡Email verificado exitosamente!"
     }
   },
+  "footer": {
+    "privacyPolicy": "Política de Privacidad",
+    "rights": "Todos los Derechos Reservados",
+    "tibiaWebsite": "El sitio web oficial de Tibia es"
+  },
+  "highscores": {
+    "columns": {
+      "cores": "Núcleos de Alma",
+      "name": "Nombre del Personaje",
+      "rank": "Posición",
+      "world": "Mundo"
+    },
+    "empty": "No se encontraron personajes",
+    "error": {
+      "description": "Ocurrió un error al cargar la clasificación. Por favor, inténtalo de nuevo.",
+      "retry": "Reintentar",
+      "title": "Error al cargar la clasificación"
+    },
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total} personajes"
+    },
+    "subtitle": "Personajes con más núcleos de alma desbloqueados",
+    "title": "Clasificación"
+  },
   "home": {
     "about": {
       "description": "TibiaCores es tu aplicación complementaria para gestionar y compartir listas de núcleos de alma. Crea personajes, construye colecciones y compártelas con amigos. Únete a listas existentes mediante códigos compartidos o enlaces directos.",
@@ -215,25 +239,6 @@
       },
       "refresh": "Actualizar",
       "title": "Tus Listas"
-    }
-  },
-  "highscores": {
-    "title": "Clasificación",
-    "subtitle": "Personajes con más núcleos de alma desbloqueados",
-    "columns": {
-      "rank": "Posición",
-      "name": "Nombre del Personaje",
-      "world": "Mundo",
-      "cores": "Núcleos de Alma"
-    },
-    "empty": "No se encontraron personajes",
-    "error": {
-      "title": "Error al cargar la clasificación",
-      "description": "Ocurrió un error al cargar la clasificación. Por favor, inténtalo de nuevo.",
-      "retry": "Reintentar"
-    },
-    "pagination": {
-      "showing": "Mostrando {from} a {to} de {total} personajes"
     }
   },
   "joinList": {
@@ -375,9 +380,9 @@
         "difficulty": "Dificultad",
         "name": "Nombre"
       },
+      "count": "{count} núcleos encontrados",
       "empty": "Aún no hay núcleos de alma desbloqueados",
       "searchPlaceholder": "Buscar núcleos...",
-      "count": "{count} núcleos encontrados",
       "title": "Núcleos de Alma"
     },
     "stats": {
@@ -410,5 +415,45 @@
     "noSuggestions": "No hay sugerencias disponibles",
     "title": "Sugerencias de Núcleo del Alma",
     "unknownList": "Lista desconocida"
+  },
+  "sponsor": {
+    "faq": {
+      "questions": {
+        "benefit": {
+          "answer": "Actualmente, todas las funciones de TibiaCores son gratuitas para todos. Tu apoyo garantiza que podamos mantenerlo así mientras continuamos agregando nuevas funciones y mejoras.",
+          "question": "¿Qué obtengo a cambio?"
+        },
+        "howMuch": {
+          "answer": "¡Cualquier cantidad es apreciada! Incluso $1 al mes ayuda a cubrir nuestros costos de alojamiento. Elige una cantidad que te resulte cómoda.",
+          "question": "¿Cuánto debería contribuir?"
+        },
+        "other": {
+          "answer": "¡Sí! Puedes contribuir con código, reportar errores, sugerir funciones o ayudar a difundir TibiaCores. ¡Cada contribución es importante!",
+          "question": "¿Hay otras formas de apoyar?"
+        }
+      },
+      "title": "Preguntas Frecuentes"
+    },
+    "github": {
+      "button": "Patrocinar en GitHub",
+      "description": "GitHub Sponsors es la manera más fácil de apoyar el desarrollo continuo. Puedes contribuir con tan solo $1 al mes, y GitHub igualará tus contribuciones durante el primer año."
+    },
+    "ingame": {
+      "description": "Si lo prefieres, también puedes apoyar el proyecto enviando items o monedas de oro directamente en Tibia.",
+      "title": "Donaciones en el juego",
+      "viewProfile": "Ver Perfil de Tibia"
+    },
+    "subtitle": "Ayúdanos a mantener TibiaCores funcionando y creciendo",
+    "support": "Apoya a TibiaCores",
+    "title": "Apoya a TibiaCores",
+    "why": {
+      "description": "Tu apoyo nos ayuda a cubrir costos y continuar mejorando TibiaCores. ¡Incluso pequeñas contribuciones marcan una gran diferencia!",
+      "reasons": {
+        "features": "Desarrollo de Nuevas Funciones",
+        "hosting": "Costos de Alojamiento del Servidor",
+        "motivation": "Motivación para Seguir Adelante"
+      },
+      "title": "¿Por qué apoyarnos?"
+    }
   }
 }

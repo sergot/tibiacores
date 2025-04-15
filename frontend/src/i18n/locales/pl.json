@@ -13,7 +13,6 @@
     "contact": {
       "description": "Masz pytania lub sugestie? Chętnie je usłyszymy! Możesz:",
       "discord": "Dołącz do naszego Discorda: ",
-      "ingame": "Napisz w grze do: ",
       "title": "Kontakt"
     },
     "contribute": {
@@ -26,8 +25,8 @@
       "title": "Współtwórz"
     },
     "donation": {
-      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores, umożliwiając nam dodawanie nowych funkcji, utrzymanie serwerów i zapewnienie lepszych wrażeń wszystkim użytkownikom. Jeśli chcesz wesprzeć nasz rozwój, możesz wysłać dotacje w grze do:",
-      "title": "Wsparcie"
+      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores. Możesz pomóc nam pokryć koszty serwerów i rozwoju poprzez GitHub Sponsors lub wysyłając dotacje w grze do:",
+      "title": "Wesprzyj nas"
     },
     "features": {
       "list": {
@@ -171,11 +170,12 @@
       "errors": {
         "verificationFailed": "Nie udało się zweryfikować postaci"
       },
+      "listNamePlaceholder": "Wpisz nazwę listy",
       "loadingCharacters": "Wczytywanie twoich postaci...",
       "submit": "Utwórz",
       "verifying": "Weryfikacja..."
     },
-    "title": "Utwórz Nową Listę"
+    "title": "Utwórz nową listę"
   },
   "difficulty": {
     "challenging": "Wymagający",
@@ -200,6 +200,30 @@
       "success": "Email zweryfikowany pomyślnie!"
     }
   },
+  "footer": {
+    "privacyPolicy": "Polityka Prywatności",
+    "rights": "Wszelkie Prawa Zastrzeżone",
+    "tibiaWebsite": "Oficjalna strona Tibii to"
+  },
+  "highscores": {
+    "columns": {
+      "cores": "Soul Cory",
+      "name": "Nazwa Postaci",
+      "rank": "Pozycja",
+      "world": "Świat"
+    },
+    "empty": "Nie znaleziono postaci",
+    "error": {
+      "description": "Wystąpił błąd podczas ładowania rankingu. Spróbuj ponownie.",
+      "retry": "Spróbuj ponownie",
+      "title": "Nie udało się załadować rankingu"
+    },
+    "pagination": {
+      "showing": "Wyświetlanie {from} do {to} z {total} postaci"
+    },
+    "subtitle": "Postacie z największą liczbą odblokowanych soul corów",
+    "title": "Ranking"
+  },
   "home": {
     "about": {
       "description": "TibiaCores to Twoja aplikacja do zarządzania i udostępniania list soul corów. Twórz postacie, buduj kolekcje i udostępniaj je znajomym. Dołączaj do istniejących list za pomocą kodów udostępniania lub bezpośrednich linków.",
@@ -215,25 +239,6 @@
       },
       "refresh": "Odśwież",
       "title": "Twoje Listy"
-    }
-  },
-  "highscores": {
-    "title": "Ranking",
-    "subtitle": "Postacie z największą liczbą odblokowanych soul corów",
-    "columns": {
-      "rank": "Pozycja",
-      "name": "Nazwa Postaci",
-      "world": "Świat",
-      "cores": "Soul Cory"
-    },
-    "empty": "Nie znaleziono postaci",
-    "error": {
-      "title": "Nie udało się załadować rankingu",
-      "description": "Wystąpił błąd podczas ładowania rankingu. Spróbuj ponownie.",
-      "retry": "Spróbuj ponownie"
-    },
-    "pagination": {
-      "showing": "Wyświetlanie {from} do {to} z {total} postaci"
     }
   },
   "joinList": {
@@ -375,9 +380,9 @@
         "difficulty": "Trudność",
         "name": "Nazwa"
       },
+      "count": "Znaleziono {count} soul corów",
       "empty": "Brak odblokowanych soul corów",
       "searchPlaceholder": "Szukaj soul corów...",
-      "count": "Znaleziono {count} soul corów",
       "title": "Soulcory"
     },
     "stats": {
@@ -410,5 +415,45 @@
     "noSuggestions": "Brak dostępnych sugestii",
     "title": "Sugestie Soul Corów",
     "unknownList": "Nieznana lista"
+  },
+  "sponsor": {
+    "faq": {
+      "questions": {
+        "benefit": {
+          "answer": "Obecnie wszystkie funkcje TibiaCores są darmowe dla wszystkich. Twoje wsparcie pomaga nam utrzymać to status quo, jednocześnie dodając nowe funkcje i ulepszenia.",
+          "question": "Co otrzymam w zamian?"
+        },
+        "howMuch": {
+          "answer": "Każda kwota jest mile widziana! Nawet 1$ miesięcznie pomaga pokryć nasze koszty hostingu. Wybierz kwotę, która jest dla Ciebie komfortowa.",
+          "question": "Ile powinienem wpłacić?"
+        },
+        "other": {
+          "answer": "Tak! Możesz przyczynić się do kodu, zgłaszać błędy, sugerować funkcje lub pomóc w rozpowszechnianiu informacji o TibiaCores. Każdy wkład ma znaczenie!",
+          "question": "Czy są inne sposoby wsparcia?"
+        }
+      },
+      "title": "Często zadawane pytania"
+    },
+    "github": {
+      "button": "Wesprzyj na GitHubie",
+      "description": "GitHub Sponsors to najprostszy sposób na wspieranie ciągłego rozwoju. Możesz wpłacać już od 1$ miesięcznie, a GitHub podwaja twoje wpłaty w pierwszym roku."
+    },
+    "ingame": {
+      "description": "Jeśli wolisz, możesz także wesprzeć projekt, wysyłając przedmioty lub złote monety bezpośrednio w Tibii.",
+      "title": "Dotacje w grze",
+      "viewProfile": "Zobacz profil w Tibii"
+    },
+    "subtitle": "Pomóż nam utrzymać i rozwijać TibiaCores",
+    "support": "Wesprzyj TibiaCores",
+    "title": "Wesprzyj TibiaCores",
+    "why": {
+      "description": "Twoje wsparcie pomaga nam pokryć koszty i kontynuować ulepszanie TibiaCores. Nawet małe wpłaty mają duże znaczenie!",
+      "reasons": {
+        "features": "Rozwój nowych funkcji",
+        "hosting": "Koszty hostingu serwerów",
+        "motivation": "Motywacja do dalszej pracy"
+      },
+      "title": "Dlaczego warto nas wspierać?"
+    }
   }
 }

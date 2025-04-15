@@ -72,9 +72,11 @@ const handleSubmit = async () => {
       })
     }
 
-    // Fetch updated lists and redirect to home
+    // Fetch updated lists
     await listsStore.fetchUserLists()
-    router.push('/')
+
+    // Redirect to the newly created list page
+    router.push(`/lists/${response.data.id}`)
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 409) {
       showNameConflict.value = true
@@ -141,7 +143,7 @@ const handleTryDifferent = () => {
             type="text"
             required
             :disabled="loading"
-            :placeholder="t('createList.form.characterNamePlaceholder')"
+            :placeholder="t('createList.form.listNamePlaceholder')"
             class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>

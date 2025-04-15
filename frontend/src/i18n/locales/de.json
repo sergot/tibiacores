@@ -13,7 +13,6 @@
     "contact": {
       "description": "Haben Sie Fragen oder Anregungen? Wir würden uns freuen, von Ihnen zu hören! Sie können:",
       "discord": "Unserem Discord beitreten: ",
-      "ingame": "Nachricht im Spiel: ",
       "title": "Kontakt"
     },
     "contribute": {
@@ -26,8 +25,8 @@
       "title": "Mitmachen"
     },
     "donation": {
-      "description": "Ihre Spenden helfen TibiaCores zu wachsen und sich zu verbessern, ermöglichen uns neue Funktionen hinzuzufügen, die Server zu warten und allen Benutzern ein besseres Erlebnis zu bieten. Wenn Sie unsere Entwicklung unterstützen möchten, können Sie Spenden im Spiel senden an:",
-      "title": "Spende"
+      "description": "Deine Unterstützung hilft TibiaCores zu wachsen und sich zu verbessern. Du kannst uns helfen, Serverkosten und Entwicklungsausgaben durch GitHub Sponsors oder durch Spenden im Spiel zu decken:",
+      "title": "Unterstütze uns"
     },
     "features": {
       "list": {
@@ -171,6 +170,7 @@
       "errors": {
         "verificationFailed": "Fehler bei der Charakterverifizierung"
       },
+      "listNamePlaceholder": "Listennamen eingeben",
       "loadingCharacters": "Lade deine Charaktere...",
       "submit": "Erstellen",
       "verifying": "Verifiziere..."
@@ -200,6 +200,30 @@
       "success": "E-Mail erfolgreich verifiziert!"
     }
   },
+  "footer": {
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "rights": "Alle Rechte vorbehalten",
+    "tibiaWebsite": "Die offizielle Website von Tibia ist"
+  },
+  "highscores": {
+    "columns": {
+      "cores": "Seelenkerne",
+      "name": "Charaktername",
+      "rank": "Rang",
+      "world": "Welt"
+    },
+    "empty": "Keine Charaktere gefunden",
+    "error": {
+      "description": "Beim Laden der Bestenliste ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "retry": "Erneut versuchen",
+      "title": "Fehler beim Laden der Bestenliste"
+    },
+    "pagination": {
+      "showing": "Zeige {from} bis {to} von {total} Charakteren"
+    },
+    "subtitle": "Charaktere mit den meisten freigeschalteten Seelenkernen",
+    "title": "Bestenliste"
+  },
   "home": {
     "about": {
       "description": "TibiaCores ist Ihre Begleiter-App für die Verwaltung und das Teilen von Seelenkern-Listen. Erstellen Sie Charaktere, bauen Sie Sammlungen auf und teilen Sie sie mit Freunden. Treten Sie bestehenden Listen über Teilungscodes oder direkte Links bei.",
@@ -215,25 +239,6 @@
       },
       "refresh": "Aktualisieren",
       "title": "Ihre Listen"
-    }
-  },
-  "highscores": {
-    "title": "Bestenliste",
-    "subtitle": "Charaktere mit den meisten freigeschalteten Seelenkernen",
-    "columns": {
-      "rank": "Rang",
-      "name": "Charaktername",
-      "world": "Welt",
-      "cores": "Seelenkerne"
-    },
-    "empty": "Keine Charaktere gefunden",
-    "error": {
-      "title": "Fehler beim Laden der Bestenliste",
-      "description": "Beim Laden der Bestenliste ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
-      "retry": "Erneut versuchen"
-    },
-    "pagination": {
-      "showing": "Zeige {from} bis {to} von {total} Charakteren"
     }
   },
   "joinList": {
@@ -375,9 +380,9 @@
         "difficulty": "Schwierigkeit",
         "name": "Name"
       },
+      "count": "{count} Seelenkerne gefunden",
       "empty": "Noch keine Seelenkerne freigeschaltet",
       "searchPlaceholder": "Seelenkerne suchen...",
-      "count": "{count} Seelenkerne gefunden",
       "title": "Seelenkerne"
     },
     "stats": {
@@ -410,5 +415,45 @@
     "noSuggestions": "Keine Vorschläge verfügbar",
     "title": "Seelenkern-Vorschläge",
     "unknownList": "Unbekannte Liste"
+  },
+  "sponsor": {
+    "faq": {
+      "questions": {
+        "benefit": {
+          "answer": "Derzeit sind alle TibiaCores-Funktionen für jeden kostenlos. Deine Unterstützung stellt sicher, dass wir es so beibehalten können, während wir weiterhin neue Funktionen und Verbesserungen hinzufügen.",
+          "question": "Was bekomme ich dafür?"
+        },
+        "howMuch": {
+          "answer": "Jeder Betrag wird geschätzt! Selbst $1 pro Monat hilft uns, unsere Hosting-Kosten zu decken. Wähle einen Betrag, der sich für dich angenehm anfühlt.",
+          "question": "Wie viel sollte ich beitragen?"
+        },
+        "other": {
+          "answer": "Ja! Du kannst Code beitragen, Fehler melden, Funktionen vorschlagen oder helfen, TibiaCores bekannter zu machen. Jeder Beitrag zählt!",
+          "question": "Gibt es andere Möglichkeiten zu unterstützen?"
+        }
+      },
+      "title": "Häufig gestellte Fragen"
+    },
+    "github": {
+      "button": "Auf GitHub sponsern",
+      "description": "GitHub Sponsors ist der einfachste Weg, die laufende Entwicklung zu unterstützen. Du kannst bereits ab $1 pro Monat beitragen, und GitHub verdoppelt deine Beiträge im ersten Jahr."
+    },
+    "ingame": {
+      "description": "Wenn du es vorziehst, kannst du das Projekt auch unterstützen, indem du Items oder Goldmünzen direkt in Tibia sendest.",
+      "title": "In-Game-Spenden",
+      "viewProfile": "Tibia-Profil anzeigen"
+    },
+    "subtitle": "Hilf uns, TibiaCores am Laufen zu halten und weiterzuentwickeln",
+    "support": "Unterstütze TibiaCores",
+    "title": "Unterstütze TibiaCores",
+    "why": {
+      "description": "Deine Unterstützung hilft uns, Kosten zu decken und TibiaCores weiter zu verbessern. Selbst kleine Beiträge machen einen großen Unterschied!",
+      "reasons": {
+        "features": "Entwicklung neuer Funktionen",
+        "hosting": "Server-Hosting-Kosten",
+        "motivation": "Motivation zum Weitermachen"
+      },
+      "title": "Warum uns unterstützen?"
+    }
   }
 }
