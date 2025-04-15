@@ -26,8 +26,8 @@
       "title": "Contribute"
     },
     "donation": {
-      "description": "Your donations help TibiaCores grow and improve, allowing us to add new features, maintain the servers, and provide a better experience for all users. If you'd like to support our development, you can send in-game donations to:",
-      "title": "Donation"
+      "description": "Your support helps TibiaCores grow and improve. You can help us cover server costs and development expenses through GitHub Sponsors or by sending in-game donations to:",
+      "title": "Support Us"
     },
     "features": {
       "list": {
@@ -175,7 +175,7 @@
       "submit": "Create",
       "verifying": "Verifying..."
     },
-    "title": "Create New List"
+    "title": "Create a list"
   },
   "difficulty": {
     "challenging": "Challenging",
@@ -263,7 +263,7 @@
     "markAsObtained": "Mark as Obtained",
     "markAsUnlocked": "Mark as Unlocked",
     "memberContributions": "Member Contributions",
-    "obtained": "obtained",
+    "obtained": "Obtained",
     "shareList": "Share List",
     "shareListDescription": "Share this link with others to let them join your list:",
     "showUnlocked": "Show Unlocked",
@@ -332,7 +332,7 @@
       }
     },
     "data": {
-      "content": "We collect minimal personal information necessary to provide our services. This includes your email address for authentication and any data you voluntarily provide when creating or joining soul core lists.",
+      "content": "We collect the minimal personal information necessary to provide our services. This includes your email address for authentication and any data you voluntarily provide when creating or joining soul core lists.",
       "title": "Data Collection"
     },
     "introduction": {
@@ -410,5 +410,8 @@
     "noSuggestions": "No suggestions available",
     "title": "Soul Core Suggestions",
     "unknownList": "Unknown List"
+  },
+  "sponsor": {
+    "support": "Support TibiaCores"
   }
 }

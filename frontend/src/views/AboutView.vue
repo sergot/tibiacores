@@ -272,18 +272,42 @@
           <p class="text-gray-600 mb-6 leading-relaxed">
             {{ t('about.donation.description') }}
           </p>
-          <div
-            class="flex items-center space-x-3 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg group-hover:transform group-hover:translate-x-1 transition-transform"
-          >
-            <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-6 h-6" />
-            <a
-              href="https://www.tibia.com/community/?name=Mlody+Filip"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-600 hover:text-blue-800 hover:underline"
+          <div class="space-y-4">
+            <!-- GitHub Sponsors -->
+            <div
+              class="flex items-center space-x-3 p-4 bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg group-hover:transform group-hover:translate-x-1 transition-transform"
             >
-              Mlody Filip
-            </a>
+              <svg class="w-6 h-6 text-pink-600" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.41 15.06V16h2.67v1.06c0 .55-.45 1-1 1h-.67c-.55 0-1-.45-1-1zm0-9.12v4.18c0 .55.45 1 1 1h.67c.55 0 1-.45 1-1V7.94c0-.55-.45-1-1-1h-.67c-.55 0-1 .45-1 1zm6.88 5.06c0 2.76-2.24 5-5 5s-5-2.24-5-5V10h1.94v2.94c0 1.71 1.35 3.06 3.06 3.06s3.06-1.35 3.06-3.06V10h1.94v3z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <a
+                href="https://github.com/sponsors/sergot"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                GitHub Sponsors
+              </a>
+            </div>
+
+            <!-- In-game donation -->
+            <div
+              class="flex items-center space-x-3 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg group-hover:transform group-hover:translate-x-1 transition-transform"
+            >
+              <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-6 h-6" />
+              <a
+                href="https://www.tibia.com/community/?name=Mlody+Filip"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                Mlody Filip
+              </a>
+            </div>
           </div>
         </div>
 

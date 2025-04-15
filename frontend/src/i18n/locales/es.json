@@ -26,8 +26,8 @@
       "title": "Contribuir"
     },
     "donation": {
-      "description": "Tus donaciones ayudan a que TibiaCores crezca y mejore, permitiéndonos agregar nuevas funciones, mantener los servidores y proporcionar una mejor experiencia para todos los usuarios. Si deseas apoyar nuestro desarrollo, puedes enviar donaciones en el juego a:",
-      "title": "Donación"
+      "description": "Tu apoyo ayuda a que TibiaCores crezca y mejore. Puedes ayudarnos a cubrir los costos del servidor y los gastos de desarrollo a través de GitHub Sponsors o enviando donaciones dentro del juego a:",
+      "title": "Apóyanos"
     },
     "features": {
       "list": {
@@ -410,5 +410,8 @@
     "noSuggestions": "No hay sugerencias disponibles",
     "title": "Sugerencias de Núcleo del Alma",
     "unknownList": "Lista desconocida"
+  },
+  "sponsor": {
+    "support": "Apoya a TibiaCores"
   }
 }

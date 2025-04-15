@@ -40,10 +40,11 @@ onBeforeUnmount(() => {
   <div class="relative" ref="dropdownRef">
     <button
       @click.stop="isOpen = !isOpen"
-      class="p-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100"
+      class="p-2 text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-100 flex items-center space-x-1"
       aria-label="Change language"
     >
       <GlobeAltIcon class="h-5 w-5" />
+      <span class="text-sm font-medium uppercase">{{ t('_locale') }}</span>
     </button>
 
     <div

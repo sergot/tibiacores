@@ -26,8 +26,8 @@
       "title": "Mitmachen"
     },
     "donation": {
-      "description": "Ihre Spenden helfen TibiaCores zu wachsen und sich zu verbessern, ermöglichen uns neue Funktionen hinzuzufügen, die Server zu warten und allen Benutzern ein besseres Erlebnis zu bieten. Wenn Sie unsere Entwicklung unterstützen möchten, können Sie Spenden im Spiel senden an:",
-      "title": "Spende"
+      "description": "Deine Unterstützung hilft TibiaCores zu wachsen und sich zu verbessern. Du kannst uns helfen, Serverkosten und Entwicklungsausgaben durch GitHub Sponsors oder durch Spenden im Spiel zu decken:",
+      "title": "Unterstütze uns"
     },
     "features": {
       "list": {
@@ -410,5 +410,8 @@
     "noSuggestions": "Keine Vorschläge verfügbar",
     "title": "Seelenkern-Vorschläge",
     "unknownList": "Unbekannte Liste"
+  },
+  "sponsor": {
+    "support": "Unterstütze TibiaCores"
   }
 }

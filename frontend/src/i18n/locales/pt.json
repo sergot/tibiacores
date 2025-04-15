@@ -26,8 +26,8 @@
       "title": "Contribua"
     },
     "donation": {
-      "description": "Suas doações ajudam o TibiaCores a crescer e melhorar, permitindo-nos adicionar novos recursos, manter os servidores e proporcionar uma melhor experiência para todos os usuários. Se você quiser apoiar nosso desenvolvimento, pode enviar doações in-game para:",
-      "title": "Doação"
+      "description": "Seu apoio ajuda o TibiaCores a crescer e melhorar. Você pode nos ajudar a cobrir custos de servidor e despesas de desenvolvimento através do GitHub Sponsors ou enviando doações no jogo para:",
+      "title": "Apoie-nos"
     },
     "features": {
       "list": {
@@ -410,5 +410,8 @@
     "noSuggestions": "Nenhuma sugestão disponível",
     "title": "Sugestões de Soul Core",
     "unknownList": "Lista desconhecida"
+  },
+  "sponsor": {
+    "support": "Apoie TibiaCores"
   }
 }

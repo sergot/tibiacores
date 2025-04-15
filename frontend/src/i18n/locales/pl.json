@@ -26,8 +26,8 @@
       "title": "Współtwórz"
     },
     "donation": {
-      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores, umożliwiając nam dodawanie nowych funkcji, utrzymanie serwerów i zapewnienie lepszych wrażeń wszystkim użytkownikom. Jeśli chcesz wesprzeć nasz rozwój, możesz wysłać dotacje w grze do:",
-      "title": "Wsparcie"
+      "description": "Twoje wsparcie pomaga rozwijać i ulepszać TibiaCores. Możesz pomóc nam pokryć koszty serwerów i rozwoju poprzez GitHub Sponsors lub wysyłając dotacje w grze do:",
+      "title": "Wesprzyj nas"
     },
     "features": {
       "list": {
@@ -175,7 +175,7 @@
       "submit": "Utwórz",
       "verifying": "Weryfikacja..."
     },
-    "title": "Utwórz Nową Listę"
+    "title": "Utwórz nową listę"
   },
   "difficulty": {
     "challenging": "Wymagający",
@@ -410,5 +410,8 @@
     "noSuggestions": "Brak dostępnych sugestii",
     "title": "Sugestie Soul Corów",
     "unknownList": "Nieznana lista"
+  },
+  "sponsor": {
+    "support": "Wesprzyj TibiaCores"
   }
 }
