@@ -2,6 +2,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAnalytics } from '@/composables/useAnalytics'
+import { useUserStore } from '@/stores/user'
 import HomeView from '@/views/HomeView.vue'
 import CharacterClaimView from '@/views/CharacterClaimView.vue'
 import SignUpView from '@/views/SignUpView.vue'
@@ -14,6 +15,7 @@ import CharacterDetailsView from '@/views/CharacterDetailsView.vue'
 import PrivacyView from '@/views/PrivacyView.vue'
 import PublicCharacterView from '@/views/PublicCharacterView.vue'
 import HighscoreView from '@/views/HighscoreView.vue'
+import SponsorView from '@/views/SponsorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,11 @@ const router = createRouter({
       path: '/highscores',
       name: 'highscores',
       component: HighscoreView,
+    },
+    {
+      path: '/sponsor',
+      name: 'sponsor',
+      component: SponsorView,
     },
     {
       path: '/signin',
@@ -53,12 +60,14 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/lists/:id',
       name: 'list-detail',
       component: ListDetailView,
       props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: '/join/:share_code',
@@ -104,6 +113,27 @@ const router = createRouter({
       component: PrivacyView,
     },
   ],
+})
+
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+
+  // Check if route requires authentication
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+
+  // Allow navigation to public routes or if user is authenticated
+  if (!requiresAuth) {
+    return next()
+  }
+
+  // Check if user is authenticated
+  if (userStore.isAuthenticated) {
+    return next()
+  }
+
+  // Redirect to signin page if not authenticated
+  return next('/signin')
 })
 
 // Track page views

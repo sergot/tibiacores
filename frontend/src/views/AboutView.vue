@@ -300,12 +300,12 @@
             >
               <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-6 h-6" />
               <a
-                href="https://www.tibia.com/community/?name=Mlody+Filip"
+                href="https://www.tibia.com/community/?name=Corescom"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-blue-600 hover:text-blue-800 hover:underline"
               >
-                Mlody Filip
+                Corescom
               </a>
             </div>
           </div>
@@ -356,22 +356,6 @@
                   class="text-blue-600 hover:text-blue-800 hover:underline"
                 >
                   discord.gg/py9RhemV
-                </a>
-              </div>
-            </li>
-            <li
-              class="flex items-center space-x-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg group-hover:transform group-hover:translate-x-1 transition-transform"
-            >
-              <img src="/assets/tibia-icon.gif" alt="Tibia Icon" class="w-6 h-6" />
-              <div class="flex-1">
-                <span>{{ t('about.contact.ingame') }}</span>
-                <a
-                  href="https://www.tibia.com/community/?name=Mlody+Filip"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  Mlody Filip
                 </a>
               </div>
             </li>

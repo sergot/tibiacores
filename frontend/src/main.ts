@@ -46,15 +46,11 @@ axios.interceptors.response.use(
       userStore.clearUser()
       listsStore.clearLists()
 
-      // Only redirect if not already on signin/signup pages or public routes
+      // Only redirect if not already on signin/signup pages
       const authRoutes = ['/signin', '/signup']
-      const publicRoutes = ['/characters/public/', '/about', '/privacy', '/highscores']
       const currentPath = router.currentRoute.value.path
 
-      if (
-        !authRoutes.includes(currentPath) &&
-        !publicRoutes.some((route) => currentPath.startsWith(route))
-      ) {
+      if (!authRoutes.includes(currentPath)) {
         router.push('/signin')
       }
     }

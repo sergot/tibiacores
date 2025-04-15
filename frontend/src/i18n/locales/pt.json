@@ -13,7 +13,6 @@
     "contact": {
       "description": "Tem dúvidas ou sugestões? Adoraríamos ouvir você! Você pode:",
       "discord": "Entrar no nosso Discord: ",
-      "ingame": "Mensagem in-game: ",
       "title": "Contato"
     },
     "contribute": {
@@ -171,6 +170,7 @@
       "errors": {
         "verificationFailed": "Falha ao verificar o personagem"
       },
+      "listNamePlaceholder": "Digite o nome da lista",
       "loadingCharacters": "Carregando seus personagens...",
       "submit": "Criar",
       "verifying": "Verificando..."
@@ -200,6 +200,30 @@
       "success": "Email verificado com sucesso!"
     }
   },
+  "footer": {
+    "privacyPolicy": "Política de Privacidade",
+    "rights": "Todos os Direitos Reservados",
+    "tibiaWebsite": "O site oficial do Tibia é"
+  },
+  "highscores": {
+    "columns": {
+      "cores": "Soul Cores",
+      "name": "Nome do Personagem",
+      "rank": "Posição",
+      "world": "Mundo"
+    },
+    "empty": "Nenhum personagem encontrado",
+    "error": {
+      "description": "Ocorreu um erro ao carregar o ranking. Por favor, tente novamente.",
+      "retry": "Tentar novamente",
+      "title": "Falha ao carregar o ranking"
+    },
+    "pagination": {
+      "showing": "Mostrando {from} a {to} de {total} personagens"
+    },
+    "subtitle": "Personagens com mais soul cores desbloqueados",
+    "title": "Ranking"
+  },
   "home": {
     "about": {
       "description": "TibiaCores é seu aplicativo complementar para gerenciar e compartilhar listas de soul cores. Crie personagens, construa coleções e compartilhe-as com amigos. Junte-se a listas existentes através de códigos de compartilhamento ou links diretos.",
@@ -215,25 +239,6 @@
       },
       "refresh": "Atualizar",
       "title": "Suas Listas"
-    }
-  },
-  "highscores": {
-    "title": "Ranking",
-    "subtitle": "Personagens com mais soul cores desbloqueados",
-    "columns": {
-      "rank": "Posição",
-      "name": "Nome do Personagem",
-      "world": "Mundo",
-      "cores": "Soul Cores"
-    },
-    "empty": "Nenhum personagem encontrado",
-    "error": {
-      "title": "Falha ao carregar o ranking",
-      "description": "Ocorreu um erro ao carregar o ranking. Por favor, tente novamente.",
-      "retry": "Tentar novamente"
-    },
-    "pagination": {
-      "showing": "Mostrando {from} a {to} de {total} personagens"
     }
   },
   "joinList": {
@@ -375,9 +380,9 @@
         "difficulty": "Dificuldade",
         "name": "Nome"
       },
+      "count": "{count} núcleos encontrados",
       "empty": "Ainda não há núcleos de alma desbloqueados",
       "searchPlaceholder": "Buscar núcleos...",
-      "count": "{count} núcleos encontrados",
       "title": "Núcleos de Alma"
     },
     "stats": {
@@ -412,6 +417,43 @@
     "unknownList": "Lista desconhecida"
   },
   "sponsor": {
-    "support": "Apoie TibiaCores"
+    "faq": {
+      "questions": {
+        "benefit": {
+          "answer": "Atualmente, todos os recursos do TibiaCores são gratuitos para todos. Seu apoio garante que possamos manter assim enquanto continuamos adicionando novos recursos e melhorias.",
+          "question": "O que ganho em troca?"
+        },
+        "howMuch": {
+          "answer": "Qualquer quantia é apreciada! Mesmo $1 por mês ajuda a cobrir nossos custos de hospedagem. Escolha um valor que seja confortável para você.",
+          "question": "Quanto devo contribuir?"
+        },
+        "other": {
+          "answer": "Sim! Você pode contribuir com código, relatar bugs, sugerir recursos ou ajudar a divulgar o TibiaCores. Cada contribuição importa!",
+          "question": "Existem outras formas de apoiar?"
+        }
+      },
+      "title": "Perguntas Frequentes"
+    },
+    "github": {
+      "button": "Patrocinar no GitHub",
+      "description": "GitHub Sponsors é a maneira mais fácil de apoiar o desenvolvimento contínuo. Você pode contribuir com apenas $1 por mês, e o GitHub iguala suas contribuições durante o primeiro ano."
+    },
+    "ingame": {
+      "description": "Se preferir, você também pode apoiar o projeto enviando itens ou moedas de ouro diretamente no Tibia.",
+      "title": "Doações no jogo",
+      "viewProfile": "Ver Perfil no Tibia"
+    },
+    "subtitle": "Ajude-nos a manter o TibiaCores funcionando e crescendo",
+    "support": "Apoie TibiaCores",
+    "title": "Apoie TibiaCores",
+    "why": {
+      "description": "Seu apoio nos ajuda a cobrir custos e continuar melhorando o TibiaCores. Mesmo pequenas contribuições fazem uma grande diferença!",
+      "reasons": {
+        "features": "Desenvolvimento de Novos Recursos",
+        "hosting": "Custos de Hospedagem do Servidor",
+        "motivation": "Motivação para Continuar"
+      },
+      "title": "Por que nos apoiar?"
+    }
   }
 }

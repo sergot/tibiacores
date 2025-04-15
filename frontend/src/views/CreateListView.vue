@@ -141,7 +141,7 @@ const handleTryDifferent = () => {
             type="text"
             required
             :disabled="loading"
-            :placeholder="t('createList.form.characterNamePlaceholder')"
+            :placeholder="t('createList.form.listNamePlaceholder')"
             class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>

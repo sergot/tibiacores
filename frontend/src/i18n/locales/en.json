@@ -13,7 +13,6 @@
     "contact": {
       "description": "Have questions or suggestions? We'd love to hear from you! You can:",
       "discord": "Join our Discord: ",
-      "ingame": "Message in-game: ",
       "title": "Contact"
     },
     "contribute": {
@@ -171,6 +170,7 @@
       "errors": {
         "verificationFailed": "Failed to verify character"
       },
+      "listNamePlaceholder": "Enter list name",
       "loadingCharacters": "Loading your characters...",
       "submit": "Create",
       "verifying": "Verifying..."
@@ -200,6 +200,30 @@
       "success": "Email verified successfully!"
     }
   },
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "rights": "All Rights Reserved",
+    "tibiaWebsite": "The official website of Tibia is"
+  },
+  "highscores": {
+    "columns": {
+      "cores": "Soul Cores",
+      "name": "Character Name",
+      "rank": "Rank",
+      "world": "World"
+    },
+    "empty": "No characters found",
+    "error": {
+      "description": "An error occurred while loading the highscores. Please try again.",
+      "retry": "Retry",
+      "title": "Failed to load highscores"
+    },
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total} characters"
+    },
+    "subtitle": "Characters with the most soul cores unlocked",
+    "title": "Highscores"
+  },
   "home": {
     "about": {
       "description": "TibiaCores is your companion app for managing and sharing soul core lists. Create characters, build collections, and share them with friends. Join existing lists via share codes or direct links.",
@@ -215,25 +239,6 @@
       },
       "refresh": "Refresh",
       "title": "Your Lists"
-    }
-  },
-  "highscores": {
-    "title": "Highscores",
-    "subtitle": "Characters with the most soul cores unlocked",
-    "columns": {
-      "rank": "Rank",
-      "name": "Character Name",
-      "world": "World",
-      "cores": "Soul Cores"
-    },
-    "empty": "No characters found",
-    "error": {
-      "title": "Failed to load highscores",
-      "description": "An error occurred while loading the highscores. Please try again.",
-      "retry": "Retry"
-    },
-    "pagination": {
-      "showing": "Showing {from} to {to} of {total} characters"
     }
   },
   "joinList": {
@@ -375,9 +380,9 @@
         "difficulty": "Difficulty",
         "name": "Name"
       },
+      "count": "{count} cores found",
       "empty": "No soul cores unlocked yet",
       "searchPlaceholder": "Search cores...",
-      "count": "{count} cores found",
       "title": "Soul Cores"
     },
     "stats": {
@@ -412,6 +417,43 @@
     "unknownList": "Unknown List"
   },
   "sponsor": {
-    "support": "Support TibiaCores"
+    "faq": {
+      "questions": {
+        "benefit": {
+          "answer": "Currently, all TibiaCores features are free for everyone. Your support ensures we can keep it that way while continuing to add new features and improvements.",
+          "question": "What do I get in return?"
+        },
+        "howMuch": {
+          "answer": "Any amount is appreciated! Even $1 per month helps cover our hosting costs. Choose an amount that feels comfortable for you.",
+          "question": "How much should I contribute?"
+        },
+        "other": {
+          "answer": "Yes! You can contribute code, report bugs, suggest features, or help spread the word about TibiaCores. Every contribution matters!",
+          "question": "Are there other ways to support?"
+        }
+      },
+      "title": "Frequently Asked Questions"
+    },
+    "github": {
+      "button": "Sponsor on GitHub",
+      "description": "GitHub Sponsors is the easiest way to support ongoing development. You can contribute as little as $1 per month, and GitHub will match your contributions during the first year."
+    },
+    "ingame": {
+      "description": "If you prefer, you can also support the project by sending items or gold coins directly in Tibia.",
+      "title": "In-game Donations",
+      "viewProfile": "View Tibia Profile"
+    },
+    "subtitle": "Help us keep TibiaCores running and growing",
+    "support": "Support TibiaCores",
+    "title": "Support TibiaCores",
+    "why": {
+      "description": "Your support helps us cover costs and continue improving TibiaCores. Even small contributions make a big difference!",
+      "reasons": {
+        "features": "New Features Development",
+        "hosting": "Server Hosting Costs",
+        "motivation": "Motivation to Keep Going"
+      },
+      "title": "Why Support Us?"
+    }
   }
 }

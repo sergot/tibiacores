@@ -5,46 +5,49 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <footer class="w-full bg-gray-800">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <!-- Sponsors and Links -->
-      <div class="py-4 flex flex-col sm:flex-row justify-between items-center">
-        <div class="mb-4 sm:mb-0 text-center sm:text-left">
-          <p class="text-gray-400 text-sm">
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <p class="text-sm">
+            &copy; {{ new Date().getFullYear() }} TibiaCores. {{ t('footer.rights') }}
+          </p>
+          <p class="text-sm mt-1">
+            {{
+              t(
+                'footer.tibiaCopyright',
+                'Tibia and all products related to Tibia are copyrighted by',
+              )
+            }}
             <a
-              href="https://github.com/sergot/tibiacores"
+              href="https://www.cipsoft.com/en/"
               target="_blank"
               rel="noopener noreferrer"
-              class="hover:text-gray-300"
-              >TibiaCores</a
-            >
-            © 2025. All rights reserved. Tibia and TibiaME are trademarks of
-            <a
-              href="https://www.cipsoft.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:text-gray-300"
+              class="text-blue-400 hover:underline"
               >CipSoft GmbH</a
             >.
+            {{ t('footer.tibiaWebsite', 'The official website of Tibia is') }}
+            <a
+              href="https://www.tibia.com/news/?subtopic=latestnews"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-400 hover:underline"
+              >tibia.com</a
+            >.
+          </p>
+          <p class="text-sm mt-1">
+            <RouterLink to="/privacy" class="text-blue-400 hover:underline">
+              {{ t('footer.privacyPolicy', 'Privacy Policy') }}
+            </RouterLink>
           </p>
         </div>
-
-        <div class="flex items-center">
-          <a
-            href="https://github.com/sponsors/sergot"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+        <div class="flex space-x-4">
+          <RouterLink
+            to="/sponsor"
+            class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-md text-sm font-medium"
           >
-            <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                fill-rule="evenodd"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.41 15.06V16h2.67v1.06c0 .55-.45 1-1 1h-.67c-.55 0-1-.45-1-1zm0-9.12v4.18c0 .55.45 1 1 1h.67c.55 0 1-.45 1-1V7.94c0-.55-.45-1-1-1h-.67c-.55 0-1 .45-1 1zm6.88 5.06c0 2.76-2.24 5-5 5s-5-2.24-5-5V10h1.94v2.94c0 1.71 1.35 3.06 3.06 3.06s3.06-1.35 3.06-3.06V10h1.94v3z"
-                clip-rule="evenodd"
-              />
-            </svg>
             {{ t('sponsor.support') || 'Support TibiaCores' }}
-          </a>
+          </RouterLink>
         </div>
       </div>
     </div>
