@@ -72,9 +72,11 @@ const handleSubmit = async () => {
       })
     }
 
-    // Fetch updated lists and redirect to home
+    // Fetch updated lists
     await listsStore.fetchUserLists()
-    router.push('/')
+
+    // Redirect to the newly created list page
+    router.push(`/lists/${response.data.id}`)
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 409) {
       showNameConflict.value = true
