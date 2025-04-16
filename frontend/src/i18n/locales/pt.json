@@ -203,6 +203,7 @@
   "footer": {
     "privacyPolicy": "Política de Privacidade",
     "rights": "Todos os Direitos Reservados",
+    "tibiaCopyright": "Tibia e todos os produtos relacionados à Tibia são protegidos por direitos autorais da",
     "tibiaWebsite": "O site oficial do Tibia é"
   },
   "highscores": {
@@ -324,7 +325,7 @@
   },
   "privacy": {
     "contact": {
-      "content": "Se você tiver alguma dúvida sobre nossa Política de Privacidade ou como lidamos com seus dados, entre em contato conosco em support@tibiacores.com.",
+      "content": "Se você tiver alguma dúvida sobre nossa Política de Privacidade ou como lidamos com seus dados, entre em contato conosco em support{'@'}tibiacores.com.",
       "title": "Contato"
     },
     "cookies": {

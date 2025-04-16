@@ -13,12 +13,7 @@ const { t } = useI18n()
             &copy; {{ new Date().getFullYear() }} TibiaCores. {{ t('footer.rights') }}
           </p>
           <p class="text-sm mt-1">
-            {{
-              t(
-                'footer.tibiaCopyright',
-                'Tibia and all products related to Tibia are copyrighted by',
-              )
-            }}
+            {{ t('footer.tibiaCopyright') }}
             <a
               href="https://www.cipsoft.com/en/"
               target="_blank"
@@ -26,7 +21,7 @@ const { t } = useI18n()
               class="text-blue-400 hover:underline"
               >CipSoft GmbH</a
             >.
-            {{ t('footer.tibiaWebsite', 'The official website of Tibia is') }}
+            {{ t('footer.tibiaWebsite') }}
             <a
               href="https://www.tibia.com/news/?subtopic=latestnews"
               target="_blank"
@@ -37,7 +32,7 @@ const { t } = useI18n()
           </p>
           <p class="text-sm mt-1">
             <RouterLink to="/privacy" class="text-blue-400 hover:underline">
-              {{ t('footer.privacyPolicy', 'Privacy Policy') }}
+              {{ t('footer.privacyPolicy') }}
             </RouterLink>
           </p>
         </div>

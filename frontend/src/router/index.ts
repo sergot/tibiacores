@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAnalytics } from '@/composables/useAnalytics'
 import { useUserStore } from '@/stores/user'
 import HomeView from '@/views/HomeView.vue'
 import CharacterClaimView from '@/views/CharacterClaimView.vue'
@@ -134,12 +133,6 @@ router.beforeEach((to, from, next) => {
 
   // Redirect to signin page if not authenticated
   return next('/signin')
-})
-
-// Track page views
-router.afterEach((to) => {
-  const { trackPageView } = useAnalytics()
-  trackPageView(to.path)
 })
 
 export default router

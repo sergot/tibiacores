@@ -8,6 +8,52 @@ import App from './App.vue'
 import router from './router'
 import { i18n, getBrowserLocale, loadLocale } from './i18n'
 
+// Define Umami type for TypeScript
+declare global {
+  interface Window {
+    umami?: {
+      track: (event_name: string, event_data?: Record<string, unknown>) => void
+    }
+  }
+}
+
+// Setup Umami analytics
+const UMAMI_SCRIPT_ID = 'umami-analytics-script'
+
+// Function to load Umami analytics
+export const loadUmamiAnalytics = () => {
+  const umamiWebsiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID
+  if (!umamiWebsiteId) return
+
+  // Skip if already loaded
+  if (document.getElementById(UMAMI_SCRIPT_ID)) return
+
+  // Initialize Umami
+  const script = document.createElement('script')
+  script.id = UMAMI_SCRIPT_ID
+  script.async = true
+  script.defer = true
+  script.setAttribute('data-website-id', umamiWebsiteId)
+  script.src = 'https://umami.tibiacores.com/script.js'
+  document.head.appendChild(script)
+}
+
+// Helper function to track custom events (if needed elsewhere in the app)
+export const trackEvent = (name: string, params?: Record<string, unknown>) => {
+  if (window.umami) {
+    window.umami.track(name, params)
+  }
+}
+
+// Check consent on initial load
+const consentData = localStorage.getItem('cookie_consent')
+if (consentData) {
+  const consent = JSON.parse(consentData)
+  if (consent.analytics) {
+    loadUmamiAnalytics()
+  }
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)

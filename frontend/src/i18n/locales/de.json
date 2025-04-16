@@ -203,6 +203,7 @@
   "footer": {
     "privacyPolicy": "Datenschutzrichtlinie",
     "rights": "Alle Rechte vorbehalten",
+    "tibiaCopyright": "Tibia und alle mit Tibia verbundenen Produkte sind urheberrechtlich geschützt von",
     "tibiaWebsite": "Die offizielle Website von Tibia ist"
   },
   "highscores": {
@@ -324,7 +325,7 @@
   },
   "privacy": {
     "contact": {
-      "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support@tibiacores.com.",
+      "content": "Wenn Sie Fragen zu unserer Datenschutzerklärung oder zum Umgang mit Ihren Daten haben, kontaktieren Sie uns bitte unter support{'@'}tibiacores.com.",
       "title": "Kontakt"
     },
     "cookies": {

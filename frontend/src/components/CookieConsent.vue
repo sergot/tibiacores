@@ -75,10 +75,9 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import { useAnalytics } from '@/composables/useAnalytics'
+import { loadUmamiAnalytics } from '@/main'
 
 const { t } = useI18n()
-const { initGA4, setEnabled } = useAnalytics()
 
 const hasConsent = ref(false)
 const preferences = ref(false)
@@ -93,12 +92,6 @@ onMounted(() => {
     hasConsent.value = true
     preferences.value = parsedConsent.preferences
     analytics.value = parsedConsent.analytics
-
-    if (analytics.value) {
-      // Initialize GA4 with your measurement ID
-      initGA4(import.meta.env.VITE_GA_MEASUREMENT_ID)
-      setEnabled(true)
-    }
   }
 })
 
@@ -111,15 +104,17 @@ const savePreferences = () => {
   localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent))
   hasConsent.value = true
 
+  // Only load analytics if user consented
   if (analytics.value) {
-    initGA4(import.meta.env.VITE_GA_MEASUREMENT_ID)
-    setEnabled(true)
-  } else {
-    setEnabled(false)
+    loadUmamiAnalytics()
   }
 }
 
 const acceptAll = () => {
+  // Ensure analytics is enabled when accepting all
+  analytics.value = true
+  preferences.value = true
+
   const consent = {
     preferences: true,
     analytics: true,
@@ -128,7 +123,7 @@ const acceptAll = () => {
   localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent))
   hasConsent.value = true
 
-  initGA4(import.meta.env.VITE_GA_MEASUREMENT_ID)
-  setEnabled(true)
+  // Load Umami analytics
+  loadUmamiAnalytics()
 }
 </script>

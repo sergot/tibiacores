@@ -203,6 +203,7 @@
   "footer": {
     "privacyPolicy": "Privacy Policy",
     "rights": "All Rights Reserved",
+    "tibiaCopyright": "Tibia and all products related to Tibia are copyrighted by",
     "tibiaWebsite": "The official website of Tibia is"
   },
   "highscores": {
@@ -324,7 +325,7 @@
   },
   "privacy": {
     "contact": {
-      "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support@tibiacores.com.",
+      "content": "If you have any questions about our Privacy Policy or how we handle your data, please contact us at support{'@'}tibiacores.com.",
       "title": "Contact Us"
     },
     "cookies": {
