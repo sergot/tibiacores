@@ -89,10 +89,10 @@ func (h *UsersHandler) Login(c echo.Context) error {
 			})
 	}
 
-	// Generate token
-	token, err := auth.GenerateToken(user.ID.String(), true)
+	// Generate token pair
+	tokenPair, err := auth.GenerateTokenPair(user.ID.String(), true)
 	if err != nil {
-		return apperror.InternalError("Failed to generate token", err).
+		return apperror.InternalError("Failed to generate tokens", err).
 			WithDetails(&apperror.ValidationErrorDetails{
 				Field:  "token",
 				Reason: "Token generation failed",
@@ -100,8 +100,8 @@ func (h *UsersHandler) Login(c echo.Context) error {
 			Wrap(err)
 	}
 
-	// Set token in X-Auth-Token header
-	c.Response().Header().Set("X-Auth-Token", token)
+	// Set cookies for authentication
+	auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"id":        user.ID,
@@ -171,41 +171,14 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 	authHeader := c.Request().Header.Get("Authorization")
 	var existingUserID *string
 	if authHeader != "" {
-		if claims, err := auth.ValidateToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
+		if claims, err := auth.ValidateAccessToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
 			existingUserID = &claims.UserID
 		}
 	}
 
-	if existingUserID != nil {
-		// Migrate existing anonymous user
-		userID, parseErr := uuid.Parse(*existingUserID)
-		if parseErr != nil {
-			return apperror.ValidationError("Invalid user ID format", parseErr).
-				WithDetails(&apperror.ValidationErrorDetails{
-					Field:  "user_id",
-					Value:  *existingUserID,
-					Reason: "Invalid UUID format",
-				})
-		}
-
-		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
-			Email:                      email,
-			Password:                   password,
-			EmailVerificationToken:     verificationToken,
-			EmailVerificationExpiresAt: expiresAt,
-			ID:                         userID,
-		})
-		if err != nil {
-			log.Printf("Failed to migrate anonymous user: %v", err)
-			return apperror.DatabaseError("Failed to migrate user", err).
-				WithDetails(&apperror.DatabaseErrorDetails{
-					Operation: "MigrateAnonymousUser",
-					Table:     "users",
-				}).
-				Wrap(err)
-		}
-	} else if getUserErr == nil && existingUser.IsAnonymous {
-		// Update existing anonymous user found by email
+	// If we found an anonymous user with this email, migrate it
+	if getUserErr == nil && existingUser.IsAnonymous {
+		// Migrate the found anonymous user
 		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
 			Email:                      email,
 			Password:                   password,
@@ -213,9 +186,39 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			EmailVerificationExpiresAt: expiresAt,
 			ID:                         existingUser.ID,
 		})
+
 		if err != nil {
-			log.Printf("Failed to migrate existing user: %v", err)
-			return apperror.DatabaseError("Failed to update user", err).
+			return apperror.DatabaseError("Failed to migrate anonymous user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "MigrateAnonymousUser",
+					Table:     "users",
+				}).
+				Wrap(err)
+		}
+	} else if existingUserID != nil {
+		// Migrate an anonymous user to a real user account if needed
+		// Parse UUID from string
+		existingID, err := uuid.Parse(*existingUserID)
+		if err != nil {
+			return apperror.ValidationError("Invalid user ID", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "user_id",
+					Value:  *existingUserID,
+					Reason: "Invalid UUID format",
+				})
+		}
+
+		// Migrate anonymous user
+		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
+			Email:                      email,
+			Password:                   password,
+			EmailVerificationToken:     verificationToken,
+			EmailVerificationExpiresAt: expiresAt,
+			ID:                         existingID,
+		})
+
+		if err != nil {
+			return apperror.DatabaseError("Failed to migrate anonymous user", err).
 				WithDetails(&apperror.DatabaseErrorDetails{
 					Operation: "MigrateAnonymousUser",
 					Table:     "users",
@@ -223,15 +226,16 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 				Wrap(err)
 		}
 	} else {
-		// Create new user
+		// Create a new user
 		user, err = h.store.CreateUser(ctx, db.CreateUserParams{
 			Email:                      email,
 			Password:                   password,
 			EmailVerificationToken:     verificationToken,
 			EmailVerificationExpiresAt: expiresAt,
+			EmailVerified:              false, // Require email verification
 		})
+
 		if err != nil {
-			log.Printf("Failed to create user: %v", err)
 			return apperror.DatabaseError("Failed to create user", err).
 				WithDetails(&apperror.DatabaseErrorDetails{
 					Operation: "CreateUser",
@@ -241,10 +245,16 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		}
 	}
 
-	// Generate new token
-	token, err := auth.GenerateToken(user.ID.String(), true)
+	// Send verification email
+	if err := h.emailService.SendVerificationEmail(ctx, email.String, verificationToken.String(), user.ID.String()); err != nil {
+		log.Printf("Error sending verification email: %v", err)
+		// Continue despite email sending error - user can request another email later
+	}
+
+	// Generate token pair
+	tokenPair, err := auth.GenerateTokenPair(user.ID.String(), true)
 	if err != nil {
-		return apperror.InternalError("Failed to generate token", err).
+		return apperror.InternalError("Failed to generate tokens", err).
 			WithDetails(&apperror.ValidationErrorDetails{
 				Field:  "token",
 				Reason: "Token generation failed",
@@ -252,18 +262,15 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			Wrap(err)
 	}
 
-	// Send verification email
-	if err := h.emailService.SendVerificationEmail(ctx, email.String, verificationToken.String(), user.ID.String()); err != nil {
-		log.Printf("Failed to send verification email: %v", err)
-		// Don't return error to client, as the account was created successfully
-	}
+	// Set cookies for authentication
+	auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 
-	// Set token in X-Auth-Token header
-	c.Response().Header().Set("X-Auth-Token", token)
-
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"id":        user.ID,
-		"has_email": true,
+	return c.JSON(http.StatusCreated, map[string]interface{}{
+		"id":         user.ID,
+		"has_email":  true,
+		"email":      user.Email.String,
+		"verified":   user.EmailVerified,
+		"expires_in": tokenPair.ExpiresIn,
 	})
 }
 

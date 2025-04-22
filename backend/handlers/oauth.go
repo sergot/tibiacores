@@ -89,18 +89,20 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 				})
 		}
 
-		// Existing OAuth user, generate token and return
-		token, err := auth.GenerateToken(existingUser.ID.String(), true)
+		// Generate token pair for cookies
+		tokenPair, err := auth.GenerateTokenPair(existingUser.ID.String(), true)
 		if err != nil {
-			return apperror.InternalError("Failed to generate token", err).
+			return apperror.InternalError("Failed to generate token pair", err).
 				WithContext(apperror.ErrorContext{
-					Operation: "GenerateToken",
+					Operation: "GenerateTokenPair",
 					UserID:    existingUser.ID.String(),
 				}).
 				Wrap(err)
 		}
 
-		c.Response().Header().Set("X-Auth-Token", token)
+		// Set cookies for authentication
+		auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"id":        existingUser.ID,
 			"has_email": true,
@@ -111,7 +113,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	authHeader := c.Request().Header.Get("Authorization")
 	var existingUserID *string
 	if authHeader != "" {
-		if claims, err := auth.ValidateToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
+		if claims, err := auth.ValidateAccessToken(strings.TrimPrefix(authHeader, "Bearer ")); err == nil {
 			existingUserID = &claims.UserID
 		}
 	}
@@ -134,17 +136,20 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 				})
 				if err == nil {
 					// Successfully migrated anonymous user
-					token, err := auth.GenerateToken(user.ID.String(), true)
+					// Generate token pair for cookies
+					tokenPair, err := auth.GenerateTokenPair(user.ID.String(), true)
 					if err != nil {
-						return apperror.InternalError("Failed to generate token", err).
+						return apperror.InternalError("Failed to generate token pair", err).
 							WithContext(apperror.ErrorContext{
-								Operation: "GenerateToken",
+								Operation: "GenerateTokenPair",
 								UserID:    user.ID.String(),
 							}).
 							Wrap(err)
 					}
 
-					c.Response().Header().Set("X-Auth-Token", token)
+					// Set cookies for authentication
+					auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
+
 					return c.JSON(http.StatusOK, map[string]interface{}{
 						"id":        user.ID,
 						"has_email": true,
@@ -172,19 +177,19 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 			Wrap(err)
 	}
 
-	// Generate JWT token
-	token, err := auth.GenerateToken(user.ID.String(), true)
+	// Generate token pair for cookies
+	tokenPair, err := auth.GenerateTokenPair(user.ID.String(), true)
 	if err != nil {
-		return apperror.InternalError("Failed to generate token", err).
+		return apperror.InternalError("Failed to generate token pair", err).
 			WithContext(apperror.ErrorContext{
-				Operation: "GenerateToken",
+				Operation: "GenerateTokenPair",
 				UserID:    user.ID.String(),
 			}).
 			Wrap(err)
 	}
 
-	// Set token in X-Auth-Token header
-	c.Response().Header().Set("X-Auth-Token", token)
+	// Set cookies for authentication
+	auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"id":        user.ID,

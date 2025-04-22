@@ -62,7 +62,6 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 
 	// Check if user is authenticated
 	var userID uuid.UUID
-	var token string
 	var err error
 
 	// Get authenticated user ID from context
@@ -80,15 +79,17 @@ func (h *ListsHandler) CreateList(c echo.Context) error {
 		}
 		userID = newUser.ID
 
-		// Generate token
-		token, err = auth.GenerateToken(userID.String(), false)
+		// Generate token pair for cookies
+		tokenPair, err := auth.GenerateTokenPair(userID.String(), false)
 		if err != nil {
-			return apperror.InternalError("failed to generate token", err).WithDetails(&apperror.DatabaseErrorDetails{
-				Operation: "GenerateToken",
+			return apperror.InternalError("failed to generate token pair", err).WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GenerateTokenPair",
 				Table:     "auth",
 			})
 		}
-		c.Response().Header().Set("X-Auth-Token", token)
+
+		// Set cookies for authentication
+		auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 
 		// For new users, we need character info
 		if req.CharacterName == "" || req.World == "" {
@@ -308,7 +309,6 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 
 	// Check if user is authenticated
 	var userID uuid.UUID
-	var token string
 
 	// Get authenticated user ID from context
 	if userIDStr, ok := c.Get("user_id").(string); ok && userIDStr != "" {
@@ -325,15 +325,17 @@ func (h *ListsHandler) JoinList(c echo.Context) error {
 		}
 		userID = newUser.ID
 
-		// Generate token
-		token, err = auth.GenerateToken(userID.String(), false)
+		// Generate token pair for cookies
+		tokenPair, err := auth.GenerateTokenPair(userID.String(), false)
 		if err != nil {
-			return apperror.InternalError("failed to generate token", err).WithDetails(&apperror.DatabaseErrorDetails{
-				Operation: "GenerateToken",
+			return apperror.InternalError("failed to generate token pair", err).WithDetails(&apperror.DatabaseErrorDetails{
+				Operation: "GenerateTokenPair",
 				Table:     "auth",
 			})
 		}
-		c.Response().Header().Set("X-Auth-Token", token)
+
+		// Set cookies for authentication
+		auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 
 		// For new users joining with a new character, require character info
 		if req.CharacterID == "" && (req.CharacterName == "" || req.World == "") {

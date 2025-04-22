@@ -83,7 +83,6 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 
 	// Get or create user
 	var userID uuid.UUID
-	var token string
 	// Check if user is authenticated
 	if userIDStr, ok := c.Get("user_id").(string); ok && userIDStr != "" {
 		// User is authenticated, parse their ID
@@ -109,10 +108,10 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 		}
 		userID = newUser.ID
 
-		// Generate token
-		token, err = auth.GenerateToken(userID.String(), false)
+		// Generate token pair and set cookies
+		tokenPair, err := auth.GenerateTokenPair(userID.String(), false)
 		if err != nil {
-			return apperror.InternalError("Failed to generate authentication token", err).
+			return apperror.InternalError("Failed to generate authentication tokens", err).
 				WithDetails(&apperror.ValidationErrorDetails{
 					Field:  "token",
 					Reason: "Token generation failed",
@@ -120,7 +119,8 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 				Wrap(err)
 		}
 
-		c.Response().Header().Set("X-Auth-Token", token)
+		// Set cookies for authentication
+		auth.SetTokenCookies(c, tokenPair.AccessToken, tokenPair.RefreshToken, tokenPair.ExpiresIn)
 	}
 
 	// Check if there's already an active claim

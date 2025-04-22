@@ -7,6 +7,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -1688,7 +1689,26 @@ func TestLogin(t *testing.T) {
 			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
+
+				// Check for auth cookies
+				cookies := headers.Values("Set-Cookie")
+				require.NotEmpty(t, cookies)
+
+				// Should have both access and refresh token cookies
+				hasAccessToken := false
+				hasRefreshToken := false
+
+				for _, cookie := range cookies {
+					if strings.Contains(cookie, "access_token") {
+						hasAccessToken = true
+					}
+					if strings.Contains(cookie, "refresh_token") {
+						hasRefreshToken = true
+					}
+				}
+
+				require.True(t, hasAccessToken, "Missing access_token cookie")
+				require.True(t, hasRefreshToken, "Missing refresh_token cookie")
 			},
 		},
 		{
@@ -1871,11 +1891,10 @@ func TestSignup(t *testing.T) {
 					SendVerificationEmail(gomock.Any(), email.String, gomock.Any(), gomock.Any()).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: http.StatusCreated,
 			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
 			},
 		},
 		{name: "Success - User With ID in Request",
@@ -1913,11 +1932,10 @@ func TestSignup(t *testing.T) {
 					SendVerificationEmail(gomock.Any(), email.String, gomock.Any(), gomock.Any()).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: http.StatusCreated,
 			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
 			},
 		},
 		{
@@ -1957,11 +1975,10 @@ func TestSignup(t *testing.T) {
 					SendVerificationEmail(gomock.Any(), email.String, gomock.Any(), gomock.Any()).
 					Return(nil)
 			},
-			expectedCode: http.StatusOK,
+			expectedCode: http.StatusCreated,
 			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
-				require.NotEmpty(t, headers.Get("X-Auth-Token"))
 			},
 		},
 		{

@@ -122,25 +122,20 @@ const handleJoin = async () => {
       requestData,
     )
 
-    // For anonymous users, get the token from response header and find our user ID
-    // from the members list (we'll be the only member with the character we just added)
-    const authToken = response.headers['x-auth-token']
-    if (authToken && !userStore.isAuthenticated) {
+    // For anonymous users, find our user ID from the members list
+    if (!userStore.isAuthenticated) {
       // Find our user ID from the response - we'll be the member with the character we just joined with
       const ourCharacterName = selectedCharacter.value?.name || characterName.value
       const ourMember = response.data.members.find(
         (m: ListMember) => m.character_name === ourCharacterName,
       )
 
-      if (!ourMember) {
-        throw new Error('Failed to identify user after joining')
+      if (ourMember) {
+        userStore.setUser({
+          id: ourMember.user_id,
+          has_email: false,
+        })
       }
-
-      userStore.setUser({
-        session_token: authToken,
-        id: ourMember.user_id,
-        has_email: false,
-      })
     }
 
     // Fetch updated lists and redirect to the joined list

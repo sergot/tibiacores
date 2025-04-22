@@ -33,6 +33,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	claimsHandler := handlers.NewClaimsHandler(store)
 	creaturesHandler := handlers.NewCreaturesHandler(store)
 	charactersHandler := handlers.NewCharactersHandler(store)
+	authHandler := handlers.NewAuthHandler(store)
 
 	// Public endpoints
 	api.GET("/creatures", creaturesHandler.GetCreatures)
@@ -60,6 +61,8 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	// User management routes
 	api.POST("/signup", usersHandler.Signup)
 	api.POST("/login", usersHandler.Login)
+	api.POST("/auth/refresh", authHandler.RefreshToken)
+	api.POST("/auth/logout", authHandler.Logout)
 	api.GET("/verify-email", usersHandler.VerifyEmail)
 
 	// OAuth routes
@@ -126,6 +129,11 @@ func main() {
 		log.Fatal("JWT_SECRET environment variable is required in production")
 	}
 
+	refreshTokenSecret := os.Getenv("REFRESH_TOKEN_SECRET")
+	if refreshTokenSecret == "" && os.Getenv("APP_ENV") == "production" {
+		log.Fatal("REFRESH_TOKEN_SECRET environment variable is required in production")
+	}
+
 	connPool, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
@@ -136,10 +144,10 @@ func main() {
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{frontendURL},
-		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowMethods:  []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
-		ExposeHeaders: []string{"X-Auth-Token"}, // Allow frontend to read X-Auth-Token header
+		AllowOrigins:     []string{frontendURL},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods:     []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+		AllowCredentials: true, // Required for cookies to work in cross-origin requests
 	}))
 
 	// Request ID middleware

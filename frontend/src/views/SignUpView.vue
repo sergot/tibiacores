@@ -38,13 +38,7 @@ const handleSubmit = async () => {
       password: password.value,
     })
 
-    const token = response.headers['x-auth-token']
-    if (!token) {
-      throw new Error('No token received')
-    }
-
     userStore.setUser({
-      session_token: token,
       id: response.data.id,
       has_email: response.data.has_email,
     })
