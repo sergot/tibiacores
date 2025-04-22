@@ -136,13 +136,6 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 	email.Valid = true
 
 	existingUser, getUserErr := h.store.GetUserByEmail(ctx, email)
-	if getUserErr == nil && !existingUser.IsAnonymous {
-		return apperror.ValidationError("Email already in use", nil).
-			WithDetails(&apperror.ValidationErrorDetails{
-				Field:  "email",
-				Reason: "Email already registered",
-			})
-	}
 
 	// Hash password
 	hashedPassword, err := auth.HashPassword(req.Password)
@@ -176,9 +169,17 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 		}
 	}
 
-	// If we found an anonymous user with this email, migrate it
-	if getUserErr == nil && existingUser.IsAnonymous {
-		// Migrate the found anonymous user
+	if getUserErr == nil {
+		// If it's not anonymous, prevent registration with this email
+		if !existingUser.IsAnonymous {
+			return apperror.ValidationError("Email already in use", nil).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "email",
+					Reason: "Email already registered",
+				})
+		}
+
+		// Migrate the anonymous user
 		user, err = h.store.MigrateAnonymousUser(ctx, db.MigrateAnonymousUserParams{
 			Email:                      email,
 			Password:                   password,
@@ -196,8 +197,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 				Wrap(err)
 		}
 	} else if existingUserID != nil {
-		// Migrate an anonymous user to a real user account if needed
-		// Parse UUID from string
+		// If user has auth token, use that ID to migrate their anonymous account
 		existingID, err := uuid.Parse(*existingUserID)
 		if err != nil {
 			return apperror.ValidationError("Invalid user ID", err).
@@ -205,6 +205,36 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 					Field:  "user_id",
 					Value:  *existingUserID,
 					Reason: "Invalid UUID format",
+				})
+		}
+
+		// Verify this is actually an anonymous account before migrating
+		existingUser, err := h.store.GetUserByID(ctx, existingID)
+		if err != nil {
+			return apperror.DatabaseError("Failed to get user", err).
+				WithDetails(&apperror.DatabaseErrorDetails{
+					Operation: "GetUserByID",
+					Table:     "users",
+				}).
+				Wrap(err)
+		}
+
+		// Only migrate anonymous accounts
+		if !existingUser.IsAnonymous {
+			return apperror.ValidationError("Cannot update existing account", nil).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "user_id",
+					Value:  existingID.String(),
+					Reason: "Account already has credentials",
+				})
+		}
+
+		// Make sure the anonymous account doesn't already have an email
+		if existingUser.Email.Valid && existingUser.Email.String != "" {
+			return apperror.ValidationError("Account already has an email", nil).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "email",
+					Reason: "Email already exists on this account",
 				})
 		}
 

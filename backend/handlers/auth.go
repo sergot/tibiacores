@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sergot/tibiacores/backend/auth"
@@ -98,10 +99,48 @@ func (h *AuthHandler) RefreshToken(c echo.Context) error {
 	})
 }
 
-// Logout clears authentication cookies
+// Logout clears authentication cookies and revokes tokens
 func (h *AuthHandler) Logout(c echo.Context) error {
+	// Get tokens from cookies (if present)
+	accessCookie, accessErr := c.Cookie("access_token")
+	refreshCookie, refreshErr := c.Cookie("refresh_token")
+
+	// Revoke access token if present (without validation)
+	if accessErr == nil && accessCookie.Value != "" {
+		// Try to extract expiry without full validation
+		claims, _ := auth.ExtractTokenClaims(accessCookie.Value)
+
+		var expiryTime time.Time
+		if claims != nil && claims.ExpiresAt != nil {
+			expiryTime = claims.ExpiresAt.Time
+		} else {
+			// If we can't extract expiry, blacklist for a reasonable period (15 minutes)
+			expiryTime = time.Now().Add(15 * time.Minute)
+		}
+
+		// Revoke until token would have expired
+		auth.RevokeToken(accessCookie.Value, expiryTime)
+	}
+
+	// Revoke refresh token if present (without validation)
+	if refreshErr == nil && refreshCookie.Value != "" {
+		// Try to extract expiry without full validation
+		claims, _ := auth.ExtractTokenClaims(refreshCookie.Value)
+
+		var expiryTime time.Time
+		if claims != nil && claims.ExpiresAt != nil {
+			expiryTime = claims.ExpiresAt.Time
+		} else {
+			// If we can't extract expiry, blacklist for a reasonable period (7 days)
+			expiryTime = time.Now().Add(7 * 24 * time.Hour)
+		}
+
+		// Revoke until token would have expired
+		auth.RevokeToken(refreshCookie.Value, expiryTime)
+	}
+
 	// Clear access token cookie
-	accessCookie := new(http.Cookie)
+	accessCookie = new(http.Cookie)
 	accessCookie.Name = "access_token"
 	accessCookie.Value = ""
 	accessCookie.Path = "/"
@@ -112,7 +151,7 @@ func (h *AuthHandler) Logout(c echo.Context) error {
 	c.SetCookie(accessCookie)
 
 	// Clear refresh token cookie
-	refreshCookie := new(http.Cookie)
+	refreshCookie = new(http.Cookie)
 	refreshCookie.Name = "refresh_token"
 	refreshCookie.Value = ""
 	refreshCookie.Path = "/"

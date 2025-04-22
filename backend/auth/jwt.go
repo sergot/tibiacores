@@ -53,6 +53,9 @@ func init() {
 		jwtSecret = []byte(secret)
 		refreshSecret = []byte(refreshSecretStr)
 	}
+
+	// Initialize token blacklist cleanup
+	InitTokenBlacklistCleanup()
 }
 
 type Claims struct {
@@ -145,6 +148,11 @@ func ValidateToken(tokenString string) (*Claims, error) {
 func validateToken(tokenString string, secret []byte, expectedType string) (*Claims, error) {
 	if tokenString == "" {
 		return nil, fmt.Errorf("empty token")
+	}
+
+	// Check if token is blacklisted (revoked)
+	if IsRevoked(tokenString) {
+		return nil, fmt.Errorf("token has been revoked")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
