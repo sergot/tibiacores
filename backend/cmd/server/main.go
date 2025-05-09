@@ -58,15 +58,15 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	optionalAuth.POST("/lists/join/:share_code", listsHandler.JoinList)
 	optionalAuth.POST("/lists", listsHandler.CreateList)
 
-	// User management routes
-	api.POST("/signup", usersHandler.Signup)
-	api.POST("/login", usersHandler.Login)
-	api.POST("/auth/refresh", authHandler.RefreshToken)
-	api.POST("/auth/logout", authHandler.Logout)
-	api.GET("/verify-email", usersHandler.VerifyEmail)
+	// User management routes with rate limiting
+	authGroup := api.Group("/auth", customMiddleware.RateLimitAuth())
+	authGroup.POST("/signup", usersHandler.Signup)
+	authGroup.POST("/login", usersHandler.Login)
+	authGroup.POST("/refresh", authHandler.RefreshToken)
+	authGroup.POST("/logout", authHandler.Logout)
+	authGroup.GET("/verify-email", usersHandler.VerifyEmail)
 
-	// OAuth routes
-	authGroup := api.Group("/auth")
+	// OAuth routes (using the same auth group with rate limiting)
 	authGroup.GET("/oauth/:provider", oauthHandler.Login)
 	authGroup.GET("/oauth/:provider/callback", oauthHandler.Callback)
 
@@ -141,6 +141,9 @@ func main() {
 	defer connPool.Close()
 
 	e := echo.New()
+
+	// Security headers middleware (applied globally)
+	e.Use(customMiddleware.SecurityHeaders())
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
