@@ -67,39 +67,55 @@ loadLocale(locale)
 // Configure axios base URL
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
 
+// Enable sending cookies with cross-origin requests (required for HttpOnly cookie auth)
+axios.defaults.withCredentials = true
+
 // Configure axios after Pinia is initialized
 import { useUserStore } from './stores/user'
-import { useListsStore } from './stores/lists'
 
 // Request interceptor
-axios.interceptors.request.use((config) => {
+axios.interceptors.request.use(async (config) => {
   const userStore = useUserStore()
-  if (userStore.token) {
-    config.headers.Authorization = `Bearer ${userStore.token}`
+
+  // Skip token refresh for token refresh requests to avoid infinite loops
+  if (config.url === '/auth/refresh') {
+    return config
   }
+
+  // Check if user is logged in and token is expired
+  if (userStore.isAuthenticated && userStore.isTokenExpired) {
+    await userStore.refreshAccessToken()
+  }
+
   return config
 })
 
-// Response interceptor
+// Response interceptor to handle 401 Unauthorized errors
 axios.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const userStore = useUserStore()
-      const listsStore = useListsStore()
+  async (error) => {
+    const userStore = useUserStore()
+    const originalRequest = error.config
 
-      // Clear both user data and lists
-      userStore.clearUser()
-      listsStore.clearLists()
+    // If the request failed due to 401 Unauthorized and we haven't tried refreshing yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      // Mark this request as retried
+      originalRequest._retry = true
 
-      // Only redirect if not already on signin/signup pages
-      const authRoutes = ['/signin', '/signup']
-      const currentPath = router.currentRoute.value.path
+      try {
+        // Try to refresh the token
+        await userStore.refreshAccessToken()
 
-      if (!authRoutes.includes(currentPath)) {
-        router.push('/signin')
+        // Retry the original request - cookies will be sent automatically
+        return axios(originalRequest)
+      } catch (refreshError) {
+        // If refresh fails, redirect to login
+        userStore.clearUser()
+        window.location.href = '/signin'
+        return Promise.reject(refreshError)
       }
     }
+
     return Promise.reject(error)
   },
 )

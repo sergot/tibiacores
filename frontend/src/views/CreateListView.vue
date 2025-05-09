@@ -62,11 +62,9 @@ const handleSubmit = async () => {
 
     const response = await axios.post('/lists', requestData)
 
-    // For anonymous users, get the token from response header
-    const authToken = response.headers['x-auth-token']
-    if (authToken && !userStore.isAuthenticated) {
+    // For anonymous users, set user info
+    if (!userStore.isAuthenticated && response.data.author_id) {
       userStore.setUser({
-        session_token: authToken,
         id: response.data.author_id,
         has_email: false,
       })

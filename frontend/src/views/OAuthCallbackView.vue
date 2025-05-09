@@ -40,14 +40,8 @@ onMounted(async () => {
       params: { code, state },
     })
 
-    const token = response.headers['x-auth-token']
-    if (!token) {
-      throw new Error('No token received')
-    }
-
-    // Set the user in the store
+    // Set the user in the store - cookies will handle authentication
     userStore.setUser({
-      session_token: token,
       id: response.data.id,
       has_email: response.data.has_email,
     })

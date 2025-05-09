@@ -33,6 +33,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	claimsHandler := handlers.NewClaimsHandler(store)
 	creaturesHandler := handlers.NewCreaturesHandler(store)
 	charactersHandler := handlers.NewCharactersHandler(store)
+	authHandler := handlers.NewAuthHandler(store)
 
 	// Public endpoints
 	api.GET("/creatures", creaturesHandler.GetCreatures)
@@ -57,13 +58,15 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	optionalAuth.POST("/lists/join/:share_code", listsHandler.JoinList)
 	optionalAuth.POST("/lists", listsHandler.CreateList)
 
-	// User management routes
-	api.POST("/signup", usersHandler.Signup)
-	api.POST("/login", usersHandler.Login)
-	api.GET("/verify-email", usersHandler.VerifyEmail)
+	// User management routes with rate limiting
+	authGroup := api.Group("/auth", customMiddleware.RateLimitAuth())
+	authGroup.POST("/signup", usersHandler.Signup)
+	authGroup.POST("/login", usersHandler.Login)
+	authGroup.POST("/refresh", authHandler.RefreshToken)
+	authGroup.POST("/logout", authHandler.Logout)
+	authGroup.GET("/verify-email", usersHandler.VerifyEmail)
 
-	// OAuth routes
-	authGroup := api.Group("/auth")
+	// OAuth routes (using the same auth group with rate limiting)
 	authGroup.GET("/oauth/:provider", oauthHandler.Login)
 	authGroup.GET("/oauth/:provider/callback", oauthHandler.Callback)
 
@@ -126,6 +129,11 @@ func main() {
 		log.Fatal("JWT_SECRET environment variable is required in production")
 	}
 
+	refreshTokenSecret := os.Getenv("REFRESH_TOKEN_SECRET")
+	if refreshTokenSecret == "" && os.Getenv("APP_ENV") == "production" {
+		log.Fatal("REFRESH_TOKEN_SECRET environment variable is required in production")
+	}
+
 	connPool, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
@@ -134,12 +142,15 @@ func main() {
 
 	e := echo.New()
 
+	// Security headers middleware (applied globally)
+	e.Use(customMiddleware.SecurityHeaders())
+
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{frontendURL},
-		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowMethods:  []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
-		ExposeHeaders: []string{"X-Auth-Token"}, // Allow frontend to read X-Auth-Token header
+		AllowOrigins:     []string{frontendURL},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods:     []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+		AllowCredentials: true, // Required for cookies to work in cross-origin requests
 	}))
 
 	// Request ID middleware

@@ -16,8 +16,15 @@ class TibiaDataService {
 
   async getCharacter(name: string): Promise<Character> {
     try {
-      const response = await axios.get(`${this.baseUrl}/character/${name}`)
-      const characterData = response.data.character.character
+      const response = await fetch(`${this.baseUrl}/character/${name}`)
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Character not found')
+        }
+        throw new Error(`Failed to fetch character data: ${response.statusText}`)
+      }
+      const data = await response.json()
+      const characterData = data.character.character
 
       return {
         name: characterData.name,
@@ -30,8 +37,11 @@ class TibiaDataService {
         comment: characterData.comment,
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        throw new Error('Character not found')
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new Error('Character not found')
+        }
+        throw new Error(`Failed to fetch character data: ${error.message}`)
       }
       throw new Error('Failed to fetch character data')
     }
