@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 import { useUserStore } from '@/stores/user'
+import { useChatNotificationsStore } from '@/stores/chatNotifications'
 
 interface ListDetails {
   id: string
@@ -61,6 +62,20 @@ interface ListMemberWithUnlocks {
   is_active: boolean
 }
 
+interface ChatMessage {
+  id: string
+  list_id: string
+  user_id: string
+  character_name: string
+  message: string
+  created_at: string
+}
+
+interface Character {
+  id: string
+  name: string
+}
+
 const props = defineProps<{
   id: string
 }>()
@@ -79,6 +94,17 @@ const hideUnlocked = ref(true)
 const showCopiedMessage = ref(false)
 const unlockStats = ref<Record<string, UnlockStats>>({})
 const membersWithUnlocks = ref<ListMemberWithUnlocks[]>([])
+const isChatOpen = ref(false)
+const unreadChatCount = ref(0)
+const messages = ref<ChatMessage[]>([])
+const newMessage = ref('')
+const chatLoading = ref(false)
+const chatError = ref('')
+const characters = ref<Character[]>([])
+const selectedCharacterId = ref('')
+const pollingInterval = ref<number | null>(null)
+const lastMessageTimestamp = ref('')
+const chatContainer = ref<HTMLElement | null>(null)
 
 // Add computed property for unlocked cores count
 const unlockedCoresCount = computed(() => {
@@ -92,6 +118,165 @@ const totalCreaturesCount = computed(() => {
 })
 
 const userStore = useUserStore()
+const chatNotificationsStore = useChatNotificationsStore()
+
+// Get current user's characters
+const fetchUserCharacters = async () => {
+  try {
+    const response = await axios.get<Character[]>(`/users/${userStore.userId}/characters`)
+    characters.value = response.data
+
+    // Auto-select the first character that is a member of this list
+    if (characters.value.length > 0) {
+      selectedCharacterId.value = characters.value[0].id
+    }
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      chatError.value = err.response?.data?.message || 'Failed to fetch characters'
+    } else {
+      chatError.value = 'Failed to fetch characters'
+    }
+  }
+}
+
+// Fetch chat messages for the list
+const fetchMessages = async (isInitial = false) => {
+  try {
+    chatLoading.value = true
+    let url = `/lists/${props.id}/chat`
+
+    if (!isInitial && lastMessageTimestamp.value) {
+      url += `?since=${encodeURIComponent(lastMessageTimestamp.value)}`
+    }
+
+    const response = await axios.get<ChatMessage[]>(url)
+
+    if (isInitial) {
+      messages.value = response.data.reverse() // Reverse for chronological order
+    } else if (response.data.length > 0) {
+      // Add only new messages
+      messages.value = [...messages.value, ...response.data]
+    }
+
+    // Update timestamp for polling
+    if (messages.value.length > 0) {
+      lastMessageTimestamp.value = messages.value[messages.value.length - 1].created_at
+    }
+
+    chatLoading.value = false
+
+    // Mark messages as read when viewed
+    if (messages.value.length > 0 && isChatOpen.value) {
+      chatNotificationsStore.markAsRead(props.id)
+      unreadChatCount.value = 0
+    }
+  } catch (err) {
+    chatLoading.value = false
+    if (axios.isAxiosError(err)) {
+      chatError.value = err.response?.data?.message || 'Failed to fetch messages'
+    } else {
+      chatError.value = 'Failed to fetch messages'
+    }
+  }
+}
+
+// Send a new message
+const sendMessage = async () => {
+  if (!newMessage.value.trim() || !selectedCharacterId.value) return
+
+  try {
+    await axios.post(`/lists/${props.id}/chat`, {
+      message: newMessage.value.trim(),
+      character_id: selectedCharacterId.value
+    })
+
+    newMessage.value = ''
+    await fetchMessages() // Refresh messages
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      chatError.value = err.response?.data?.message || 'Failed to send message'
+    } else {
+      chatError.value = 'Failed to send message'
+    }
+  }
+}
+
+// Delete a message (only own messages)
+const deleteMessage = async (messageId: string) => {
+  try {
+    await axios.delete(`/lists/${props.id}/chat/${messageId}`)
+    // Remove the message from the local list
+    messages.value = messages.value.filter(msg => msg.id !== messageId)
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      chatError.value = err.response?.data?.message || 'Failed to delete message'
+    } else {
+      chatError.value = 'Failed to delete message'
+    }
+  }
+}
+
+// Set up message polling for real-time updates
+const setupPolling = () => {
+  pollingInterval.value = window.setInterval(async () => {
+    if (isChatOpen.value) { // Only poll when chat is open
+      await fetchMessages()
+    }
+  }, 5000) // Poll every 5 seconds
+}
+
+// Check if message is from current user
+const isOwnMessage = (message: ChatMessage) => {
+  return message.user_id === userStore.userId
+}
+
+// Format the timestamp to display only time if it's today, otherwise date and time
+const formatTimestamp = (timestamp: string) => {
+  const date = new Date(timestamp)
+  const now = new Date()
+
+  if (
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  ) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  }
+
+  return date.toLocaleString([], {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+// Watch for unread chat messages in this list
+watch(() => chatNotificationsStore.notifications, (notifications) => {
+  const listNotifications = notifications.filter((n: { list_id: string }) => n.list_id === props.id)
+  unreadChatCount.value = listNotifications.length
+}, { deep: true, immediate: true })
+
+// Mark messages as read when chat is opened
+watch(() => isChatOpen.value, (isOpen: boolean) => {
+  if (isOpen) {
+    if (unreadChatCount.value > 0) {
+      chatNotificationsStore.markAsRead(props.id)
+      unreadChatCount.value = 0
+    }
+    fetchMessages(true) // Load initial messages when opening chat
+  }
+})
+
+// Auto-scroll to bottom when new messages arrive
+watch(() => messages.value.length, () => {
+  setTimeout(() => {
+    if (chatContainer.value) {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+    }
+  }, 50)
+})
 
 const getSelectedCreature = computed(() => {
   return creatures.value.find((c) => c.name === selectedCreatureName.value)
@@ -276,10 +461,23 @@ onMounted(async () => {
     await fetchListDetails()
     await fetchListMembers()
     await fetchCreatures() // This needs to run after members are loaded
+
+    // Get chat notifications for this list
+    if (userStore.isAuthenticated) {
+      await chatNotificationsStore.fetchChatNotifications()
+      await fetchUserCharacters()
+      setupPolling()
+    }
   } catch (err) {
     console.error('Error loading data:', err)
   } finally {
     loading.value = false
+  }
+})
+
+onUnmounted(() => {
+  if (pollingInterval.value !== null) {
+    clearInterval(pollingInterval.value)
   }
 })
 </script>
@@ -454,6 +652,8 @@ onMounted(async () => {
         </div>
       </div>
 
+      <!-- Chat window is now implemented as a floating bubble -->
+
       <!-- Soul Cores Table -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6 border-b border-gray-200">
@@ -591,7 +791,7 @@ onMounted(async () => {
     <!-- Share Dialog -->
     <div
       v-if="showShareDialog"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40"
       @click="showShareDialog = false"
     >
       <div class="bg-white rounded-xl p-6 max-w-lg w-full" @click.stop>
@@ -622,8 +822,143 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
+  <!-- Floating Chat Bubble -->
+  <div class="fixed bottom-6 right-6 z-30">
+    <!-- Chat Bubble when closed -->
+    <button
+      v-if="!isChatOpen"
+      @click="isChatOpen = true"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-3 shadow-lg flex items-center justify-center relative transition-transform hover:scale-110"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+
+      <!-- Unread messages indicator -->
+      <span
+        v-if="unreadChatCount > 0"
+        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse"
+      >
+        {{ unreadChatCount }}
+      </span>
+    </button>
+
+    <!-- Chat Panel when open -->
+    <div
+      v-else
+      class="bg-white border border-gray-200 rounded-lg shadow-xl w-80 md:w-96 h-[450px] flex flex-col animate-slide-up overflow-hidden"
+    >
+      <div class="p-3 border-b border-gray-200 flex justify-between items-center bg-indigo-50">
+        <h3 class="font-semibold flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+          </svg>
+          {{ t('listDetail.chat.title') }}
+        </h3>
+        <button @click="isChatOpen = false" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Chat content -->
+      <div class="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50" ref="chatContainer">
+        <div v-if="chatLoading && !messages.length" class="flex justify-center items-center h-full">
+          <div class="animate-spin h-5 w-5 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
+          <span class="ml-2 text-gray-600">{{ t('listDetail.chat.loading') }}</span>
+        </div>
+
+        <div v-else-if="!messages.length" class="flex justify-center items-center h-full">
+          <p class="text-gray-500">{{ t('listDetail.chat.noMessages') }}</p>
+        </div>
+
+        <div
+          v-for="message in messages"
+          :key="message.id"
+          class="p-2 rounded-lg break-words text-sm"
+          :class="[
+            isOwnMessage(message)
+              ? 'bg-indigo-100 text-indigo-900 ml-auto max-w-[80%]'
+              : 'bg-white border border-gray-200 max-w-[80%]'
+          ]"
+        >
+          <div class="flex justify-between items-start mb-1">
+            <span class="font-medium text-xs">{{ message.character_name }}</span>
+            <span class="text-xs text-gray-500">{{ formatTimestamp(message.created_at) }}</span>
+          </div>
+          <p>{{ message.message }}</p>
+          <div v-if="isOwnMessage(message)" class="mt-1 flex justify-end">
+            <button
+              @click="deleteMessage(message.id)"
+              class="text-xs text-red-600 hover:text-red-800"
+            >
+              {{ t('listDetail.chat.delete') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div class="p-3 border-t border-gray-200 bg-white">
+        <div v-if="characters.length > 0" class="flex items-center mb-2">
+          <span class="text-xs text-gray-600">
+            {{ t('listDetail.chat.chatAs') }} <span class="font-medium">{{ characters[0]?.name }}</span>
+          </span>
+        </div>
+        <div class="flex gap-2">
+          <input
+            v-model="newMessage"
+            type="text"
+            :placeholder="t('listDetail.chat.typingMessage')"
+            class="flex-1 p-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            @keyup.enter="sendMessage"
+          />
+          <button
+            @click="sendMessage"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition-colors"
+            :disabled="!newMessage.trim() || !selectedCharacterId"
+          >
+            {{ t('listDetail.chat.send') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style>
-/* Remove old multiselect styles */
+<style scoped>
+/* Chat bubble animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease forwards;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s infinite;
+}
 </style>

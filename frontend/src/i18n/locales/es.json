@@ -260,6 +260,17 @@
   "listDetail": {
     "actions": "Acciones",
     "addedBy": "Añadido por",
+    "chat": {
+      "chatAs": "Chatear como",
+      "collapse": "Colapsar chat",
+      "delete": "Eliminar",
+      "expand": "Expandir chat",
+      "loading": "Cargando mensajes...",
+      "noMessages": "Aún no hay mensajes. ¡Inicia la conversación!",
+      "send": "Enviar",
+      "title": "Chat",
+      "typingMessage": "Escribe un mensaje..."
+    },
     "copied": "¡Copiado!",
     "copyLink": "Copiar Enlace",
     "created": "Creado",
@@ -288,6 +299,13 @@
   },
   "nav": {
     "about": "Acerca de",
+    "chat": {
+      "aria": "Notificaciones de chat",
+      "count": "{count} nuevos",
+      "lastMessage": "Último mensaje de {character}",
+      "noMessages": "No hay mensajes sin leer",
+      "title": "Mensajes de chat"
+    },
     "highscores": "Clasificación",
     "logout": {
       "warning": {
@@ -303,6 +321,7 @@
     "signOut": "Cerrar sesión",
     "signUp": "Registrarse",
     "suggestions": {
+      "aria": "Ver sugerencias de núcleos de alma pendientes",
       "count": "{count} sugerencias pendientes",
       "title": "Sugerencias de Núcleos de Alma Pendientes"
     }

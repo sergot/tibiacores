@@ -43,7 +43,7 @@ func (m *MockEmailServiceInterface) SendVerificationEmail(ctx context.Context, e
 }
 
 // SendVerificationEmail indicates an expected call of SendVerificationEmail.
-func (mr *MockEmailServiceInterfaceMockRecorder) SendVerificationEmail(ctx, email, verificationToken, userID interface{}) *gomock.Call {
+func (mr *MockEmailServiceInterfaceMockRecorder) SendVerificationEmail(ctx, email, verificationToken, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationEmail", reflect.TypeOf((*MockEmailServiceInterface)(nil).SendVerificationEmail), ctx, email, verificationToken, userID)
 }

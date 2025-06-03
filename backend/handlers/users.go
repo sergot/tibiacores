@@ -103,7 +103,7 @@ func (h *UsersHandler) Login(c echo.Context) error {
 	// Set token in X-Auth-Token header
 	c.Response().Header().Set("X-Auth-Token", token)
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]any{
 		"id":        user.ID,
 		"has_email": true,
 	})
@@ -261,7 +261,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 	// Set token in X-Auth-Token header
 	c.Response().Header().Set("X-Auth-Token", token)
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]any{
 		"id":        user.ID,
 		"has_email": true,
 	})
@@ -843,7 +843,7 @@ func (h *UsersHandler) GetUser(c echo.Context) error {
 			Wrap(err)
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]any{
 		"email":          user.Email.String,
 		"email_verified": user.EmailVerified,
 	})

@@ -130,6 +130,21 @@ func (mr *MockStoreMockRecorder) CreateCharacterClaim(ctx, arg any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCharacterClaim", reflect.TypeOf((*MockStore)(nil).CreateCharacterClaim), ctx, arg)
 }
 
+// CreateChatMessage mocks base method.
+func (m *MockStore) CreateChatMessage(ctx context.Context, arg db.CreateChatMessageParams) (db.ListChatMessage, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateChatMessage", ctx, arg)
+	ret0, _ := ret[0].(db.ListChatMessage)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateChatMessage indicates an expected call of CreateChatMessage.
+func (mr *MockStoreMockRecorder) CreateChatMessage(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateChatMessage", reflect.TypeOf((*MockStore)(nil).CreateChatMessage), ctx, arg)
+}
+
 // CreateList mocks base method.
 func (m *MockStore) CreateList(ctx context.Context, arg db.CreateListParams) (db.List, error) {
 	m.ctrl.T.Helper()
@@ -186,6 +201,34 @@ func (m *MockStore) DeactivateCharacterListMemberships(ctx context.Context, char
 func (mr *MockStoreMockRecorder) DeactivateCharacterListMemberships(ctx, characterID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeactivateCharacterListMemberships", reflect.TypeOf((*MockStore)(nil).DeactivateCharacterListMemberships), ctx, characterID)
+}
+
+// DeleteAllChatMessages mocks base method.
+func (m *MockStore) DeleteAllChatMessages(ctx context.Context, listID uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAllChatMessages", ctx, listID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAllChatMessages indicates an expected call of DeleteAllChatMessages.
+func (mr *MockStoreMockRecorder) DeleteAllChatMessages(ctx, listID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllChatMessages", reflect.TypeOf((*MockStore)(nil).DeleteAllChatMessages), ctx, listID)
+}
+
+// DeleteChatMessage mocks base method.
+func (m *MockStore) DeleteChatMessage(ctx context.Context, arg db.DeleteChatMessageParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteChatMessage", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteChatMessage indicates an expected call of DeleteChatMessage.
+func (mr *MockStoreMockRecorder) DeleteChatMessage(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteChatMessage", reflect.TypeOf((*MockStore)(nil).DeleteChatMessage), ctx, arg)
 }
 
 // DeleteSoulcoreSuggestion mocks base method.
@@ -290,6 +333,51 @@ func (m *MockStore) GetCharactersByUserID(ctx context.Context, userID uuid.UUID)
 func (mr *MockStoreMockRecorder) GetCharactersByUserID(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCharactersByUserID", reflect.TypeOf((*MockStore)(nil).GetCharactersByUserID), ctx, userID)
+}
+
+// GetChatMessages mocks base method.
+func (m *MockStore) GetChatMessages(ctx context.Context, arg db.GetChatMessagesParams) ([]db.GetChatMessagesRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetChatMessages", ctx, arg)
+	ret0, _ := ret[0].([]db.GetChatMessagesRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetChatMessages indicates an expected call of GetChatMessages.
+func (mr *MockStoreMockRecorder) GetChatMessages(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChatMessages", reflect.TypeOf((*MockStore)(nil).GetChatMessages), ctx, arg)
+}
+
+// GetChatMessagesByTimestamp mocks base method.
+func (m *MockStore) GetChatMessagesByTimestamp(ctx context.Context, arg db.GetChatMessagesByTimestampParams) ([]db.GetChatMessagesByTimestampRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetChatMessagesByTimestamp", ctx, arg)
+	ret0, _ := ret[0].([]db.GetChatMessagesByTimestampRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetChatMessagesByTimestamp indicates an expected call of GetChatMessagesByTimestamp.
+func (mr *MockStoreMockRecorder) GetChatMessagesByTimestamp(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChatMessagesByTimestamp", reflect.TypeOf((*MockStore)(nil).GetChatMessagesByTimestamp), ctx, arg)
+}
+
+// GetChatNotificationsForUser mocks base method.
+func (m *MockStore) GetChatNotificationsForUser(ctx context.Context, userID uuid.UUID) ([]db.GetChatNotificationsForUserRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetChatNotificationsForUser", ctx, userID)
+	ret0, _ := ret[0].([]db.GetChatNotificationsForUserRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetChatNotificationsForUser indicates an expected call of GetChatNotificationsForUser.
+func (mr *MockStoreMockRecorder) GetChatNotificationsForUser(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetChatNotificationsForUser", reflect.TypeOf((*MockStore)(nil).GetChatNotificationsForUser), ctx, userID)
 }
 
 // GetClaimByID mocks base method.
@@ -560,6 +648,20 @@ func (m *MockStore) IsUserListMember(ctx context.Context, arg db.IsUserListMembe
 func (mr *MockStoreMockRecorder) IsUserListMember(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsUserListMember", reflect.TypeOf((*MockStore)(nil).IsUserListMember), ctx, arg)
+}
+
+// MarkListMessagesAsRead mocks base method.
+func (m *MockStore) MarkListMessagesAsRead(ctx context.Context, arg db.MarkListMessagesAsReadParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MarkListMessagesAsRead", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MarkListMessagesAsRead indicates an expected call of MarkListMessagesAsRead.
+func (mr *MockStoreMockRecorder) MarkListMessagesAsRead(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkListMessagesAsRead", reflect.TypeOf((*MockStore)(nil).MarkListMessagesAsRead), ctx, arg)
 }
 
 // MigrateAnonymousUser mocks base method.

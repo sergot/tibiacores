@@ -19,7 +19,7 @@ const (
 	SoulcoreStatusUnlocked SoulcoreStatus = "unlocked"
 )
 
-func (e *SoulcoreStatus) Scan(src interface{}) error {
+func (e *SoulcoreStatus) Scan(src any) error {
 	switch s := src.(type) {
 	case []byte:
 		*e = SoulcoreStatus(s)
@@ -37,7 +37,7 @@ type NullSoulcoreStatus struct {
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullSoulcoreStatus) Scan(value interface{}) error {
+func (ns *NullSoulcoreStatus) Scan(value any) error {
 	if value == nil {
 		ns.SoulcoreStatus, ns.Valid = "", false
 		return nil
@@ -101,6 +101,21 @@ type List struct {
 	World     string             `json:"world"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ListChatMessage struct {
+	ID          uuid.UUID          `json:"id"`
+	ListID      uuid.UUID          `json:"list_id"`
+	UserID      uuid.UUID          `json:"user_id"`
+	CharacterID uuid.UUID          `json:"character_id"`
+	Message     string             `json:"message"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+}
+
+type ListUserReadStatus struct {
+	UserID     uuid.UUID          `json:"user_id"`
+	ListID     uuid.UUID          `json:"list_id"`
+	LastReadAt pgtype.Timestamptz `json:"last_read_at"`
 }
 
 type ListsSoulcore struct {

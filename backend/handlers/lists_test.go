@@ -36,7 +36,7 @@ func TestCreateList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID,
 					"name":         "My Soul Core List",
 				})
@@ -86,7 +86,7 @@ func TestCreateList(t *testing.T) {
 			name: "Success - New Character",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "My New List",
 					"world":          "Secura",
@@ -140,7 +140,7 @@ func TestCreateList(t *testing.T) {
 			name: "Success - Anonymous User",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "Anonymous List",
 					"world":          "Monza",
@@ -166,7 +166,7 @@ func TestCreateList(t *testing.T) {
 				// Create new character
 				store.EXPECT().
 					CreateCharacter(gomock.Any(), gomock.Any()).
-					Do(func(_ interface{}, params db.CreateCharacterParams) {
+					Do(func(_ any, params db.CreateCharacterParams) {
 						require.Equal(t, newUserID, params.UserID)
 						require.Equal(t, "NewCharacter", params.Name)
 						require.Equal(t, "Monza", params.World)
@@ -181,7 +181,7 @@ func TestCreateList(t *testing.T) {
 				// Create list
 				store.EXPECT().
 					CreateList(gomock.Any(), gomock.Any()).
-					Do(func(_ interface{}, params db.CreateListParams) {
+					Do(func(_ any, params db.CreateListParams) {
 						require.Equal(t, newUserID, params.AuthorID)
 						require.Equal(t, "Anonymous List", params.Name)
 						require.Equal(t, "Monza", params.World)
@@ -216,7 +216,7 @@ func TestCreateList(t *testing.T) {
 			name: "Anonymous User - Missing Character Info",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"name": "Anonymous List",
 					// Missing character_name and world
 				})
@@ -240,7 +240,7 @@ func TestCreateList(t *testing.T) {
 			name: "Error Creating Anonymous User",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "Anonymous List",
 					"world":          "Monza",
@@ -275,7 +275,7 @@ func TestCreateList(t *testing.T) {
 			name: "Missing List Name",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TestCharacter",
 					"world":          "Antica",
 				})
@@ -292,7 +292,7 @@ func TestCreateList(t *testing.T) {
 			name: "Character Already Registered",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TakenCharacter",
 					"name":           "My List",
 					"world":          "Antica",
@@ -319,7 +319,7 @@ func TestCreateList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID,
 					"name":         "My List",
 				})
@@ -340,7 +340,7 @@ func TestCreateList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID,
 					"name":         "My List",
 				})
@@ -365,7 +365,7 @@ func TestCreateList(t *testing.T) {
 			name: "Error Creating List",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "New List",
 					"world":          "Secura",
@@ -401,7 +401,7 @@ func TestCreateList(t *testing.T) {
 			name: "Error Adding Character to List",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "New List",
 					"world":          "Secura",
@@ -450,7 +450,7 @@ func TestCreateList(t *testing.T) {
 			name: "Error Creating Character",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"name":           "New List",
 					"world":          "Secura",
@@ -552,7 +552,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)
@@ -614,7 +614,7 @@ func TestJoinList(t *testing.T) {
 			name: "Success - New Character",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NewCharacter",
 					"world":          "Secura",
 				})
@@ -706,7 +706,7 @@ func TestJoinList(t *testing.T) {
 			name: "List Not Found",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TestCharacter",
 					"world":          "Antica",
 				})
@@ -725,7 +725,7 @@ func TestJoinList(t *testing.T) {
 			name: "User Already a Member",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TestCharacter",
 					"world":          "Antica",
 				})
@@ -758,7 +758,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)
@@ -793,7 +793,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)
@@ -833,7 +833,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)
@@ -873,7 +873,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)
@@ -918,7 +918,7 @@ func TestJoinList(t *testing.T) {
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				characterID := uuid.New()
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": characterID.String(),
 				})
 				require.NoError(t, err)

@@ -260,6 +260,17 @@
   "listDetail": {
     "actions": "Ações",
     "addedBy": "Adicionado Por",
+    "chat": {
+      "chatAs": "Conversar como",
+      "collapse": "Recolher chat",
+      "delete": "Excluir",
+      "expand": "Expandir chat",
+      "loading": "Carregando mensagens...",
+      "noMessages": "Ainda não há mensagens. Inicie a conversa!",
+      "send": "Enviar",
+      "title": "Chat",
+      "typingMessage": "Digite uma mensagem..."
+    },
     "copied": "Copiado!",
     "copyLink": "Copiar Link",
     "created": "Criado",
@@ -288,6 +299,13 @@
   },
   "nav": {
     "about": "Sobre",
+    "chat": {
+      "aria": "Notificações de chat",
+      "count": "{count} novos",
+      "lastMessage": "Última mensagem de {character}",
+      "noMessages": "Sem mensagens não lidas",
+      "title": "Mensagens de chat"
+    },
     "highscores": "Ranking",
     "logout": {
       "warning": {
@@ -303,6 +321,7 @@
     "signOut": "Sair",
     "signUp": "Cadastrar",
     "suggestions": {
+      "aria": "Ver sugestões de soul core pendentes",
       "count": "{count} sugestão | {count} sugestões",
       "title": "Sugestões de Soul Core Pendentes"
     }

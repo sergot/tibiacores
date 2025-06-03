@@ -131,7 +131,7 @@ func TestGetCreatures(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return

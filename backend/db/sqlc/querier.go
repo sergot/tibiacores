@@ -18,10 +18,13 @@ type Querier interface {
 	CreateAnonymousUser(ctx context.Context, id uuid.UUID) (User, error)
 	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
 	CreateCharacterClaim(ctx context.Context, arg CreateCharacterClaimParams) (CharacterClaim, error)
+	CreateChatMessage(ctx context.Context, arg CreateChatMessageParams) (ListChatMessage, error)
 	CreateList(ctx context.Context, arg CreateListParams) (List, error)
 	CreateSoulcoreSuggestion(ctx context.Context, arg CreateSoulcoreSuggestionParams) error
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeactivateCharacterListMemberships(ctx context.Context, characterID uuid.UUID) error
+	DeleteAllChatMessages(ctx context.Context, listID uuid.UUID) error
+	DeleteChatMessage(ctx context.Context, arg DeleteChatMessageParams) error
 	DeleteSoulcoreSuggestion(ctx context.Context, arg DeleteSoulcoreSuggestionParams) error
 	GetCharacter(ctx context.Context, id uuid.UUID) (Character, error)
 	GetCharacterByName(ctx context.Context, name string) (Character, error)
@@ -29,6 +32,9 @@ type Querier interface {
 	GetCharacterSoulcores(ctx context.Context, characterID uuid.UUID) ([]GetCharacterSoulcoresRow, error)
 	GetCharacterSuggestions(ctx context.Context, characterID uuid.UUID) ([]GetCharacterSuggestionsRow, error)
 	GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]Character, error)
+	GetChatMessages(ctx context.Context, arg GetChatMessagesParams) ([]GetChatMessagesRow, error)
+	GetChatMessagesByTimestamp(ctx context.Context, arg GetChatMessagesByTimestampParams) ([]GetChatMessagesByTimestampRow, error)
+	GetChatNotificationsForUser(ctx context.Context, userID uuid.UUID) ([]GetChatNotificationsForUserRow, error)
 	GetClaimByID(ctx context.Context, id uuid.UUID) (GetClaimByIDRow, error)
 	GetCreatures(ctx context.Context) ([]Creature, error)
 	GetHighscoreCharacters(ctx context.Context, arg GetHighscoreCharactersParams) ([]GetHighscoreCharactersRow, error)
@@ -47,6 +53,7 @@ type Querier interface {
 	GetUserCharacters(ctx context.Context, userID uuid.UUID) ([]GetUserCharactersRow, error)
 	GetUserLists(ctx context.Context, authorID uuid.UUID) ([]GetUserListsRow, error)
 	IsUserListMember(ctx context.Context, arg IsUserListMemberParams) (bool, error)
+	MarkListMessagesAsRead(ctx context.Context, arg MarkListMessagesAsReadParams) error
 	MigrateAnonymousUser(ctx context.Context, arg MigrateAnonymousUserParams) (User, error)
 	RemoveCharacterSoulcore(ctx context.Context, arg RemoveCharacterSoulcoreParams) error
 	RemoveListSoulcore(ctx context.Context, arg RemoveListSoulcoreParams) error
