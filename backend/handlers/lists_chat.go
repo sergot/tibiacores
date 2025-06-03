@@ -213,22 +213,38 @@ func (h *ListsHandler) GetChatMessages(c echo.Context) error {
 	}
 
 	// Get pagination parameters
-	limit := 50 // default limit
-	offset := 0 // default offset
+	limit := int32(50) // default limit
+	offset := int32(0) // default offset
 
 	limitParam := c.QueryParam("limit")
 	if limitParam != "" {
-		parsedLimit, err := strconv.Atoi(limitParam)
-		if err == nil && parsedLimit > 0 {
-			limit = parsedLimit
+		parsedLimit, err := strconv.ParseInt(limitParam, 10, 32)
+		if err != nil {
+			return apperror.ValidationError("Invalid limit parameter", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "limit",
+					Value:  limitParam,
+					Reason: "Must be a valid 32-bit integer",
+				})
+		}
+		if parsedLimit > 0 {
+			limit = int32(parsedLimit)
 		}
 	}
 
 	offsetParam := c.QueryParam("offset")
 	if offsetParam != "" {
-		parsedOffset, err := strconv.Atoi(offsetParam)
-		if err == nil && parsedOffset >= 0 {
-			offset = parsedOffset
+		parsedOffset, err := strconv.ParseInt(offsetParam, 10, 32)
+		if err != nil {
+			return apperror.ValidationError("Invalid offset parameter", err).
+				WithDetails(&apperror.ValidationErrorDetails{
+					Field:  "offset",
+					Value:  offsetParam,
+					Reason: "Must be a valid 32-bit integer",
+				})
+		}
+		if parsedOffset >= 0 {
+			offset = int32(parsedOffset)
 		}
 	}
 
@@ -282,8 +298,8 @@ func (h *ListsHandler) GetChatMessages(c echo.Context) error {
 	// If no since parameter, get paginated messages
 	messages, err := h.store.GetChatMessages(ctx, db.GetChatMessagesParams{
 		ListID: listID,
-		Limit:  int32(limit),
-		Offset: int32(offset),
+		Limit:  limit,
+		Offset: offset,
 	})
 	if err != nil {
 		return apperror.DatabaseError("Failed to get chat messages", err).
