@@ -406,7 +406,7 @@ func TestAcceptSoulcoreSuggestion(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]any{
 				"creature_id": creatureID,
 			})
 			require.NoError(t, err)
@@ -588,7 +588,7 @@ func TestDismissSoulcoreSuggestion(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]any{
 				"creature_id": creatureID,
 			})
 			require.NoError(t, err)

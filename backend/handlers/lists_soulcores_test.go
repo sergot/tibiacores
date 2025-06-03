@@ -122,7 +122,7 @@ func TestAddSoulcore(t *testing.T) {
 			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
 				reqBody.Reset()
 				// Need to access the current test's creatureID parameter here
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+				err := json.NewEncoder(reqBody).Encode(map[string]any{
 					"creature_id": "invalid-status", // This will cause the handler to fail
 					"status":      "invalid-status", // Invalid status value
 				})
@@ -149,7 +149,7 @@ func TestAddSoulcore(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]any{
 				"creature_id": creatureID,
 				"status":      db.SoulcoreStatusObtained,
 			})
@@ -673,7 +673,7 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 			name: "Success - Update to Obtained Status",
 			setupRequest: func(c echo.Context, reqBody *bytes.Buffer) {
 				reqBody.Reset()
-				err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+				err := json.NewEncoder(reqBody).Encode(map[string]any{
 					"creature_id": creatureID,
 					"status":      db.SoulcoreStatusObtained,
 				})
@@ -1175,7 +1175,7 @@ func TestUpdateSoulcoreStatus(t *testing.T) {
 
 			// Create request body
 			reqBody := &bytes.Buffer{}
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]any{
 				"creature_id": creatureID,
 				"status":      db.SoulcoreStatusUnlocked,
 			})

@@ -27,7 +27,7 @@ const (
 // ErrorDetails interface for type-safe error details
 type ErrorDetails interface {
 	Validate() error
-	ToClientSafe() map[string]interface{}
+	ToClientSafe() map[string]any
 }
 
 // ValidationErrorDetails represents validation error details
@@ -44,8 +44,8 @@ func (d *ValidationErrorDetails) Validate() error {
 	return nil
 }
 
-func (d *ValidationErrorDetails) ToClientSafe() map[string]interface{} {
-	return map[string]interface{}{
+func (d *ValidationErrorDetails) ToClientSafe() map[string]any {
+	return map[string]any{
 		"field":  d.Field,
 		"reason": d.Reason,
 	}
@@ -65,8 +65,8 @@ func (d *DatabaseErrorDetails) Validate() error {
 	return nil
 }
 
-func (d *DatabaseErrorDetails) ToClientSafe() map[string]interface{} {
-	return map[string]interface{}{
+func (d *DatabaseErrorDetails) ToClientSafe() map[string]any {
+	return map[string]any{
 		"operation": d.Operation,
 		"table":     d.Table,
 	}
@@ -86,8 +86,8 @@ func (d *ExternalServiceErrorDetails) Validate() error {
 	return nil
 }
 
-func (d *ExternalServiceErrorDetails) ToClientSafe() map[string]interface{} {
-	return map[string]interface{}{
+func (d *ExternalServiceErrorDetails) ToClientSafe() map[string]any {
+	return map[string]any{
 		"service":   d.Service,
 		"operation": d.Operation,
 	}
@@ -106,8 +106,8 @@ func (d *AuthorizationErrorDetails) Validate() error {
 	return nil
 }
 
-func (d *AuthorizationErrorDetails) ToClientSafe() map[string]interface{} {
-	result := map[string]interface{}{
+func (d *AuthorizationErrorDetails) ToClientSafe() map[string]any {
+	result := map[string]any{
 		"reason": d.Reason,
 	}
 	if d.Field != "" {
@@ -208,7 +208,7 @@ func NewError(errType ErrorType, code string, message string, statusCode int, er
 
 // LogError logs the error with structured logging
 func (e *AppError) LogError() {
-	logData := map[string]interface{}{
+	logData := map[string]any{
 		"type":        e.Type,
 		"code":        e.Code,
 		"message":     e.Message,
@@ -238,8 +238,8 @@ func (e *AppError) LogError() {
 }
 
 // ToHTTPResponse converts the error to a client-friendly HTTP response format
-func (e *AppError) ToHTTPResponse() map[string]interface{} {
-	response := map[string]interface{}{
+func (e *AppError) ToHTTPResponse() map[string]any {
+	response := map[string]any{
 		"type":    e.Type,
 		"code":    e.Code,
 		"message": e.Message,

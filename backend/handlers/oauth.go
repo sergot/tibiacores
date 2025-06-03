@@ -101,7 +101,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		}
 
 		c.Response().Header().Set("X-Auth-Token", token)
-		return c.JSON(http.StatusOK, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]any{
 			"id":        existingUser.ID,
 			"has_email": true,
 		})
@@ -145,7 +145,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 					}
 
 					c.Response().Header().Set("X-Auth-Token", token)
-					return c.JSON(http.StatusOK, map[string]interface{}{
+					return c.JSON(http.StatusOK, map[string]any{
 						"id":        user.ID,
 						"has_email": true,
 					})
@@ -186,7 +186,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	// Set token in X-Auth-Token header
 	c.Response().Header().Set("X-Auth-Token", token)
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]any{
 		"id":        user.ID,
 		"has_email": true,
 	})

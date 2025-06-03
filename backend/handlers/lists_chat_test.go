@@ -167,7 +167,7 @@ func TestCreateChatMessage(t *testing.T) {
 			name: "Missing Message",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_id": uuid.New().String(),
 					// Missing message
 				})
@@ -188,7 +188,7 @@ func TestCreateChatMessage(t *testing.T) {
 			name: "Invalid Character ID",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"message":      "Test message",
 					"character_id": "invalid-uuid",
 				})
@@ -314,7 +314,7 @@ func TestCreateChatMessage(t *testing.T) {
 
 			// Setup default request body
 			reqBody.Reset()
-			err := json.NewEncoder(reqBody).Encode(map[string]interface{}{
+			err := json.NewEncoder(reqBody).Encode(map[string]any{
 				"message":      "Test message",
 				"character_id": characterID.String(),
 			})

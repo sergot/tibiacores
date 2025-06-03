@@ -77,7 +77,7 @@ func TestOAuthHandler_Callback(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, http.StatusOK, rec.Code)
 
-				var resp map[string]interface{}
+				var resp map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
 				assert.True(t, resp["has_email"].(bool))
 			},
@@ -111,7 +111,7 @@ func TestOAuthHandler_Callback(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, http.StatusOK, rec.Code)
 
-				var resp map[string]interface{}
+				var resp map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
 				assert.True(t, resp["has_email"].(bool))
 			},

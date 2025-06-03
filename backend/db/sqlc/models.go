@@ -19,7 +19,7 @@ const (
 	SoulcoreStatusUnlocked SoulcoreStatus = "unlocked"
 )
 
-func (e *SoulcoreStatus) Scan(src interface{}) error {
+func (e *SoulcoreStatus) Scan(src any) error {
 	switch s := src.(type) {
 	case []byte:
 		*e = SoulcoreStatus(s)
@@ -37,7 +37,7 @@ type NullSoulcoreStatus struct {
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullSoulcoreStatus) Scan(value interface{}) error {
+func (ns *NullSoulcoreStatus) Scan(value any) error {
 	if value == nil {
 		ns.SoulcoreStatus, ns.Valid = "", false
 		return nil

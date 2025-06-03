@@ -155,7 +155,7 @@ func TestGetPendingSuggestions(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -311,7 +311,7 @@ func TestAddCharacterSoulcore(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -331,7 +331,7 @@ func TestGetUser(t *testing.T) {
 		setupMocks    func(store *mockdb.MockStore, requestedUserID uuid.UUID, authedUserID uuid.UUID)
 		expectedCode  int
 		expectedError string
-		checkResponse func(t *testing.T, response map[string]interface{})
+		checkResponse func(t *testing.T, response map[string]any)
 	}{
 		{
 			name: "Success",
@@ -352,7 +352,7 @@ func TestGetUser(t *testing.T) {
 					}, nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}) {
+			checkResponse: func(t *testing.T, response map[string]any) {
 				require.Equal(t, "test@example.com", response["email"])
 				require.Equal(t, true, response["email_verified"])
 			},
@@ -489,7 +489,7 @@ func TestGetUser(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -501,7 +501,7 @@ func TestGetUser(t *testing.T) {
 
 			// Check response body
 			if tc.checkResponse != nil {
-				var response map[string]interface{}
+				var response map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, response)
 			}
@@ -684,7 +684,7 @@ func TestGetUserLists(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -883,7 +883,7 @@ func TestGetCharactersByUserId(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1015,7 +1015,7 @@ func TestVerifyEmail(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1182,7 +1182,7 @@ func TestGetCharacter(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1424,7 +1424,7 @@ func TestGetCharacterSoulcores(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1643,7 +1643,7 @@ func TestRemoveCharacterSoulcore(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1663,7 +1663,7 @@ func TestLogin(t *testing.T) {
 		setupMocks    func(store *mockdb.MockStore)
 		expectedCode  int
 		expectedError string
-		checkResponse func(t *testing.T, response map[string]interface{}, headers http.Header)
+		checkResponse func(t *testing.T, response map[string]any, headers http.Header)
 	}{
 		{
 			name: "Success",
@@ -1685,7 +1685,7 @@ func TestLogin(t *testing.T) {
 					}, nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
+			checkResponse: func(t *testing.T, response map[string]any, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
 				require.NotEmpty(t, headers.Get("X-Auth-Token"))
@@ -1808,7 +1808,7 @@ func TestLogin(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -1820,7 +1820,7 @@ func TestLogin(t *testing.T) {
 
 			// Check response body and headers
 			if tc.checkResponse != nil {
-				var response map[string]interface{}
+				var response map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, response, rec.Header())
 			}
@@ -1835,7 +1835,7 @@ func TestSignup(t *testing.T) {
 		setupMocks    func(store *mockdb.MockStore, emailService *mock.MockEmailServiceInterface)
 		expectedCode  int
 		expectedError string
-		checkResponse func(t *testing.T, response map[string]interface{}, headers http.Header)
+		checkResponse func(t *testing.T, response map[string]any, headers http.Header)
 	}{
 		{
 			name: "Success - New User",
@@ -1853,7 +1853,7 @@ func TestSignup(t *testing.T) {
 
 				store.EXPECT().
 					CreateUser(gomock.Any(), gomock.Any()).
-					DoAndReturn(func(_ interface{}, params db.CreateUserParams) (db.User, error) {
+					DoAndReturn(func(_ any, params db.CreateUserParams) (db.User, error) {
 						require.Equal(t, email, params.Email)
 						require.True(t, params.Password.Valid)
 						require.True(t, params.EmailVerificationToken.String() != "")
@@ -1872,7 +1872,7 @@ func TestSignup(t *testing.T) {
 					Return(nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
+			checkResponse: func(t *testing.T, response map[string]any, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
 				require.NotEmpty(t, headers.Get("X-Auth-Token"))
@@ -1895,7 +1895,7 @@ func TestSignup(t *testing.T) {
 				// Create new user with the provided user_id
 				store.EXPECT().
 					CreateUser(gomock.Any(), gomock.Any()).
-					DoAndReturn(func(_ interface{}, params db.CreateUserParams) (db.User, error) {
+					DoAndReturn(func(_ any, params db.CreateUserParams) (db.User, error) {
 						require.Equal(t, email, params.Email)
 						require.True(t, params.Password.Valid)
 						require.True(t, params.EmailVerificationToken.String() != "")
@@ -1914,7 +1914,7 @@ func TestSignup(t *testing.T) {
 					Return(nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
+			checkResponse: func(t *testing.T, response map[string]any, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
 				require.NotEmpty(t, headers.Get("X-Auth-Token"))
@@ -1941,7 +1941,7 @@ func TestSignup(t *testing.T) {
 
 				store.EXPECT().
 					MigrateAnonymousUser(gomock.Any(), gomock.Any()).
-					DoAndReturn(func(_ interface{}, params db.MigrateAnonymousUserParams) (db.User, error) {
+					DoAndReturn(func(_ any, params db.MigrateAnonymousUserParams) (db.User, error) {
 						require.Equal(t, email, params.Email)
 						require.True(t, params.Password.Valid)
 
@@ -1958,7 +1958,7 @@ func TestSignup(t *testing.T) {
 					Return(nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}, headers http.Header) {
+			checkResponse: func(t *testing.T, response map[string]any, headers http.Header) {
 				require.NotEmpty(t, response["id"])
 				require.Equal(t, true, response["has_email"])
 				require.NotEmpty(t, headers.Get("X-Auth-Token"))
@@ -2089,7 +2089,7 @@ func TestSignup(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -2101,7 +2101,7 @@ func TestSignup(t *testing.T) {
 
 			// Check response body and headers
 			if tc.checkResponse != nil {
-				var response map[string]interface{}
+				var response map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, response, rec.Header())
 			}

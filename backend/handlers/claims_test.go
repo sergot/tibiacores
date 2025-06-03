@@ -59,7 +59,7 @@ func TestStartClaim(t *testing.T) {
 			name: "Success - Authenticated User",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TestChar",
 				})
 				require.NoError(t, err)
@@ -110,7 +110,7 @@ func TestStartClaim(t *testing.T) {
 			name: "Success - Anonymous User",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "TestChar",
 				})
 				require.NoError(t, err)
@@ -180,7 +180,7 @@ func TestStartClaim(t *testing.T) {
 			name: "Character Not Found in Tibia",
 			setupRequest: func(c echo.Context, body *bytes.Buffer) {
 				body.Reset()
-				err := json.NewEncoder(body).Encode(map[string]interface{}{
+				err := json.NewEncoder(body).Encode(map[string]any{
 					"character_name": "NonExistentChar",
 				})
 				require.NoError(t, err)
@@ -240,7 +240,7 @@ func TestStartClaim(t *testing.T) {
 				// Check if we received an error with the correct status code and message
 				require.Equal(t, tc.expectedCode, rec.Code)
 
-				var errorResponse map[string]interface{}
+				var errorResponse map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errorResponse))
 				require.Contains(t, errorResponse["message"].(string), tc.expectedError)
 				return
@@ -267,7 +267,7 @@ func TestCheckClaim(t *testing.T) {
 		setupMocks    func(store *mockdb.MockStore, tibiaData *mockTibiaDataService, claimID uuid.UUID, userID uuid.UUID)
 		expectedCode  int
 		expectedError string
-		checkResponse func(t *testing.T, response map[string]interface{})
+		checkResponse func(t *testing.T, response map[string]any)
 	}{
 		{
 			name: "Success - Claim Verified",
@@ -322,7 +322,7 @@ func TestCheckClaim(t *testing.T) {
 					}, nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response map[string]interface{}) {
+			checkResponse: func(t *testing.T, response map[string]any) {
 				require.Equal(t, "approved", response["status"])
 				require.NotNil(t, response["character"])
 			},
@@ -408,7 +408,7 @@ func TestCheckClaim(t *testing.T) {
 
 			// Check response body
 			if tc.checkResponse != nil {
-				var response map[string]interface{}
+				var response map[string]any
 				require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &response))
 				tc.checkResponse(t, response)
 			}

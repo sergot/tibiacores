@@ -290,7 +290,7 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 					Wrap(err)
 			}
 
-			return c.JSON(http.StatusOK, map[string]interface{}{
+			return c.JSON(http.StatusOK, map[string]any{
 				"claim_id":  updatedClaim.ID,
 				"status":    updatedClaim.Status,
 				"character": character,
@@ -298,7 +298,7 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 		}
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]any{
 		"claim_id":          claim.ID,
 		"verification_code": claim.VerificationCode,
 		"status":            claim.Status,
