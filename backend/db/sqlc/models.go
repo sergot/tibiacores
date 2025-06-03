@@ -103,6 +103,21 @@ type List struct {
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
 }
 
+type ListChatMessage struct {
+	ID          uuid.UUID          `json:"id"`
+	ListID      uuid.UUID          `json:"list_id"`
+	UserID      uuid.UUID          `json:"user_id"`
+	CharacterID uuid.UUID          `json:"character_id"`
+	Message     string             `json:"message"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+}
+
+type ListUserReadStatus struct {
+	UserID     uuid.UUID          `json:"user_id"`
+	ListID     uuid.UUID          `json:"list_id"`
+	LastReadAt pgtype.Timestamptz `json:"last_read_at"`
+}
+
 type ListsSoulcore struct {
 	ListID        uuid.UUID      `json:"list_id"`
 	CreatureID    uuid.UUID      `json:"creature_id"`

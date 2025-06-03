@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useSuggestionsStore } from '@/stores/suggestions'
+import { useChatNotificationsStore } from '@/stores/chatNotifications'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import {
@@ -11,15 +12,19 @@ import {
   ArrowRightStartOnRectangleIcon,
   UserIcon,
   ExclamationTriangleIcon,
+  ChatBubbleLeftRightIcon,
+  BellIcon,
 } from '@heroicons/vue/24/outline'
 
 const { t } = useI18n()
 const userStore = useUserStore()
 const router = useRouter()
 const suggestionsStore = useSuggestionsStore()
+const chatNotificationsStore = useChatNotificationsStore()
 const isMenuOpen = ref(false)
 const showLogoutWarning = ref(false)
 const showSuggestions = ref(false)
+const showChatNotifications = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -39,17 +44,19 @@ const handleLogout = () => {
   isMenuOpen.value = false
   showLogoutWarning.value = false
   suggestionsStore.stopPolling()
+  chatNotificationsStore.stopPolling()
 }
 
 const cancelLogout = () => {
   showLogoutWarning.value = false
 }
 
-// Close dropdown when clicking outside
+// Close dropdowns when clicking outside
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
-  if (!target.closest('.relative')) {
+  if (!target.closest('.notification-dropdown')) {
     showSuggestions.value = false
+    showChatNotifications.value = false
   }
 }
 
@@ -58,9 +65,25 @@ const handleSuggestionClick = () => {
   suggestionsStore.fetchPendingSuggestions() // Refresh suggestions after navigation
 }
 
+const handleChatNotificationClick = (listId: string) => {
+  showChatNotifications.value = false
+  chatNotificationsStore.markAsRead(listId)
+}
+
+const toggleNotificationDropdown = (type: 'suggestions' | 'chat') => {
+  if (type === 'suggestions') {
+    showSuggestions.value = !showSuggestions.value
+    showChatNotifications.value = false
+  } else {
+    showChatNotifications.value = !showChatNotifications.value
+    showSuggestions.value = false
+  }
+}
+
 onMounted(() => {
   if (userStore.isAuthenticated) {
     suggestionsStore.startPolling()
+    chatNotificationsStore.startPolling()
   }
   document.addEventListener('click', handleClickOutside)
 })
@@ -113,60 +136,105 @@ onBeforeUnmount(() => {
             </RouterLink>
           </div>
           <div v-else class="flex items-center space-x-4">
-            <!-- Suggestions Dropdown -->
-            <div class="relative" v-if="suggestionsStore.hasPendingSuggestions">
-              <button
-                @click="showSuggestions = !showSuggestions"
-                class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+            <!-- Notifications Area -->
+            <div class="flex items-center space-x-2">
+              <!-- Suggestions Notifications -->
+              <div class="notification-dropdown relative" v-if="suggestionsStore.hasPendingSuggestions">
+                <button
+                  @click="toggleNotificationDropdown('suggestions')"
+                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+                  :aria-label="t('nav.suggestions.aria')"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                  />
-                </svg>
-                <span
-                  v-if="suggestionsStore.totalPendingSuggestions > 0"
-                  class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full"
-                >
-                  {{ suggestionsStore.totalPendingSuggestions }}
-                </span>
-              </button>
-
-              <!-- Suggestions Dropdown Menu -->
-              <div
-                v-if="showSuggestions"
-                class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
-                @click.stop
-              >
-                <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
-                  {{ t('nav.suggestions.title') }}
-                </div>
-                <div class="max-h-96 overflow-y-auto">
-                  <RouterLink
-                    v-for="char in suggestionsStore.pendingSuggestions"
-                    :key="char.character_id"
-                    :to="{ name: 'character-details', params: { id: char.character_id } }"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    @click="handleSuggestionClick"
+                  <BellIcon class="h-6 w-6" />
+                  <span
+                    v-if="suggestionsStore.totalPendingSuggestions > 0"
+                    class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full"
                   >
-                    <div class="flex justify-between items-center">
-                      <span>{{ char.character_name }}</span>
-                      <span
-                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                      >
-                        {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
-                      </span>
+                    {{ suggestionsStore.totalPendingSuggestions }}
+                  </span>
+                </button>
+
+                <!-- Suggestions Dropdown Menu -->
+                <div
+                  v-if="showSuggestions"
+                  class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
+                  @click.stop
+                >
+                  <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
+                    {{ t('nav.suggestions.title') }}
+                  </div>
+                  <div class="max-h-96 overflow-y-auto">
+                    <RouterLink
+                      v-for="char in suggestionsStore.pendingSuggestions"
+                      :key="char.character_id"
+                      :to="{ name: 'character-details', params: { id: char.character_id } }"
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      @click="handleSuggestionClick"
+                    >
+                      <div class="flex justify-between items-center">
+                        <span>{{ char.character_name }}</span>
+                        <span
+                          class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                        >
+                          {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
+                        </span>
+                      </div>
+                    </RouterLink>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Notifications -->
+              <div class="notification-dropdown relative" v-if="chatNotificationsStore.hasUnreadMessages">
+                <button
+                  @click="toggleNotificationDropdown('chat')"
+                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+                  :aria-label="t('nav.chat.aria')"
+                >
+                  <ChatBubbleLeftRightIcon class="h-6 w-6" />
+                  <span
+                    v-if="chatNotificationsStore.totalUnreadMessages > 0"
+                    class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-green-500 rounded-full"
+                  >
+                    {{ chatNotificationsStore.totalUnreadMessages }}
+                  </span>
+                </button>
+
+                <!-- Chat Notifications Dropdown Menu -->
+                <div
+                  v-if="showChatNotifications"
+                  class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
+                  @click.stop
+                >
+                  <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
+                    {{ t('nav.chat.title') }}
+                  </div>
+                  <div class="max-h-96 overflow-y-auto">
+                    <RouterLink
+                      v-for="notification in chatNotificationsStore.notifications"
+                      :key="notification.list_id"
+                      :to="{ name: 'list-detail', params: { id: notification.list_id } }"
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      @click="handleChatNotificationClick(notification.list_id)"
+                    >
+                      <div class="flex flex-col">
+                        <div class="flex justify-between items-center">
+                          <span class="font-medium">{{ notification.list_name }}</span>
+                          <span
+                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                          >
+                            {{ t('nav.chat.count', { count: notification.unread_count }) }}
+                          </span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                          {{ t('nav.chat.lastMessage', { character: notification.last_character_name }) }}
+                        </div>
+                      </div>
+                    </RouterLink>
+                    <div v-if="chatNotificationsStore.notifications.length === 0" class="px-4 py-3 text-sm text-gray-500">
+                      {{ t('nav.chat.noMessages') }}
                     </div>
-                  </RouterLink>
+                  </div>
                 </div>
               </div>
             </div>
@@ -223,6 +291,7 @@ onBeforeUnmount(() => {
           </RouterLink>
         </div>
         <div v-else class="space-y-2">
+          <!-- Suggestions notifications for mobile -->
           <RouterLink
             v-if="suggestionsStore.hasPendingSuggestions"
             :to="{
@@ -235,6 +304,22 @@ onBeforeUnmount(() => {
             <span>{{ t('nav.suggestions.title') }}</span>
             <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
               {{ suggestionsStore.totalPendingSuggestions }}
+            </span>
+          </RouterLink>
+
+          <!-- Chat notifications for mobile -->
+          <RouterLink
+            v-if="chatNotificationsStore.hasUnreadMessages"
+            :to="{
+              name: 'list-detail',
+              params: { id: chatNotificationsStore.notifications[0]?.list_id },
+            }"
+            class="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            @click="isMenuOpen = false"
+          >
+            <span>{{ t('nav.chat.title') }}</span>
+            <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {{ chatNotificationsStore.totalUnreadMessages }}
             </span>
           </RouterLink>
           <RouterLink

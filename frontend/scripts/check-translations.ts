@@ -141,6 +141,42 @@ function cleanTranslations(
   return cleaned
 }
 
+function checkInterpolationFormats(translations: Record<string, TranslationObject>): {
+  hasIssues: boolean,
+  issues: { lang: string, key: string, value: string }[]
+} {
+  const issues: { lang: string, key: string, value: string }[] = []
+  let hasIssues = false
+
+  // Regex to find {{variable}} format (incorrect for Vue I18n)
+  const incorrectFormatRegex = /\{\{\s*[a-zA-Z0-9_]+\s*\}\}/g
+
+  for (const [lang, langTranslations] of Object.entries(translations)) {
+    const extractAndCheckValues = (obj: TranslationObject, prefix: string = '') => {
+      for (const [key, value] of Object.entries(obj)) {
+        const fullKey = prefix ? `${prefix}.${key}` : key
+
+        if (typeof value === 'string') {
+          if (incorrectFormatRegex.test(value)) {
+            hasIssues = true
+            issues.push({
+              lang,
+              key: fullKey,
+              value
+            })
+          }
+        } else if (value !== null && typeof value === 'object') {
+          extractAndCheckValues(value as TranslationObject, fullKey)
+        }
+      }
+    }
+
+    extractAndCheckValues(langTranslations)
+  }
+
+  return { hasIssues, issues }
+}
+
 async function main() {
   // Get the project root directory (parent of frontend directory)
   const scriptDir = path.dirname(fileURLToPath(import.meta.url))
@@ -247,6 +283,17 @@ async function main() {
     } else {
       console.log(`\nNo missing translations in ${lang}`)
     }
+  }
+
+  // Check for incorrect interpolation formats
+  const interpolationCheck = checkInterpolationFormats(translations)
+  if (interpolationCheck.hasIssues) {
+    console.log('\nIncorrect Interpolation Formats:')
+    console.log('='.repeat(50))
+    for (const issue of interpolationCheck.issues) {
+      console.log(`Language: ${issue.lang}, Key: ${issue.key}, Value: ${issue.value}`)
+    }
+    hasIssues = true
   }
 
   // Create cleaned translation files if not in check-only mode

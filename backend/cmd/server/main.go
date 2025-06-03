@@ -15,6 +15,7 @@ import (
 	"github.com/sergot/tibiacores/backend/handlers"
 	customMiddleware "github.com/sergot/tibiacores/backend/middleware"
 	"github.com/sergot/tibiacores/backend/pkg/apperror"
+	"github.com/sergot/tibiacores/backend/pkg/validator"
 	"github.com/sergot/tibiacores/backend/services"
 )
 
@@ -75,6 +76,13 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	protected.PUT("/lists/:id/soulcores", listsHandler.UpdateSoulcoreStatus)
 	protected.DELETE("/lists/:id/soulcores/:creature_id", listsHandler.RemoveSoulcore)
 
+	// Chat endpoints
+	protected.POST("/lists/:id/chat/read", listsHandler.MarkChatMessagesAsRead)
+	protected.GET("/lists/:id/chat", listsHandler.GetChatMessages)
+	protected.POST("/lists/:id/chat", listsHandler.CreateChatMessage)
+	protected.DELETE("/lists/:id/chat/:messageId", listsHandler.DeleteChatMessage)
+	protected.GET("/chat-notifications", listsHandler.GetChatNotifications)
+
 	// User endpoints
 	protected.GET("/users/:user_id/characters", usersHandler.GetCharactersByUserId)
 	protected.GET("/users/:user_id/lists", usersHandler.GetUserLists)
@@ -133,6 +141,9 @@ func main() {
 	defer connPool.Close()
 
 	e := echo.New()
+
+	// Register validator
+	e.Validator = validator.New()
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

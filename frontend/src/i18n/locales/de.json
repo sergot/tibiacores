@@ -260,6 +260,17 @@
   "listDetail": {
     "actions": "Aktionen",
     "addedBy": "Hinzugefügt von",
+    "chat": {
+      "chatAs": "Chatten als",
+      "collapse": "Chat einklappen",
+      "delete": "Löschen",
+      "expand": "Chat ausklappen",
+      "loading": "Nachrichten werden geladen...",
+      "noMessages": "Noch keine Nachrichten. Starte die Unterhaltung!",
+      "send": "Senden",
+      "title": "Chat",
+      "typingMessage": "Nachricht eingeben..."
+    },
     "copied": "Kopiert!",
     "copyLink": "Link Kopieren",
     "created": "Erstellt",
@@ -288,6 +299,13 @@
   },
   "nav": {
     "about": "Über",
+    "chat": {
+      "aria": "Chat-Benachrichtigungen",
+      "count": "{count} neue",
+      "lastMessage": "Letzte Nachricht von {character}",
+      "noMessages": "Keine ungelesenen Nachrichten",
+      "title": "Chat-Nachrichten"
+    },
     "highscores": "Bestenliste",
     "logout": {
       "warning": {
@@ -303,6 +321,7 @@
     "signOut": "Abmelden",
     "signUp": "Registrieren",
     "suggestions": {
+      "aria": "Ausstehende Seelenkern-Vorschläge anzeigen",
       "count": "{count} ausstehende Vorschläge",
       "title": "Ausstehende Seelenkern-Vorschläge"
     }

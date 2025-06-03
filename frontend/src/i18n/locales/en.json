@@ -260,6 +260,17 @@
   "listDetail": {
     "actions": "Actions",
     "addedBy": "Added By",
+    "chat": {
+      "chatAs": "Chatting as",
+      "collapse": "Collapse chat",
+      "delete": "Delete",
+      "expand": "Expand chat",
+      "loading": "Loading messages...",
+      "noMessages": "No messages yet. Start the conversation!",
+      "send": "Send",
+      "title": "Chat",
+      "typingMessage": "Type your message..."
+    },
     "copied": "Copied!",
     "copyLink": "Copy Link",
     "created": "Created",
@@ -288,6 +299,13 @@
   },
   "nav": {
     "about": "About",
+    "chat": {
+      "aria": "Chat notifications",
+      "count": "{count} new",
+      "lastMessage": "Last message from {character}",
+      "noMessages": "No unread messages",
+      "title": "Chat Messages"
+    },
     "highscores": "Highscores",
     "logout": {
       "warning": {
@@ -303,6 +321,7 @@
     "signOut": "Sign out",
     "signUp": "Sign up",
     "suggestions": {
+      "aria": "View pending soul core suggestions",
       "count": "{count} pending suggestions",
       "title": "Pending Soul Core Suggestions"
     }

@@ -260,6 +260,17 @@
   "listDetail": {
     "actions": "Akcje",
     "addedBy": "Dodane Przez",
+    "chat": {
+      "chatAs": "Rozmawiaj jako",
+      "collapse": "Zwiń czat",
+      "delete": "Usuń",
+      "expand": "Rozwiń czat",
+      "loading": "Ładowanie wiadomości...",
+      "noMessages": "Brak wiadomości. Rozpocznij rozmowę!",
+      "send": "Wyślij",
+      "title": "Czat",
+      "typingMessage": "Wpisz wiadomość..."
+    },
     "copied": "Skopiowano!",
     "copyLink": "Kopiuj Link",
     "created": "Utworzono",
@@ -288,6 +299,13 @@
   },
   "nav": {
     "about": "O Nas",
+    "chat": {
+      "aria": "Powiadomienia czatu",
+      "count": "{count} nowych",
+      "lastMessage": "Ostatnia wiadomość od {character}",
+      "noMessages": "Brak nieprzeczytanych wiadomości",
+      "title": "Wiadomości czatu"
+    },
     "highscores": "Ranking",
     "logout": {
       "warning": {
@@ -303,6 +321,7 @@
     "signOut": "Wyloguj się",
     "signUp": "Zarejestruj się",
     "suggestions": {
+      "aria": "Zobacz oczekujące sugestie soul corów",
       "count": "{count} oczekujących sugestii",
       "title": "Oczekujące sugestie soul corów"
     }
