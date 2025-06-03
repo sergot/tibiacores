@@ -227,11 +227,11 @@ ORDER BY last_message_time DESC
 `
 
 type GetChatNotificationsForUserRow struct {
-	ListID            uuid.UUID   `json:"list_id"`
-	ListName          string      `json:"list_name"`
-	LastMessageTime   interface{} `json:"last_message_time"`
-	UnreadCount       int64       `json:"unread_count"`
-	LastCharacterName string      `json:"last_character_name"`
+	ListID            uuid.UUID          `json:"list_id"`
+	ListName          string             `json:"list_name"`
+	LastMessageTime   pgtype.Timestamptz `json:"last_message_time"`
+	UnreadCount       int64              `json:"unread_count"`
+	LastCharacterName string             `json:"last_character_name"`
 }
 
 func (q *Queries) GetChatNotificationsForUser(ctx context.Context, userID uuid.UUID) ([]GetChatNotificationsForUserRow, error) {

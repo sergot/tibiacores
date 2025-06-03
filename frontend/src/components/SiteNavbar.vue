@@ -70,6 +70,11 @@ const handleChatNotificationClick = (listId: string) => {
   chatNotificationsStore.markAsRead(listId)
 }
 
+const handleMobileChatNotificationClick = (listId: string) => {
+  isMenuOpen.value = false
+  chatNotificationsStore.markAsRead(listId)
+}
+
 const toggleNotificationDropdown = (type: 'suggestions' | 'chat') => {
   if (type === 'suggestions') {
     showSuggestions.value = !showSuggestions.value
@@ -144,6 +149,8 @@ onBeforeUnmount(() => {
                   @click="toggleNotificationDropdown('suggestions')"
                   class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
                   :aria-label="t('nav.suggestions.aria')"
+                  aria-haspopup="true"
+                  :aria-expanded="showSuggestions"
                 >
                   <BellIcon class="h-6 w-6" />
                   <span
@@ -190,6 +197,8 @@ onBeforeUnmount(() => {
                   @click="toggleNotificationDropdown('chat')"
                   class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
                   :aria-label="t('nav.chat.aria')"
+                  aria-haspopup="true"
+                  :aria-expanded="showChatNotifications"
                 >
                   <ChatBubbleLeftRightIcon class="h-6 w-6" />
                   <span
@@ -315,7 +324,7 @@ onBeforeUnmount(() => {
               params: { id: chatNotificationsStore.notifications[0]?.list_id },
             }"
             class="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            @click="isMenuOpen = false"
+            @click="handleMobileChatNotificationClick(chatNotificationsStore.notifications[0]?.list_id)"
           >
             <span>{{ t('nav.chat.title') }}</span>
             <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">

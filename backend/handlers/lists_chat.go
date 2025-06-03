@@ -412,18 +412,10 @@ func (h *ListsHandler) GetChatNotifications(c echo.Context) error {
 	// Format response
 	response := make([]ChatNotification, len(notifications))
 	for i, notification := range notifications {
-		// Process LastMessageTime which is interface{}
-		var lastMessageTime time.Time
-		if timestamp, ok := notification.LastMessageTime.(pgtype.Timestamptz); ok {
-			lastMessageTime = timestamp.Time
-		} else if t, ok := notification.LastMessageTime.(time.Time); ok {
-			lastMessageTime = t
-		}
-
 		response[i] = ChatNotification{
 			ListID:            notification.ListID.String(),
 			ListName:          notification.ListName,
-			LastMessageTime:   lastMessageTime,
+			LastMessageTime:   notification.LastMessageTime.Time,
 			UnreadCount:       int32(notification.UnreadCount),
 			LastCharacterName: notification.LastCharacterName,
 		}
