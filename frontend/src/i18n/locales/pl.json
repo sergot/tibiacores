@@ -307,6 +307,10 @@
       "title": "Wiadomości czatu"
     },
     "highscores": "Ranking",
+    "marketplace": {
+      "title": "Rynek",
+      "comingSoon": "Wkrótce"
+    },
     "logout": {
       "warning": {
         "cancel": "Anuluj",

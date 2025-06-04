@@ -109,24 +109,32 @@ onBeforeUnmount(() => {
               <span class="text-xl font-bold text-gray-800">TibiaCores</span>
             </RouterLink>
           </div>
-          <RouterLink
-            to="/highscores"
-            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            {{ t('nav.highscores') }}
-          </RouterLink>
-          <RouterLink
-            to="/blog"
-            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            News
-          </RouterLink>
-          <RouterLink
-            to="/about"
-            class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            {{ t('nav.about') }}
-          </RouterLink>
+          <div class="hidden md:flex md:items-center md:space-x-8">
+            <RouterLink
+              to="/highscores"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              {{ t('nav.highscores') }}
+            </RouterLink>
+            <RouterLink
+              to="/blog"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              News
+            </RouterLink>
+            <div class="relative px-3 py-2 rounded-md text-sm font-medium text-gray-400 cursor-not-allowed flex items-center">
+              {{ t('nav.marketplace.title') }}
+              <span class="ml-2 text-xs bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-full border border-indigo-200 shadow-sm">
+                {{ t('nav.marketplace.comingSoon') }}
+              </span>
+            </div>
+            <RouterLink
+              to="/about"
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              {{ t('nav.about') }}
+            </RouterLink>
+          </div>
         </div>
 
         <!-- Desktop Navigation -->
@@ -289,7 +297,39 @@ onBeforeUnmount(() => {
     <!-- Mobile menu -->
     <div v-if="isMenuOpen" class="md:hidden bg-white border-t border-gray-200">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <div v-if="!userStore.isAuthenticated" class="space-y-2">
+        <!-- Main navigation links for all users -->
+        <RouterLink
+          to="/highscores"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          @click="isMenuOpen = false"
+        >
+          {{ t('nav.highscores') }}
+        </RouterLink>
+        <RouterLink
+          to="/blog"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          @click="isMenuOpen = false"
+        >
+          News
+        </RouterLink>
+        <div class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 cursor-not-allowed">
+          <div class="flex items-center justify-between">
+            <span>{{ t('nav.marketplace.title') }}</span>
+            <span class="text-xs bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-full border border-indigo-200 shadow-sm">
+              {{ t('nav.marketplace.comingSoon') }}
+            </span>
+          </div>
+        </div>
+        <RouterLink
+          to="/about"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          @click="isMenuOpen = false"
+        >
+          {{ t('nav.about') }}
+        </RouterLink>
+
+        <!-- Authentication-specific sections -->
+        <div v-if="!userStore.isAuthenticated" class="space-y-2 pt-2 border-t border-gray-200">
           <RouterLink
             to="/signin"
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -305,7 +345,7 @@ onBeforeUnmount(() => {
             {{ t('nav.signUp') }}
           </RouterLink>
         </div>
-        <div v-else class="space-y-2">
+        <div v-else class="space-y-2 pt-2 border-t border-gray-200">
           <!-- Suggestions notifications for mobile -->
           <RouterLink
             v-if="suggestionsStore.hasPendingSuggestions"
@@ -343,27 +383,6 @@ onBeforeUnmount(() => {
             @click="isMenuOpen = false"
           >
             {{ t('nav.profile') }}
-          </RouterLink>
-          <RouterLink
-            to="/highscores"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            @click="isMenuOpen = false"
-          >
-            {{ t('nav.highscores') }}
-          </RouterLink>
-          <RouterLink
-            to="/blog"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            @click="isMenuOpen = false"
-          >
-            News
-          </RouterLink>
-          <RouterLink
-            to="/about"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            @click="isMenuOpen = false"
-          >
-            {{ t('nav.about') }}
           </RouterLink>
           <button
             @click="initiateLogout"
