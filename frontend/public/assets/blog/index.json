@@ -1,0 +1,12 @@
+[
+  {
+    "id": "chat-feature-announcement",
+    "title": "Real-Time Chat Now Available!",
+    "excerpt": "Collaborate better with your team! We've added a powerful chat feature that lets you communicate with other list members in real-time.",
+    "date": "2025-06-03",
+    "author": "TibiaCores Team",
+    "image": "/assets/blog/chat-feature.svg",
+    "icon": "💬",
+    "tags": ["feature", "collaboration", "communication"]
+  }
+]

@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import CreateListForm from '../components/CreateListForm.vue'
 import JoinListForm from '../components/JoinListForm.vue'
 import RegisterSuggestion from '../components/RegisterSuggestion.vue'
+import NewsSection from '../components/NewsSection.vue'
 import { useUserStore } from '../stores/user'
 import { useListsStore } from '../stores/lists'
 import { RouterLink } from 'vue-router'
@@ -21,6 +22,8 @@ onMounted(() => {
 
 <template>
   <div class="w-full">
+    <NewsSection />
+
     <main class="max-w-6xl mx-auto px-8 py-8">
       <div class="text-center mb-8">
         <h1 class="text-4xl mb-2">{{ t('home.title') }}</h1>
