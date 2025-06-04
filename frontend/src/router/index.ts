@@ -124,17 +124,6 @@ const router = createRouter({
       name: 'privacy',
       component: PrivacyView,
     },
-    {
-      path: '/blog',
-      name: 'blog',
-      component: BlogView,
-    },
-    {
-      path: '/blog/:slug',
-      name: 'blog-post',
-      component: BlogPostView,
-      props: true,
-    },
   ],
 })
 

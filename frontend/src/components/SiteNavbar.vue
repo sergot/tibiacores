@@ -359,13 +359,6 @@ onBeforeUnmount(() => {
             News
           </RouterLink>
           <RouterLink
-            to="/blog"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            @click="isMenuOpen = false"
-          >
-            News
-          </RouterLink>
-          <RouterLink
             to="/about"
             class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             @click="isMenuOpen = false"
