@@ -307,6 +307,10 @@
       "title": "Mensajes de chat"
     },
     "highscores": "Clasificación",
+    "marketplace": {
+      "title": "Mercado",
+      "comingSoon": "Próximamente"
+    },
     "logout": {
       "warning": {
         "cancel": "Cancelar",

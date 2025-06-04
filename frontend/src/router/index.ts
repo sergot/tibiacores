@@ -15,6 +15,8 @@ import PrivacyView from '@/views/PrivacyView.vue'
 import PublicCharacterView from '@/views/PublicCharacterView.vue'
 import HighscoreView from '@/views/HighscoreView.vue'
 import SponsorView from '@/views/SponsorView.vue'
+import BlogView from '@/views/BlogView.vue'
+import BlogPostView from '@/views/BlogPostView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +40,17 @@ const router = createRouter({
       path: '/sponsor',
       name: 'sponsor',
       component: SponsorView,
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: BlogView,
+    },
+    {
+      path: '/blog/:slug',
+      name: 'blog-post',
+      component: BlogPostView,
+      props: true,
     },
     {
       path: '/signin',

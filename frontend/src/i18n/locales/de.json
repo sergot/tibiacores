@@ -307,6 +307,10 @@
       "title": "Chat-Nachrichten"
     },
     "highscores": "Bestenliste",
+    "marketplace": {
+      "title": "Marktplatz",
+      "comingSoon": "Demnächst"
+    },
     "logout": {
       "warning": {
         "cancel": "Abbrechen",
