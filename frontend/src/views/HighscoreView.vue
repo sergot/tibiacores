@@ -1,6 +1,9 @@
 <template>
   <div class="w-full bg-gradient-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-8rem)]">
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Breadcrumb Navigation -->
+      <BreadcrumbNavigation />
+
       <div class="text-center mb-8">
         <h1
           class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 mb-2"
@@ -223,10 +226,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import { useSEO } from '@/composables/useSEO'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const { setHighscoresSEO } = useSEO()
 
 interface Character {
   id: string
@@ -340,6 +346,7 @@ const fetchHighscores = async () => {
 
 // Watch for route changes and refetch data if needed
 onMounted(() => {
+  setHighscoresSEO()
   fetchHighscores()
 })
 

@@ -479,5 +479,16 @@
       },
       "title": "Why Support Us?"
     }
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "blogPost": "Post",
+    "highscores": "Highscores",
+    "characters": "Characters",
+    "character": "Character",
+    "sponsor": "Sponsor",
+    "privacy": "Privacy"
   }
 }

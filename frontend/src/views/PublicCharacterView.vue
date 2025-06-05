@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <BreadcrumbNavigation />
+
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center h-64">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -277,9 +279,12 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import { useSEO } from '@/composables/useSEO'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
 
 const route = useRoute()
 const { t } = useI18n()
+const { setCharacterSEO } = useSEO()
 const characterName = route.params.name as string
 
 interface Character {
@@ -399,6 +404,15 @@ const loadCharacterDetails = async () => {
       }),
     )
     totalCreatures.value = creatures.length
+
+    // Set SEO data for the character page
+    if (character.value) {
+      setCharacterSEO(
+        character.value.name,
+        character.value.world,
+        unlockedCores.value.length
+      )
+    }
   } catch (error) {
     console.error('Failed to load character details:', error)
   }

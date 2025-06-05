@@ -4,15 +4,36 @@
     <loc>https://tibiacores.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <lastmod>2025-06-05</lastmod>
   </url>
   <url>
     <loc>https://tibiacores.com/about</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <lastmod>2025-06-05</lastmod>
+  </url>
+  <url>
+    <loc>https://tibiacores.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2025-06-05</lastmod>
+  </url>
+  <url>
+    <loc>https://tibiacores.com/highscores</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2025-06-05</lastmod>
+  </url>
+  <url>
+    <loc>https://tibiacores.com/sponsor</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <lastmod>2025-06-05</lastmod>
   </url>
   <url>
     <loc>https://tibiacores.com/privacy</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
+    <lastmod>2025-06-05</lastmod>
   </url>
 </urlset> 

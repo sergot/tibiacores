@@ -8,12 +8,21 @@ import { useUserStore } from '../stores/user'
 import { useListsStore } from '../stores/lists'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useSEO } from '@/composables/useSEO'
 
 const userStore = useUserStore()
 const listsStore = useListsStore()
 const { t } = useI18n()
+const { setPageSEO } = useSEO()
 
 onMounted(() => {
+  setPageSEO({
+    title: 'TibiaCores - Tibia Soulcore Management',
+    description: 'Manage and track your Tibia soulcore collection with TibiaCores. Create and share lists of creatures with your friends.',
+    keywords: 'Tibia, soulcore, hunting, gaming, MMORPG, collection, tracking',
+    canonical: `${window.location.origin}/`
+  })
+
   if (userStore.isAuthenticated) {
     listsStore.fetchUserLists()
   }

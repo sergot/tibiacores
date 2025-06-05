@@ -479,5 +479,16 @@
       },
       "title": "¿Por qué apoyarnos?"
     }
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "blog": "Blog",
+    "blogPost": "Publicación",
+    "highscores": "Puntuaciones",
+    "characters": "Personajes",
+    "character": "Personaje",
+    "sponsor": "Patrocinar",
+    "privacy": "Privacidad"
   }
 }

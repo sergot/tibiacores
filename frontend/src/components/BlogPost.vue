@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
+import { useSEO } from '@/composables/useSEO'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
+
+const { setBlogPostSEO } = useSEO()
 
 interface BlogPost {
   id: string
@@ -57,6 +61,9 @@ const loadBlogPost = async () => {
     }
 
     post.value = foundPost
+
+    // Set SEO data for the blog post
+    setBlogPostSEO(foundPost)
 
     // Load the markdown content
     const contentResponse = await fetch(`/assets/blog/posts/${foundPost.date}-${foundPost.id}.md`)
@@ -144,6 +151,9 @@ onMounted(() => {
 
 <template>
   <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Breadcrumb Navigation -->
+    <BreadcrumbNavigation :page-title="post?.title" />
+
     <div class="grid lg:grid-cols-3 gap-8">
       <!-- Main content column -->
       <div class="lg:col-span-2">

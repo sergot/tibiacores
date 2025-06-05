@@ -479,5 +479,16 @@
       },
       "title": "Warum uns unterstützen?"
     }
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "blog": "Blog",
+    "blogPost": "Beitrag",
+    "highscores": "Bestenlisten",
+    "characters": "Charaktere",
+    "character": "Charakter",
+    "sponsor": "Unterstützen",
+    "privacy": "Datenschutz"
   }
 }
