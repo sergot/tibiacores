@@ -62,15 +62,7 @@ export class SitemapGenerator {
     }
   }
 
-  async addPublicCharacters() {
-    try {
-      // Note: This would require an API endpoint to get public character names
-      // For now, we'll skip this since we don't have access to the character list
-      // In a real implementation, you'd fetch from /api/characters/public or similar
-    } catch (error) {
-      console.warn('Failed to load public characters for sitemap:', error)
-    }
-  }
+
 
   generateXML(): string {
     const urlElements = this.urls.map(url => {
@@ -102,7 +94,6 @@ ${urlElements}
     this.urls = [] // Reset URLs
     this.addStaticPages()
     await this.addBlogPosts()
-    await this.addPublicCharacters()
     return this.generateXML()
   }
 }

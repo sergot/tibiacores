@@ -177,8 +177,8 @@ export const performanceUtils = {
 
   // Get connection quality information
   getConnectionInfo() {
-    const connection = (navigator as NavigatorWithConnection).connection || 
-                      (navigator as NavigatorWithConnection).mozConnection || 
+    const connection = (navigator as NavigatorWithConnection).connection ||
+                      (navigator as NavigatorWithConnection).mozConnection ||
                       (navigator as NavigatorWithConnection).webkitConnection
     if (connection) {
       return {

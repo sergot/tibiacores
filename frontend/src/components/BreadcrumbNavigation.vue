@@ -99,7 +99,7 @@ const breadcrumbs = computed((): BreadcrumbItem[] => {
   } else if (route.name === 'public-character') {
     crumbs.push({
       name: t('breadcrumb.characters'),
-      path: '/highscores',
+      path: '/characters/public',
       isLast: false
     })
     crumbs.push({
