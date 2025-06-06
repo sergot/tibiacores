@@ -479,5 +479,19 @@
       },
       "title": "Warum uns unterstützen?"
     }
+  },
+  "language": {
+    "change": "Sprache wechseln"
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "blog": "Blog",
+    "blogPost": "Beitrag",
+    "highscores": "Bestenlisten",
+    "characters": "Charaktere",
+    "character": "Charakter",
+    "sponsor": "Unterstützen",
+    "privacy": "Datenschutz"
   }
 }

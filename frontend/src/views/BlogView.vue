@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import BlogCard from '@/components/BlogCard.vue'
+import { useSEO } from '@/composables/useSEO'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
+
+const { setPageSEO } = useSEO()
 
 interface BlogPost {
   id: string
@@ -38,12 +42,20 @@ const loadBlogPosts = async () => {
 }
 
 onMounted(() => {
+  setPageSEO({
+    title: 'TibiaCores Blog - Latest Updates and Features',
+    description: 'Stay updated with the latest TibiaCores features, improvements, and Tibia soulcore hunting tips. Read our development blog for insights and updates.',
+    keywords: 'TibiaCores, blog, updates, features, Tibia, soulcore, development, tips',
+    canonical: `${window.location.origin}/blog`
+  })
   loadBlogPosts()
 })
 </script>
 
 <template>
   <div class="max-w-7xl mx-auto px-4 py-8">
+    <BreadcrumbNavigation />
+
     <div class="grid lg:grid-cols-3 gap-8">
       <!-- Main content column -->
       <div class="lg:col-span-2">

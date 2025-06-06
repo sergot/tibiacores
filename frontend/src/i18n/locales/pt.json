@@ -479,5 +479,19 @@
       },
       "title": "Por que nos apoiar?"
     }
+  },
+  "language": {
+    "change": "Alterar idioma"
+  },
+  "breadcrumb": {
+    "home": "Início",
+    "about": "Sobre",
+    "blog": "Blog",
+    "blogPost": "Postagem",
+    "highscores": "Pontuações",
+    "characters": "Personagens",
+    "character": "Personagem",
+    "sponsor": "Patrocinar",
+    "privacy": "Privacidade"
   }
 }

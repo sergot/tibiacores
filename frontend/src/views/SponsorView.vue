@@ -1,6 +1,9 @@
 <template>
   <div class="w-full bg-gradient-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-8rem)]">
     <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Breadcrumb Navigation -->
+      <BreadcrumbNavigation />
+
       <div class="text-center mb-12">
         <h1
           class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-rose-600 mb-4"
@@ -177,6 +180,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
 
 const { t } = useI18n({
   useScope: 'global',

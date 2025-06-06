@@ -479,5 +479,19 @@
       },
       "title": "Dlaczego warto nas wspierać?"
     }
+  },
+  "language": {
+    "change": "Zmień język"
+  },
+  "breadcrumb": {
+    "home": "Strona główna",
+    "about": "O nas",
+    "blog": "Blog",
+    "blogPost": "Post",
+    "highscores": "Najlepsze wyniki",
+    "characters": "Postacie",
+    "character": "Postać",
+    "sponsor": "Wsparcie",
+    "privacy": "Prywatność"
   }
 }

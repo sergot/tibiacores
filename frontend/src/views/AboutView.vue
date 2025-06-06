@@ -1,6 +1,8 @@
 <template>
   <div class="w-full bg-gradient-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-8rem)]">
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <BreadcrumbNavigation />
+
       <div class="text-center mb-12">
         <h1
           class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 mb-4"
@@ -367,9 +369,22 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSEO } from '@/composables/useSEO'
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
 
 const { t } = useI18n({
   useScope: 'global',
+})
+const { setPageSEO } = useSEO()
+
+onMounted(() => {
+  setPageSEO({
+    title: 'About TibiaCores - Tibia Soulcore Management',
+    description: 'Learn about TibiaCores, the ultimate tool for managing and tracking your Tibia soulcore collection. Collaborate with friends and optimize your hunting strategies.',
+    keywords: 'Tibia, soulcore, about, features, collaboration, hunting, management',
+    canonical: `${window.location.origin}/about`
+  })
 })
 </script>

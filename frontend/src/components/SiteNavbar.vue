@@ -15,6 +15,7 @@ import {
   ChatBubbleLeftRightIcon,
   BellIcon,
 } from '@heroicons/vue/24/outline'
+import { Menu, MenuButton, MenuItems, MenuItem, Dialog, DialogPanel } from '@headlessui/vue'
 
 const { t } = useI18n()
 const userStore = useUserStore()
@@ -23,8 +24,6 @@ const suggestionsStore = useSuggestionsStore()
 const chatNotificationsStore = useChatNotificationsStore()
 const isMenuOpen = ref(false)
 const showLogoutWarning = ref(false)
-const showSuggestions = ref(false)
-const showChatNotifications = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -51,22 +50,11 @@ const cancelLogout = () => {
   showLogoutWarning.value = false
 }
 
-// Close dropdowns when clicking outside
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  if (!target.closest('.notification-dropdown')) {
-    showSuggestions.value = false
-    showChatNotifications.value = false
-  }
-}
-
 const handleSuggestionClick = () => {
-  showSuggestions.value = false
   suggestionsStore.fetchPendingSuggestions() // Refresh suggestions after navigation
 }
 
 const handleChatNotificationClick = (listId: string) => {
-  showChatNotifications.value = false
   chatNotificationsStore.markAsRead(listId)
 }
 
@@ -75,26 +63,15 @@ const handleMobileChatNotificationClick = (listId: string) => {
   chatNotificationsStore.markAsRead(listId)
 }
 
-const toggleNotificationDropdown = (type: 'suggestions' | 'chat') => {
-  if (type === 'suggestions') {
-    showSuggestions.value = !showSuggestions.value
-    showChatNotifications.value = false
-  } else {
-    showChatNotifications.value = !showChatNotifications.value
-    showSuggestions.value = false
-  }
-}
-
 onMounted(() => {
   if (userStore.isAuthenticated) {
     suggestionsStore.startPolling()
     chatNotificationsStore.startPolling()
   }
-  document.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
+  // Cleanup handled by Headless UI
 })
 </script>
 
@@ -158,13 +135,10 @@ onBeforeUnmount(() => {
             <!-- Notifications Area -->
             <div class="flex items-center space-x-2">
               <!-- Suggestions Notifications -->
-              <div class="notification-dropdown relative" v-if="suggestionsStore.hasPendingSuggestions">
-                <button
-                  @click="toggleNotificationDropdown('suggestions')"
-                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+              <Menu as="div" class="relative" v-if="suggestionsStore.hasPendingSuggestions">
+                <MenuButton
+                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 ui-focus-visible:outline-none ui-focus-visible:ring-2 ui-focus-visible:ring-indigo-500"
                   :aria-label="t('nav.suggestions.aria')"
-                  aria-haspopup="true"
-                  :aria-expanded="showSuggestions"
                 >
                   <BellIcon class="h-6 w-6" />
                   <span
@@ -173,46 +147,56 @@ onBeforeUnmount(() => {
                   >
                     {{ suggestionsStore.totalPendingSuggestions }}
                   </span>
-                </button>
+                </MenuButton>
 
-                <!-- Suggestions Dropdown Menu -->
-                <div
-                  v-if="showSuggestions"
-                  class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
-                  @click.stop
+                <transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
                 >
-                  <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
-                    {{ t('nav.suggestions.title') }}
-                  </div>
-                  <div class="max-h-96 overflow-y-auto">
-                    <RouterLink
-                      v-for="char in suggestionsStore.pendingSuggestions"
-                      :key="char.character_id"
-                      :to="{ name: 'character-details', params: { id: char.character_id } }"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      @click="handleSuggestionClick"
-                    >
-                      <div class="flex justify-between items-center">
-                        <span>{{ char.character_name }}</span>
-                        <span
-                          class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                  <MenuItems
+                    class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200 ui-focus-visible:outline-none"
+                  >
+                    <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
+                      {{ t('nav.suggestions.title') }}
+                    </div>
+                    <div class="max-h-96 overflow-y-auto">
+                      <MenuItem
+                        v-for="char in suggestionsStore.pendingSuggestions"
+                        :key="char.character_id"
+                        v-slot="{ active }"
+                      >
+                        <RouterLink
+                          :to="{ name: 'character-details', params: { id: char.character_id } }"
+                          :class="[
+                            active ? 'bg-gray-100' : '',
+                            'block px-4 py-2 text-sm text-gray-700'
+                          ]"
+                          @click="handleSuggestionClick"
                         >
-                          {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
-                        </span>
-                      </div>
-                    </RouterLink>
-                  </div>
-                </div>
-              </div>
+                          <div class="flex justify-between items-center">
+                            <span>{{ char.character_name }}</span>
+                            <span
+                              class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                            >
+                              {{ t('nav.suggestions.count', { count: char.suggestion_count }) }}
+                            </span>
+                          </div>
+                        </RouterLink>
+                      </MenuItem>
+                    </div>
+                  </MenuItems>
+                </transition>
+              </Menu>
 
               <!-- Chat Notifications -->
-              <div class="notification-dropdown relative" v-if="chatNotificationsStore.hasUnreadMessages">
-                <button
-                  @click="toggleNotificationDropdown('chat')"
-                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+              <Menu as="div" class="relative" v-if="chatNotificationsStore.hasUnreadMessages">
+                <MenuButton
+                  class="relative text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 ui-focus-visible:outline-none ui-focus-visible:ring-2 ui-focus-visible:ring-indigo-500"
                   :aria-label="t('nav.chat.aria')"
-                  aria-haspopup="true"
-                  :aria-expanded="showChatNotifications"
                 >
                   <ChatBubbleLeftRightIcon class="h-6 w-6" />
                   <span
@@ -221,45 +205,58 @@ onBeforeUnmount(() => {
                   >
                     {{ chatNotificationsStore.totalUnreadMessages }}
                   </span>
-                </button>
+                </MenuButton>
 
-                <!-- Chat Notifications Dropdown Menu -->
-                <div
-                  v-if="showChatNotifications"
-                  class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
-                  @click.stop
+                <transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
                 >
-                  <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
-                    {{ t('nav.chat.title') }}
-                  </div>
-                  <div class="max-h-96 overflow-y-auto">
-                    <RouterLink
-                      v-for="notification in chatNotificationsStore.notifications"
-                      :key="notification.list_id"
-                      :to="{ name: 'list-detail', params: { id: notification.list_id } }"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      @click="handleChatNotificationClick(notification.list_id)"
-                    >
-                      <div class="flex flex-col">
-                        <div class="flex justify-between items-center">
-                          <span class="font-medium">{{ notification.list_name }}</span>
-                          <span
-                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                          >
-                            {{ t('nav.chat.count', { count: notification.unread_count }) }}
-                          </span>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">
-                          {{ t('nav.chat.lastMessage', { character: notification.last_character_name }) }}
-                        </div>
-                      </div>
-                    </RouterLink>
-                    <div v-if="chatNotificationsStore.notifications.length === 0" class="px-4 py-3 text-sm text-gray-500">
-                      {{ t('nav.chat.noMessages') }}
+                  <MenuItems
+                    class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200 ui-focus-visible:outline-none"
+                  >
+                    <div class="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200">
+                      {{ t('nav.chat.title') }}
                     </div>
-                  </div>
-                </div>
-              </div>
+                    <div class="max-h-96 overflow-y-auto">
+                      <MenuItem
+                        v-for="notification in chatNotificationsStore.notifications"
+                        :key="notification.list_id"
+                        v-slot="{ active }"
+                      >
+                        <RouterLink
+                          :to="{ name: 'list-detail', params: { id: notification.list_id } }"
+                          :class="[
+                            active ? 'bg-gray-100' : '',
+                            'block px-4 py-2 text-sm text-gray-700'
+                          ]"
+                          @click="handleChatNotificationClick(notification.list_id)"
+                        >
+                          <div class="flex flex-col">
+                            <div class="flex justify-between items-center">
+                              <span class="font-medium">{{ notification.list_name }}</span>
+                              <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                              >
+                                {{ t('nav.chat.count', { count: notification.unread_count }) }}
+                              </span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                              {{ t('nav.chat.lastMessage', { character: notification.last_character_name }) }}
+                            </div>
+                          </div>
+                        </RouterLink>
+                      </MenuItem>
+                      <div v-if="chatNotificationsStore.notifications.length === 0" class="px-4 py-3 text-sm text-gray-500">
+                        {{ t('nav.chat.noMessages') }}
+                      </div>
+                    </div>
+                  </MenuItems>
+                </transition>
+              </Menu>
             </div>
 
             <RouterLink
@@ -396,47 +393,46 @@ onBeforeUnmount(() => {
   </nav>
 
   <!-- Logout warning modal -->
-  <div
-    v-if="showLogoutWarning"
-    class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-  >
-    <div class="bg-white rounded-lg max-w-md w-full p-6">
-      <div class="flex items-start">
-        <div class="flex-shrink-0">
-          <ExclamationTriangleIcon class="h-6 w-6 text-yellow-400" />
-        </div>
-        <div class="ml-3">
-          <h3 class="text-lg font-medium text-gray-900">{{ t('nav.logout.warning.title') }}</h3>
-          <div class="mt-2">
-            <p class="text-sm text-gray-500">
-              {{ t('nav.logout.warning.message') }}
-            </p>
+  <Dialog :open="showLogoutWarning" @close="cancelLogout">
+    <div class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <DialogPanel class="bg-white rounded-lg max-w-md w-full p-6">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <ExclamationTriangleIcon class="h-6 w-6 text-yellow-400" />
           </div>
-          <div class="mt-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-            <RouterLink
-              to="/signup"
-              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
-              @click="showLogoutWarning = false"
-            >
-              {{ t('nav.logout.warning.register') }}
-            </RouterLink>
-            <button
-              type="button"
-              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
-              @click="handleLogout"
-            >
-              {{ t('nav.logout.warning.signOut') }}
-            </button>
-            <button
-              type="button"
-              class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
-              @click="cancelLogout"
-            >
-              {{ t('nav.logout.warning.cancel') }}
-            </button>
+          <div class="ml-3">
+            <h3 class="text-lg font-medium text-gray-900">{{ t('nav.logout.warning.title') }}</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">
+                {{ t('nav.logout.warning.message') }}
+              </p>
+            </div>
+            <div class="mt-4 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+              <RouterLink
+                to="/signup"
+                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
+                @click="showLogoutWarning = false"
+              >
+                {{ t('nav.logout.warning.register') }}
+              </RouterLink>
+              <button
+                type="button"
+                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
+                @click="handleLogout"
+              >
+                {{ t('nav.logout.warning.signOut') }}
+              </button>
+              <button
+                type="button"
+                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-md"
+                @click="cancelLogout"
+              >
+                {{ t('nav.logout.warning.cancel') }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </DialogPanel>
     </div>
-  </div>
+  </Dialog>
 </template>
