@@ -181,38 +181,36 @@
       </div>
 
       <!-- Share Dialog -->
-      <div
-        v-if="showShareDialog"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
-        @click="showShareDialog = false"
-      >
-        <div class="bg-white rounded-xl p-6 max-w-lg w-full" @click.stop>
-          <h3 class="text-xl font-semibold mb-4">{{ t('characterDetails.shareCharacter') }}</h3>
-          <p class="text-gray-600 mb-4">
-            {{ t('characterDetails.shareCharacterDescription') }}
-          </p>
-          <div class="flex gap-2">
-            <input
-              type="text"
-              readonly
-              :value="shareUrl"
-              class="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
-            />
-            <button
-              @click="copyShareUrl"
-              class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              <span
-                v-if="showCopiedMessage"
-                class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+      <Dialog :open="showShareDialog" @close="showShareDialog = false">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <DialogPanel class="bg-white rounded-xl p-6 max-w-lg w-full">
+            <DialogTitle class="text-xl font-semibold mb-4">{{ t('characterDetails.shareCharacter') }}</DialogTitle>
+            <p class="text-gray-600 mb-4">
+              {{ t('characterDetails.shareCharacterDescription') }}
+            </p>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                readonly
+                :value="shareUrl"
+                class="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
+              />
+              <button
+                @click="copyShareUrl"
+                class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
               >
-                {{ t('characterDetails.copied') }}
-              </span>
-              {{ t('characterDetails.copyLink') }}
-            </button>
-          </div>
+                <span
+                  v-if="showCopiedMessage"
+                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+                >
+                  {{ t('characterDetails.copied') }}
+                </span>
+                {{ t('characterDetails.copyLink') }}
+              </button>
+            </div>
+          </DialogPanel>
         </div>
-      </div>
+      </Dialog>
     </div>
   </div>
 </template>
@@ -224,6 +222,7 @@ import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
 import CreatureSelect from '@/components/CreatureSelect.vue'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 
 const route = useRoute()
 const { t } = useI18n()

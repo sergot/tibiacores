@@ -480,6 +480,9 @@
       "title": "¿Por qué apoyarnos?"
     }
   },
+  "language": {
+    "change": "Cambiar idioma"
+  },
   "breadcrumb": {
     "home": "Inicio",
     "about": "Acerca de",

@@ -27,10 +27,24 @@ export default defineConfig({
     // Split chunks for better caching
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['vue', 'vue-router', 'vue-i18n', 'pinia'],
-          ui: ['@headlessui/vue'],
-          utils: ['axios']
+        manualChunks: (id) => {
+          // Group all node_modules dependencies
+          if (id.includes('node_modules')) {
+            // Group Vue ecosystem packages
+            if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router') || id.includes('vue-i18n')) {
+              return 'vendor'
+            }
+            // Group UI packages
+            if (id.includes('@headlessui') || id.includes('@heroicons')) {
+              return 'ui'
+            }
+            // Group axios and other utilities
+            if (id.includes('axios')) {
+              return 'utils'
+            }
+            // Other node_modules packages
+            return 'vendor'
+          }
         }
       }
     },

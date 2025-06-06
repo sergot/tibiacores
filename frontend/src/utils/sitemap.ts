@@ -120,7 +120,12 @@ Disallow: /oauth/
 Disallow: /signin
 Disallow: /signup
 Disallow: /lists/*/join
+Disallow: /characters/claim
+Disallow: /characters/details
 
 # Crawl delay for politeness
-Crawl-delay: 1`
+Crawl-delay: 1
+
+# Allow access to public character profiles and nested paths
+Allow: /characters/public/*`
 }

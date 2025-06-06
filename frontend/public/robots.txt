@@ -19,4 +19,4 @@ Disallow: /characters/details
 Crawl-delay: 1
 
 # Allow access to public character profiles and nested paths
-Allow: /characters/public/ 
+Allow: /characters/public/*

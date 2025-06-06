@@ -480,6 +480,9 @@
       "title": "Dlaczego warto nas wspierać?"
     }
   },
+  "language": {
+    "change": "Zmień język"
+  },
   "breadcrumb": {
     "home": "Strona główna",
     "about": "O nas",

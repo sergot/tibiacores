@@ -6,6 +6,7 @@ import axios from 'axios'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 import { useUserStore } from '@/stores/user'
 import { useChatNotificationsStore } from '@/stores/chatNotifications'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 
 interface ListDetails {
   id: string
@@ -789,38 +790,36 @@ onUnmounted(() => {
     </template>
 
     <!-- Share Dialog -->
-    <div
-      v-if="showShareDialog"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40"
-      @click="showShareDialog = false"
-    >
-      <div class="bg-white rounded-xl p-6 max-w-lg w-full" @click.stop>
-        <h3 class="text-xl font-semibold mb-4">{{ t('listDetail.shareList') }}</h3>
-        <p class="text-gray-600 mb-4">
-          {{ t('listDetail.shareListDescription') }}
-        </p>
-        <div class="flex gap-2">
-          <input
-            type="text"
-            readonly
-            :value="`${origin}/join/${listDetails?.share_code}`"
-            class="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
-          />
-          <button
-            @click="copyShareLink"
-            class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            <span
-              v-if="showCopiedMessage"
-              class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+    <Dialog :open="showShareDialog" @close="showShareDialog = false">
+      <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-40">
+        <DialogPanel class="bg-white rounded-xl p-6 max-w-lg w-full">
+          <DialogTitle class="text-xl font-semibold mb-4">{{ t('listDetail.shareList') }}</DialogTitle>
+          <p class="text-gray-600 mb-4">
+            {{ t('listDetail.shareListDescription') }}
+          </p>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              readonly
+              :value="`${origin}/join/${listDetails?.share_code}`"
+              class="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50"
+            />
+            <button
+              @click="copyShareLink"
+              class="relative px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             >
-              {{ t('listDetail.copied') }}
-            </span>
-            {{ t('listDetail.copyLink') }}
-          </button>
-        </div>
+              <span
+                v-if="showCopiedMessage"
+                class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm"
+              >
+                {{ t('listDetail.copied') }}
+              </span>
+              {{ t('listDetail.copyLink') }}
+            </button>
+          </div>
+        </DialogPanel>
       </div>
-    </div>
+    </Dialog>
   </div>
 
   <!-- Floating Chat Bubble -->

@@ -480,6 +480,9 @@
       "title": "Why Support Us?"
     }
   },
+  "language": {
+    "change": "Change language"
+  },
   "breadcrumb": {
     "home": "Home",
     "about": "About",
