@@ -52,8 +52,8 @@ onMounted(async () => {
       has_email: response.data.has_email,
     })
 
-    // Navigate to profile page
-    router.push('/profile')
+    // Navigate to home page
+    router.push('/')
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 400) {
       error.value = t('oauth.callback.error.missingState')

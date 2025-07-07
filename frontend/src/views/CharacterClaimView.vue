@@ -109,7 +109,7 @@ const checkClaim = async (id?: string) => {
 
     if (response.data.status === 'approved') {
       setTimeout(() => {
-        router.push('/profile')
+        router.push('/')
       }, 2000)
     }
   } catch (err: unknown) {

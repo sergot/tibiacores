@@ -87,17 +87,27 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       const userStore = useUserStore()
       const listsStore = useListsStore()
-
-      // Clear both user data and lists
-      userStore.clearUser()
-      listsStore.clearLists()
-
-      // Only redirect if not already on signin/signup pages
-      const authRoutes = ['/signin', '/signup']
       const currentPath = router.currentRoute.value.path
 
-      if (!authRoutes.includes(currentPath)) {
-        router.push('/signin')
+      // Check if this is likely an authorization error (accessing specific resource)
+      // vs authentication error (invalid/expired token)
+      const isResourceAccessError = currentPath.startsWith('/lists/') ||
+                                   currentPath.startsWith('/characters/') ||
+                                   currentPath.match(/^\/[^\/]+\/[a-f0-9-]{36}/) // UUID pattern
+
+      if (isResourceAccessError && userStore.isAuthenticated) {
+        // For resource access errors, just redirect to home without clearing user data
+        router.push('/')
+      } else {
+        // For authentication errors, clear user data and redirect
+        userStore.clearUser()
+        listsStore.clearLists()
+
+        // Only redirect if not already on signin/signup/home pages
+        const authRoutes = ['/signin', '/signup', '/']
+        if (!authRoutes.includes(currentPath)) {
+          router.push('/')
+        }
       }
     }
     return Promise.reject(error)
