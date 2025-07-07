@@ -87,17 +87,16 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       const userStore = useUserStore()
       const listsStore = useListsStore()
-      const currentPath = router.currentRoute.value.path
+      const currentRoute = router.currentRoute.value
 
       // Check if this is likely an authorization error (accessing specific resource)
       // vs authentication error (invalid/expired token)
-      const isResourceAccessError = currentPath.startsWith('/lists/') ||
-                                   currentPath.startsWith('/characters/') ||
-                                   currentPath.match(/^\/[^\/]+\/[a-f0-9-]{36}/) // UUID pattern
+      const isResourceAccessError = currentRoute.matched.some(record => record.meta.requiresAuth) &&
+                                   userStore.isAuthenticated
 
-      if (isResourceAccessError && userStore.isAuthenticated) {
+      if (isResourceAccessError) {
         // For resource access errors, just redirect to home without clearing user data
-        router.push('/')
+        router.replace('/')
       } else {
         // For authentication errors, clear user data and redirect
         userStore.clearUser()
@@ -105,8 +104,8 @@ axios.interceptors.response.use(
 
         // Only redirect if not already on signin/signup/home pages
         const authRoutes = ['/signin', '/signup', '/']
-        if (!authRoutes.includes(currentPath)) {
-          router.push('/')
+        if (!authRoutes.includes(currentRoute.path)) {
+          router.replace('/')
         }
       }
     }

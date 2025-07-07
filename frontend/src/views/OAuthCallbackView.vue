@@ -53,7 +53,7 @@ onMounted(async () => {
     })
 
     // Navigate to home page
-    router.push('/')
+    router.replace('/')
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 400) {
       error.value = t('oauth.callback.error.missingState')

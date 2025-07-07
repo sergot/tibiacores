@@ -115,7 +115,7 @@ onMounted(async () => {
     isVerifying.value = false
     // Redirect to home after 2 seconds
     setTimeout(() => {
-      router.push('/')
+      router.replace('/')
     }, 2000)
   } catch (err) {
     error.value =
