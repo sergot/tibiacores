@@ -15,17 +15,20 @@ type Querier interface {
 	AddCharacterSoulcore(ctx context.Context, arg AddCharacterSoulcoreParams) error
 	AddListCharacter(ctx context.Context, arg AddListCharacterParams) error
 	AddSoulcoreToList(ctx context.Context, arg AddSoulcoreToListParams) error
+	ConfirmNewsletterSubscription(ctx context.Context, email string) (NewsletterSubscriber, error)
 	CreateAnonymousUser(ctx context.Context, id uuid.UUID) (User, error)
 	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
 	CreateCharacterClaim(ctx context.Context, arg CreateCharacterClaimParams) (CharacterClaim, error)
 	CreateChatMessage(ctx context.Context, arg CreateChatMessageParams) (ListChatMessage, error)
 	CreateList(ctx context.Context, arg CreateListParams) (List, error)
+	CreateNewsletterSubscriber(ctx context.Context, arg CreateNewsletterSubscriberParams) (NewsletterSubscriber, error)
 	CreateSoulcoreSuggestion(ctx context.Context, arg CreateSoulcoreSuggestionParams) error
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeactivateCharacterListMemberships(ctx context.Context, characterID uuid.UUID) error
 	DeleteAllChatMessages(ctx context.Context, listID uuid.UUID) error
 	DeleteChatMessage(ctx context.Context, arg DeleteChatMessageParams) error
 	DeleteSoulcoreSuggestion(ctx context.Context, arg DeleteSoulcoreSuggestionParams) error
+	GetActiveNewsletterSubscribers(ctx context.Context) ([]NewsletterSubscriber, error)
 	GetCharacter(ctx context.Context, id uuid.UUID) (Character, error)
 	GetCharacterByName(ctx context.Context, name string) (Character, error)
 	GetCharacterClaim(ctx context.Context, arg GetCharacterClaimParams) (CharacterClaim, error)
@@ -46,6 +49,8 @@ type Querier interface {
 	GetListSoulcores(ctx context.Context, listID uuid.UUID) ([]GetListSoulcoresRow, error)
 	GetListsByAuthorId(ctx context.Context, authorID uuid.UUID) ([]List, error)
 	GetMembers(ctx context.Context, listID uuid.UUID) ([]ListsUser, error)
+	GetNewsletterSubscriberByEmail(ctx context.Context, email string) (NewsletterSubscriber, error)
+	GetNewsletterSubscriberStats(ctx context.Context) (GetNewsletterSubscriberStatsRow, error)
 	GetPendingClaimsToCheck(ctx context.Context) ([]GetPendingClaimsToCheckRow, error)
 	GetPendingSuggestionsForUser(ctx context.Context, userID uuid.UUID) ([]GetPendingSuggestionsForUserRow, error)
 	GetUserByEmail(ctx context.Context, email pgtype.Text) (User, error)
@@ -57,6 +62,7 @@ type Querier interface {
 	MigrateAnonymousUser(ctx context.Context, arg MigrateAnonymousUserParams) (User, error)
 	RemoveCharacterSoulcore(ctx context.Context, arg RemoveCharacterSoulcoreParams) error
 	RemoveListSoulcore(ctx context.Context, arg RemoveListSoulcoreParams) error
+	UnsubscribeFromNewsletter(ctx context.Context, email string) (NewsletterSubscriber, error)
 	UpdateCharacterOwner(ctx context.Context, arg UpdateCharacterOwnerParams) (Character, error)
 	UpdateClaimStatus(ctx context.Context, arg UpdateClaimStatusParams) (CharacterClaim, error)
 	UpdateSoulcoreStatus(ctx context.Context, arg UpdateSoulcoreStatusParams) error

@@ -19,7 +19,7 @@ import (
 	"github.com/sergot/tibiacores/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Store) {
+func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterService *services.EmailOctopusService, store db.Store) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -34,6 +34,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	claimsHandler := handlers.NewClaimsHandler(store)
 	creaturesHandler := handlers.NewCreaturesHandler(store)
 	charactersHandler := handlers.NewCharactersHandler(store)
+	newsletterHandler := handlers.NewNewsletterHandler(store, newsletterService)
 
 	// Public endpoints
 	api.GET("/creatures", creaturesHandler.GetCreatures)
@@ -62,6 +63,11 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	api.POST("/signup", usersHandler.Signup)
 	api.POST("/login", usersHandler.Login)
 	api.GET("/verify-email", usersHandler.VerifyEmail)
+
+	// Newsletter routes (public)
+	api.POST("/newsletter/subscribe", newsletterHandler.Subscribe)
+	api.POST("/newsletter/unsubscribe", newsletterHandler.Unsubscribe)
+	api.GET("/newsletter/status", newsletterHandler.CheckSubscriptionStatus)
 
 	// OAuth routes
 	authGroup := api.Group("/auth")
@@ -100,6 +106,9 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 
 	protected.POST("/claims", claimsHandler.StartClaim)
 	protected.GET("/claims/:id", claimsHandler.CheckClaim)
+
+	// Newsletter admin endpoints
+	protected.GET("/newsletter/stats", newsletterHandler.GetStats)
 }
 
 func main() {
@@ -174,9 +183,14 @@ func main() {
 		log.Fatal("Error initializing email service: ", err)
 	}
 
+	newsletterService, err := services.NewEmailOctopusService()
+	if err != nil {
+		log.Fatal("Error initializing newsletter service: ", err)
+	}
+
 	store := db.NewStore(connPool)
 
-	setupRoutes(e, emailService, store)
+	setupRoutes(e, emailService, newsletterService, store)
 
 	port := os.Getenv("PORT")
 	if port == "" {

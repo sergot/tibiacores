@@ -493,5 +493,22 @@
     "character": "Personaje",
     "sponsor": "Patrocinar",
     "privacy": "Privacidad"
+  },
+  "newsletter": {
+    "title": "Manténgase actualizado",
+    "description": "¿Quiere ser el primero en saber sobre nuevas funciones y actualizaciones?",
+    "emailPlaceholder": "Ingrese su correo electrónico",
+    "subscribe": "Suscribirse",
+    "subscribing": "Suscribiéndose...",
+    "subscribed": "¡Está suscrito!",
+    "unsubscribe": "Cancelar suscripción",
+    "unsubscribing": "Cancelando...",
+    "messages": {
+      "subscribed": "¡Suscrito exitosamente al boletín!",
+      "alreadySubscribed": "Ya está suscrito a nuestro boletín.",
+      "resubscribed": "¡Bienvenido de vuelta! Ha sido resuscrito.",
+      "unsubscribed": "Se ha cancelado la suscripción a nuestro boletín.",
+      "error": "Algo salió mal. Inténtelo de nuevo."
+    }
   }
 }

@@ -493,5 +493,22 @@
     "character": "Postać",
     "sponsor": "Wsparcie",
     "privacy": "Prywatność"
+  },
+  "newsletter": {
+    "title": "Bądź na bieżąco",
+    "description": "Chcesz być pierwszym, który dowie się o nowych funkcjach i aktualizacjach?",
+    "emailPlaceholder": "Wprowadź swój email",
+    "subscribe": "Subskrybuj",
+    "subscribing": "Subskrybowanie...",
+    "subscribed": "Jesteś subskrybentem!",
+    "unsubscribe": "Anuluj subskrypcję",
+    "unsubscribing": "Anulowanie...",
+    "messages": {
+      "subscribed": "Pomyślnie zapisano do newslettera!",
+      "alreadySubscribed": "Już subskrybujesz nasz newsletter.",
+      "resubscribed": "Witaj ponownie! Zostałeś ponownie zapisany.",
+      "unsubscribed": "Anulowałeś subskrypcję naszego newslettera.",
+      "error": "Coś poszło nie tak. Spróbuj ponownie."
+    }
   }
 }

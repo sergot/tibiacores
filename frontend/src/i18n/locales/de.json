@@ -493,5 +493,22 @@
     "character": "Charakter",
     "sponsor": "Unterstützen",
     "privacy": "Datenschutz"
+  },
+  "newsletter": {
+    "title": "Bleiben Sie auf dem Laufenden",
+    "description": "Möchten Sie als Erster über neue Funktionen und Updates erfahren?",
+    "emailPlaceholder": "E-Mail eingeben",
+    "subscribe": "Abonnieren",
+    "subscribing": "Abonniert...",
+    "subscribed": "Sie sind abonniert!",
+    "unsubscribe": "Abbestellen",
+    "unsubscribing": "Abbestellt...",
+    "messages": {
+      "subscribed": "Erfolgreich für Newsletter angemeldet!",
+      "alreadySubscribed": "Sie haben unseren Newsletter bereits abonniert.",
+      "resubscribed": "Willkommen zurück! Sie wurden wieder angemeldet.",
+      "unsubscribed": "Sie haben sich von unserem Newsletter abgemeldet.",
+      "error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+    }
   }
 }

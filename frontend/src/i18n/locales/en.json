@@ -493,5 +493,22 @@
     "character": "Character",
     "sponsor": "Sponsor",
     "privacy": "Privacy"
+  },
+  "newsletter": {
+    "title": "Stay Updated",
+    "description": "Want to be the first to know about new features and updates?",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "subscribed": "You're subscribed!",
+    "unsubscribe": "Unsubscribe",
+    "unsubscribing": "Unsubscribing...",
+    "messages": {
+      "subscribed": "Successfully subscribed to newsletter!",
+      "alreadySubscribed": "You're already subscribed to our newsletter.",
+      "resubscribed": "Welcome back! You've been resubscribed.",
+      "unsubscribed": "You've been unsubscribed from our newsletter.",
+      "error": "Something went wrong. Please try again."
+    }
   }
 }

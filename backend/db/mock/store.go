@@ -85,6 +85,21 @@ func (mr *MockStoreMockRecorder) AddSoulcoreToList(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddSoulcoreToList", reflect.TypeOf((*MockStore)(nil).AddSoulcoreToList), ctx, arg)
 }
 
+// ConfirmNewsletterSubscription mocks base method.
+func (m *MockStore) ConfirmNewsletterSubscription(ctx context.Context, email string) (db.NewsletterSubscriber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConfirmNewsletterSubscription", ctx, email)
+	ret0, _ := ret[0].(db.NewsletterSubscriber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ConfirmNewsletterSubscription indicates an expected call of ConfirmNewsletterSubscription.
+func (mr *MockStoreMockRecorder) ConfirmNewsletterSubscription(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmNewsletterSubscription", reflect.TypeOf((*MockStore)(nil).ConfirmNewsletterSubscription), ctx, email)
+}
+
 // CreateAnonymousUser mocks base method.
 func (m *MockStore) CreateAnonymousUser(ctx context.Context, id uuid.UUID) (db.User, error) {
 	m.ctrl.T.Helper()
@@ -158,6 +173,21 @@ func (m *MockStore) CreateList(ctx context.Context, arg db.CreateListParams) (db
 func (mr *MockStoreMockRecorder) CreateList(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateList", reflect.TypeOf((*MockStore)(nil).CreateList), ctx, arg)
+}
+
+// CreateNewsletterSubscriber mocks base method.
+func (m *MockStore) CreateNewsletterSubscriber(ctx context.Context, arg db.CreateNewsletterSubscriberParams) (db.NewsletterSubscriber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNewsletterSubscriber", ctx, arg)
+	ret0, _ := ret[0].(db.NewsletterSubscriber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNewsletterSubscriber indicates an expected call of CreateNewsletterSubscriber.
+func (mr *MockStoreMockRecorder) CreateNewsletterSubscriber(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewsletterSubscriber", reflect.TypeOf((*MockStore)(nil).CreateNewsletterSubscriber), ctx, arg)
 }
 
 // CreateSoulcoreSuggestion mocks base method.
@@ -243,6 +273,21 @@ func (m *MockStore) DeleteSoulcoreSuggestion(ctx context.Context, arg db.DeleteS
 func (mr *MockStoreMockRecorder) DeleteSoulcoreSuggestion(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSoulcoreSuggestion", reflect.TypeOf((*MockStore)(nil).DeleteSoulcoreSuggestion), ctx, arg)
+}
+
+// GetActiveNewsletterSubscribers mocks base method.
+func (m *MockStore) GetActiveNewsletterSubscribers(ctx context.Context) ([]db.NewsletterSubscriber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetActiveNewsletterSubscribers", ctx)
+	ret0, _ := ret[0].([]db.NewsletterSubscriber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetActiveNewsletterSubscribers indicates an expected call of GetActiveNewsletterSubscribers.
+func (mr *MockStoreMockRecorder) GetActiveNewsletterSubscribers(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActiveNewsletterSubscribers", reflect.TypeOf((*MockStore)(nil).GetActiveNewsletterSubscribers), ctx)
 }
 
 // GetCharacter mocks base method.
@@ -545,6 +590,36 @@ func (mr *MockStoreMockRecorder) GetMembers(ctx, listID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMembers", reflect.TypeOf((*MockStore)(nil).GetMembers), ctx, listID)
 }
 
+// GetNewsletterSubscriberByEmail mocks base method.
+func (m *MockStore) GetNewsletterSubscriberByEmail(ctx context.Context, email string) (db.NewsletterSubscriber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNewsletterSubscriberByEmail", ctx, email)
+	ret0, _ := ret[0].(db.NewsletterSubscriber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNewsletterSubscriberByEmail indicates an expected call of GetNewsletterSubscriberByEmail.
+func (mr *MockStoreMockRecorder) GetNewsletterSubscriberByEmail(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNewsletterSubscriberByEmail", reflect.TypeOf((*MockStore)(nil).GetNewsletterSubscriberByEmail), ctx, email)
+}
+
+// GetNewsletterSubscriberStats mocks base method.
+func (m *MockStore) GetNewsletterSubscriberStats(ctx context.Context) (db.GetNewsletterSubscriberStatsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNewsletterSubscriberStats", ctx)
+	ret0, _ := ret[0].(db.GetNewsletterSubscriberStatsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNewsletterSubscriberStats indicates an expected call of GetNewsletterSubscriberStats.
+func (mr *MockStoreMockRecorder) GetNewsletterSubscriberStats(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNewsletterSubscriberStats", reflect.TypeOf((*MockStore)(nil).GetNewsletterSubscriberStats), ctx)
+}
+
 // GetPendingClaimsToCheck mocks base method.
 func (m *MockStore) GetPendingClaimsToCheck(ctx context.Context) ([]db.GetPendingClaimsToCheckRow, error) {
 	m.ctrl.T.Helper()
@@ -705,6 +780,21 @@ func (m *MockStore) RemoveListSoulcore(ctx context.Context, arg db.RemoveListSou
 func (mr *MockStoreMockRecorder) RemoveListSoulcore(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveListSoulcore", reflect.TypeOf((*MockStore)(nil).RemoveListSoulcore), ctx, arg)
+}
+
+// UnsubscribeFromNewsletter mocks base method.
+func (m *MockStore) UnsubscribeFromNewsletter(ctx context.Context, email string) (db.NewsletterSubscriber, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnsubscribeFromNewsletter", ctx, email)
+	ret0, _ := ret[0].(db.NewsletterSubscriber)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UnsubscribeFromNewsletter indicates an expected call of UnsubscribeFromNewsletter.
+func (mr *MockStoreMockRecorder) UnsubscribeFromNewsletter(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnsubscribeFromNewsletter", reflect.TypeOf((*MockStore)(nil).UnsubscribeFromNewsletter), ctx, email)
 }
 
 // UpdateCharacterOwner mocks base method.

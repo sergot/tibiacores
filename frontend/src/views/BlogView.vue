@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import BlogCard from '@/components/BlogCard.vue'
 import { useSEO } from '@/composables/useSEO'
 import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
+import NewsletterSignup from '@/components/NewsletterSignup.vue'
 
 const { setPageSEO } = useSEO()
 
@@ -105,29 +106,7 @@ onMounted(() => {
       <div class="lg:col-span-1">
         <div class="sticky top-8 space-y-6">
           <!-- Newsletter signup -->
-          <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-indigo-900 mb-3">Stay Updated</h3>
-            <p class="text-indigo-700 mb-4 text-sm">
-              Want to be the first to know about new features and updates?
-            </p>
-            <div class="mb-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                class="w-full px-3 py-2 border border-indigo-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                disabled
-              />
-            </div>
-            <button
-              class="w-full bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium opacity-50 cursor-not-allowed"
-              disabled
-            >
-              Coming Soon
-            </button>
-            <p class="text-xs text-indigo-600 mt-2">
-              💡 Newsletter signup functionality coming soon!
-            </p>
-          </div>
+          <NewsletterSignup />
 
           <!-- Sponsor section -->
           <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6">

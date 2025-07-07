@@ -19,7 +19,7 @@ const (
 	SoulcoreStatusUnlocked SoulcoreStatus = "unlocked"
 )
 
-func (e *SoulcoreStatus) Scan(src any) error {
+func (e *SoulcoreStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
 		*e = SoulcoreStatus(s)
@@ -37,7 +37,7 @@ type NullSoulcoreStatus struct {
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullSoulcoreStatus) Scan(value any) error {
+func (ns *NullSoulcoreStatus) Scan(value interface{}) error {
 	if value == nil {
 		ns.SoulcoreStatus, ns.Valid = "", false
 		return nil
@@ -130,6 +130,18 @@ type ListsUser struct {
 	UserID      uuid.UUID `json:"user_id"`
 	CharacterID uuid.UUID `json:"character_id"`
 	Active      bool      `json:"active"`
+}
+
+type NewsletterSubscriber struct {
+	ID                    uuid.UUID          `json:"id"`
+	Email                 string             `json:"email"`
+	SubscribedAt          pgtype.Timestamptz `json:"subscribed_at"`
+	Confirmed             bool               `json:"confirmed"`
+	ConfirmedAt           pgtype.Timestamptz `json:"confirmed_at"`
+	UnsubscribedAt        pgtype.Timestamptz `json:"unsubscribed_at"`
+	EmailoctopusContactID pgtype.Text        `json:"emailoctopus_contact_id"`
+	CreatedAt             pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt             pgtype.Timestamptz `json:"updated_at"`
 }
 
 type User struct {
