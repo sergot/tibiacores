@@ -21,18 +21,17 @@ func TestEmailOctopusService_SubscribeToNewsletter(t *testing.T) {
 	}{
 		{
 			name:  "Success - New subscription",
-			email: "test@example.com",
-			mockResponse: func(w http.ResponseWriter, r *http.Request) {
+			email: "test@example.com",			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				// Verify request method and content type
 				assert.Equal(t, "POST", r.Method)
 				assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
-
+				
 				// Verify API key is present
 				assert.Contains(t, r.URL.RawQuery, "api_key=test-api-key")
-
+				
 				// Return successful response
 				w.WriteHeader(http.StatusCreated)
-				w.Write([]byte(`{
+				_, _ = w.Write([]byte(`{
 					"id": "contact-123",
 					"email_address": "test@example.com",
 					"status": "SUBSCRIBED",
@@ -47,7 +46,7 @@ func TestEmailOctopusService_SubscribeToNewsletter(t *testing.T) {
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				// First request returns conflict
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(`{"error": "Member already exists"}`))
+				_, _ = w.Write([]byte(`{"error": "Member already exists"}`))
 			},
 			expectedError: "contact already exists but failed to retrieve",
 		},
@@ -56,7 +55,7 @@ func TestEmailOctopusService_SubscribeToNewsletter(t *testing.T) {
 			email: "test@example.com",
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte(`{"error": "Invalid request"}`))
+				_, _ = w.Write([]byte(`{"error": "Invalid request"}`))
 			},
 			expectedError: "unexpected status code: 400",
 		},
@@ -65,7 +64,7 @@ func TestEmailOctopusService_SubscribeToNewsletter(t *testing.T) {
 			email: "test@example.com",
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusCreated)
-				w.Write([]byte(`invalid json`))
+				_, _ = w.Write([]byte(`invalid json`))
 			},
 			expectedError: "failed to decode response",
 		},
@@ -121,7 +120,7 @@ func TestEmailOctopusService_UnsubscribeFromNewsletter(t *testing.T) {
 				func(w http.ResponseWriter, r *http.Request) {
 					if r.Method == "GET" && strings.Contains(r.URL.Path, "/contacts") {
 						w.WriteHeader(http.StatusOK)
-						w.Write([]byte(`{
+						_, _ = w.Write([]byte(`{
 							"data": [
 								{
 									"id": "contact-123",
@@ -148,7 +147,7 @@ func TestEmailOctopusService_UnsubscribeFromNewsletter(t *testing.T) {
 				func(w http.ResponseWriter, r *http.Request) {
 					if r.Method == "GET" && strings.Contains(r.URL.Path, "/contacts") {
 						w.WriteHeader(http.StatusOK)
-						w.Write([]byte(`{"data": []}`))
+						_, _ = w.Write([]byte(`{"data": []}`))
 					}
 				},
 			},
@@ -187,7 +186,7 @@ func TestEmailOctopusService_GetSubscriberStatus(t *testing.T) {
 			email: "subscribed@example.com",
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(`{
+				_, _ = w.Write([]byte(`{
 					"data": [
 						{
 							"id": "contact-123",
@@ -204,7 +203,7 @@ func TestEmailOctopusService_GetSubscriberStatus(t *testing.T) {
 			email: "unsubscribed@example.com",
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(`{
+				_, _ = w.Write([]byte(`{
 					"data": [
 						{
 							"id": "contact-123",
@@ -221,7 +220,7 @@ func TestEmailOctopusService_GetSubscriberStatus(t *testing.T) {
 			email: "notfound@example.com",
 			mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(`{"data": []}`))
+				_, _ = w.Write([]byte(`{"data": []}`))
 			},
 			expectedError: "contact not found",
 		},

@@ -260,6 +260,7 @@ The application includes several custom middleware components:
 3. Implement backend handlers
 4. Create or update frontend components
 5. Add translations for any new UI text
+6. **Run quality checks**: Always run `golangci-lint run`, `npm run lint`, and `npm run build` before committing
 
 ### Database Migrations
 When modifying the database schema:
@@ -328,3 +329,38 @@ The application uses Pinia for state management with the following key stores:
 ## Testing
 
 The backend includes unit tests for handlers and services. Tests use mocks for database operations.
+
+## Code Quality and Testing
+
+Before committing any changes to the codebase, contributors must run the following commands to ensure code quality and prevent build failures:
+
+### Backend Quality Checks
+From the `backend/` directory:
+```bash
+# Run Go linter
+golangci-lint run
+
+# Run all Go tests
+go test ./...
+```
+
+### Frontend Quality Checks
+From the `frontend/` directory:
+```bash
+# Run TypeScript/Vue linter
+npm run lint
+
+# Build the frontend to check for compilation errors
+npm run build
+
+# Check translations for completeness and consistency
+npm run check-translations
+```
+
+### Required Tools
+- **golangci-lint**: Install following [official instructions](https://golangci-lint.run/usage/install/)
+- **Node.js**: Required for frontend development and build processes
+- **Docker Compose**: For running the full development environment
+
+### Continuous Integration
+These same checks are run in CI/CD pipelines. Failing any of these checks will prevent code from being merged.
