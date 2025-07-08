@@ -132,10 +132,15 @@ const subscribe = async () => {
       showMessage(t('newsletter.messages.resubscribed'), 'success')
       isSubscribed.value = true
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Newsletter subscription error:', error)
-    if (error.response?.data?.message) {
-      showMessage(error.response.data.message, 'error')
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { message?: string } } }
+      if (axiosError.response?.data?.message) {
+        showMessage(axiosError.response.data.message, 'error')
+      } else {
+        showMessage(t('newsletter.messages.error'), 'error')
+      }
     } else {
       showMessage(t('newsletter.messages.error'), 'error')
     }
@@ -155,10 +160,15 @@ const unsubscribe = async () => {
       showMessage(t('newsletter.messages.unsubscribed'), 'success')
       isSubscribed.value = false
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Newsletter unsubscription error:', error)
-    if (error.response?.data?.message) {
-      showMessage(error.response.data.message, 'error')
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { message?: string } } }
+      if (axiosError.response?.data?.message) {
+        showMessage(axiosError.response.data.message, 'error')
+      } else {
+        showMessage(t('newsletter.messages.error'), 'error')
+      }
     } else {
       showMessage(t('newsletter.messages.error'), 'error')
     }
