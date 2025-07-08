@@ -21,14 +21,14 @@ func TestEmailOctopusService_SubscribeToNewsletter(t *testing.T) {
 	}{
 		{
 			name:  "Success - New subscription",
-			email: "test@example.com",			mockResponse: func(w http.ResponseWriter, r *http.Request) {
+			email: "test@example.com", mockResponse: func(w http.ResponseWriter, r *http.Request) {
 				// Verify request method and content type
 				assert.Equal(t, "POST", r.Method)
 				assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
-				
+
 				// Verify API key is present
 				assert.Contains(t, r.URL.RawQuery, "api_key=test-api-key")
-				
+
 				// Return successful response
 				w.WriteHeader(http.StatusCreated)
 				_, _ = w.Write([]byte(`{
