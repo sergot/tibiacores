@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -30,7 +29,7 @@ func NewNewsletterHandler(newsletterService services.NewsletterServiceInterface)
 // Subscribe subscribes an email to the newsletter
 func (h *NewsletterHandler) Subscribe(c echo.Context) error {
 	var req NewsletterSubscribeRequest
-	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		return apperror.ValidationError("Invalid request body", err).
 			WithDetails(&apperror.ValidationErrorDetails{
 				Field:  "body",

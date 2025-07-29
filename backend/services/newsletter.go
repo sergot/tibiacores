@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/mail"
 	"os"
+	"strings"
 )
 
 type NewsletterServiceInterface interface {
@@ -50,6 +52,11 @@ func NewNewsletterService() (*NewsletterService, error) {
 }
 
 func (s *NewsletterService) Subscribe(ctx context.Context, email string) error {
+	// Validate email parameter
+	if err := s.validateEmail(email); err != nil {
+		return fmt.Errorf("invalid email: %w", err)
+	}
+
 	subscribeReq := EmailOctopusSubscribeRequest{
 		APIKey: s.apiKey,
 		Email:  email,
@@ -90,4 +97,20 @@ func (s *NewsletterService) Subscribe(ctx context.Context, email string) error {
 	}
 
 	return fmt.Errorf("emailoctopus error: %s - %s", errorResp.Error.Code, errorResp.Error.Message)
+}
+
+// validateEmail validates the email parameter for basic format and emptiness
+func (s *NewsletterService) validateEmail(email string) error {
+	// Check for empty or whitespace-only email
+	if strings.TrimSpace(email) == "" {
+		return fmt.Errorf("email cannot be empty")
+	}
+
+	// Use net/mail to validate email format
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		return fmt.Errorf("invalid email format: %w", err)
+	}
+
+	return nil
 }
