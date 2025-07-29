@@ -19,7 +19,7 @@ import (
 	"github.com/sergot/tibiacores/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Store) {
+func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterService *services.NewsletterService, store db.Store) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -34,11 +34,13 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, store db.Sto
 	claimsHandler := handlers.NewClaimsHandler(store)
 	creaturesHandler := handlers.NewCreaturesHandler(store)
 	charactersHandler := handlers.NewCharactersHandler(store)
+	newsletterHandler := handlers.NewNewsletterHandler(newsletterService)
 
 	// Public endpoints
 	api.GET("/creatures", creaturesHandler.GetCreatures)
 	api.GET("/characters/public/:name", usersHandler.GetCharacterPublic)
 	api.GET("/highscores", charactersHandler.GetHighscores)
+	api.POST("/newsletter/subscribe", newsletterHandler.Subscribe)
 
 	// Start background claim checker
 	go func() {
@@ -174,9 +176,14 @@ func main() {
 		log.Fatal("Error initializing email service: ", err)
 	}
 
+	newsletterService, err := services.NewNewsletterService()
+	if err != nil {
+		log.Fatal("Error initializing newsletter service: ", err)
+	}
+
 	store := db.NewStore(connPool)
 
-	setupRoutes(e, emailService, store)
+	setupRoutes(e, emailService, newsletterService, store)
 
 	port := os.Getenv("PORT")
 	if port == "" {

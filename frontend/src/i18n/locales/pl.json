@@ -483,6 +483,16 @@
   "language": {
     "change": "Zmień język"
   },
+  "newsletter": {
+    "title": "Bądź na bieżąco",
+    "subtitle": "Chcesz być pierwszym, który dowie się o nowych funkcjach i aktualizacjach?",
+    "emailPlaceholder": "Wprowadź swój email",
+    "subscribe": "Zapisz się",
+    "subscribing": "Zapisywanie...",
+    "success": "Pomyślnie zapisano!",
+    "successMessage": "Dziękujemy za zapisanie się do naszego newslettera.",
+    "error": "Nie udało się zapisać. Spróbuj ponownie."
+  },
   "breadcrumb": {
     "home": "Strona główna",
     "about": "O nas",

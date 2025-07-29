@@ -483,6 +483,16 @@
   "language": {
     "change": "Sprache wechseln"
   },
+  "newsletter": {
+    "title": "Bleiben Sie auf dem Laufenden",
+    "subtitle": "Möchten Sie als Erster über neue Funktionen und Updates informiert werden?",
+    "emailPlaceholder": "E-Mail eingeben",
+    "subscribe": "Abonnieren",
+    "subscribing": "Abonnieren...",
+    "success": "Erfolgreich abonniert!",
+    "successMessage": "Vielen Dank für das Abonnieren unseres Newsletters.",
+    "error": "Abonnement fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
   "breadcrumb": {
     "home": "Startseite",
     "about": "Über uns",
