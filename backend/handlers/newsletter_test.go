@@ -1,4 +1,4 @@
-package handlers
+package handlers_test
 
 import (
 	"bytes"
@@ -7,10 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
+	"github.com/sergot/tibiacores/backend/handlers"
+	"github.com/sergot/tibiacores/backend/pkg/validator"
 	"github.com/sergot/tibiacores/backend/services/mock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestNewsletterHandler_Subscribe(t *testing.T) {
@@ -20,12 +22,12 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 		setupMocks    func(newsletterService *mock.MockNewsletterServiceInterface)
 		expectedCode  int
 		expectedError string
-		checkResponse func(t *testing.T, response NewsletterSubscribeResponse)
+		checkResponse func(t *testing.T, response handlers.NewsletterSubscribeResponse)
 	}{
 		{
 			name: "success",
 			setupRequest: func() *bytes.Buffer {
-				reqBody := NewsletterSubscribeRequest{
+				reqBody := handlers.NewsletterSubscribeRequest{
 					Email: "test@example.com",
 				}
 				jsonBody, _ := json.Marshal(reqBody)
@@ -35,14 +37,14 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 				newsletterService.EXPECT().Subscribe(gomock.Any(), "test@example.com").Return(nil)
 			},
 			expectedCode: http.StatusOK,
-			checkResponse: func(t *testing.T, response NewsletterSubscribeResponse) {
+			checkResponse: func(t *testing.T, response handlers.NewsletterSubscribeResponse) {
 				assert.Equal(t, "Successfully subscribed to newsletter", response.Message)
 			},
 		},
 		{
 			name: "invalid email",
 			setupRequest: func() *bytes.Buffer {
-				reqBody := NewsletterSubscribeRequest{
+				reqBody := handlers.NewsletterSubscribeRequest{
 					Email: "invalid-email",
 				}
 				jsonBody, _ := json.Marshal(reqBody)
@@ -57,7 +59,7 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 		{
 			name: "empty email",
 			setupRequest: func() *bytes.Buffer {
-				reqBody := NewsletterSubscribeRequest{
+				reqBody := handlers.NewsletterSubscribeRequest{
 					Email: "",
 				}
 				jsonBody, _ := json.Marshal(reqBody)
@@ -83,7 +85,7 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 		{
 			name: "service error",
 			setupRequest: func() *bytes.Buffer {
-				reqBody := NewsletterSubscribeRequest{
+				reqBody := handlers.NewsletterSubscribeRequest{
 					Email: "test@example.com",
 				}
 				jsonBody, _ := json.Marshal(reqBody)
@@ -108,10 +110,11 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 			tc.setupMocks(newsletterService)
 
 			// Create handler
-			handler := NewNewsletterHandler(newsletterService)
+			handler := handlers.NewNewsletterHandler(newsletterService)
 
 			// Setup HTTP request/response
 			e := echo.New()
+			e.Validator = validator.New()
 			req := httptest.NewRequest(http.MethodPost, "/newsletter/subscribe", tc.setupRequest())
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
@@ -129,7 +132,7 @@ func TestNewsletterHandler_Subscribe(t *testing.T) {
 				assert.Equal(t, tc.expectedCode, rec.Code)
 
 				if tc.checkResponse != nil {
-					var response NewsletterSubscribeResponse
+					var response handlers.NewsletterSubscribeResponse
 					err := json.Unmarshal(rec.Body.Bytes(), &response)
 					assert.NoError(t, err)
 					tc.checkResponse(t, response)
