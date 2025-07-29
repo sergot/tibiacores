@@ -14,8 +14,8 @@ type NewsletterServiceInterface interface {
 }
 
 type NewsletterService struct {
-	apiKey string
-	listID string
+	apiKey  string
+	listID  string
 	baseURL string
 }
 
@@ -61,7 +61,7 @@ func (s *NewsletterService) Subscribe(ctx context.Context, email string) error {
 	}
 
 	url := fmt.Sprintf("%s/lists/%s/contacts", s.baseURL, s.listID)
-	
+
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
@@ -74,7 +74,9 @@ func (s *NewsletterService) Subscribe(ctx context.Context, email string) error {
 	if err != nil {
 		return fmt.Errorf("failed to send request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close() // Ignore close error as it's a cleanup operation
+	}()
 
 	// EmailOctopus returns 200 for success, 409 for already subscribed
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusConflict {
