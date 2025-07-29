@@ -483,6 +483,16 @@
   "language": {
     "change": "Alterar idioma"
   },
+  "newsletter": {
+    "title": "Fique atualizado",
+    "subtitle": "Quer ser o primeiro a saber sobre novos recursos e atualizações?",
+    "emailPlaceholder": "Digite seu email",
+    "subscribe": "Inscrever-se",
+    "subscribing": "Inscrevendo...",
+    "success": "Inscrito com sucesso!",
+    "successMessage": "Obrigado por se inscrever em nosso boletim informativo.",
+    "error": "Falha ao se inscrever. Tente novamente."
+  },
   "breadcrumb": {
     "home": "Início",
     "about": "Sobre",

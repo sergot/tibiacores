@@ -483,6 +483,16 @@
   "language": {
     "change": "Change language"
   },
+  "newsletter": {
+    "title": "Stay Updated",
+    "subtitle": "Want to be the first to know about new features and updates?",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "success": "Successfully subscribed!",
+    "successMessage": "Thank you for subscribing to our newsletter.",
+    "error": "Failed to subscribe. Please try again."
+  },
   "breadcrumb": {
     "home": "Home",
     "about": "About",
