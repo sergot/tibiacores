@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"runtime/debug"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,7 +21,14 @@ import (
 )
 
 func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterService *services.NewsletterService, store db.Store, logger *slog.Logger) {
+	// Create rate limiters
+	globalLimiter := customMiddleware.NewIPRateLimiter(20, 40)  // 20 req/sec, burst of 40
+	authLimiter := customMiddleware.NewIPRateLimiter(5.0/60, 5) // 5 req/min, burst of 5
+
 	api := e.Group("/api")
+
+	// Apply global rate limiting to all API routes
+	api.Use(customMiddleware.RateLimiterMiddleware(globalLimiter))
 
 	// Public endpoints (no auth required)
 	api.GET("/health", func(c echo.Context) error {
@@ -40,10 +48,19 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterSe
 	api.GET("/creatures", creaturesHandler.GetCreatures)
 	api.GET("/characters/public/:name", usersHandler.GetCharacterPublic)
 	api.GET("/highscores", charactersHandler.GetHighscores)
-	api.POST("/newsletter/subscribe", newsletterHandler.Subscribe)
+	api.POST("/newsletter/subscribe", newsletterHandler.Subscribe, customMiddleware.RateLimiterMiddleware(authLimiter))
 
-	// Start background claim checker
+	// Start background claim checker with panic recovery
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.Error("claim processor panicked",
+					"panic", r,
+					"stack", string(debug.Stack()),
+				)
+			}
+		}()
+
 		// TODO: Add Distributed Lock (e.g. Postgres Advisory Lock) here for horizontal scaling support
 		ticker := time.NewTicker(15 * time.Minute)
 		defer ticker.Stop()
@@ -62,9 +79,9 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterSe
 	optionalAuth.POST("/lists/join/:share_code", listsHandler.JoinList)
 	optionalAuth.POST("/lists", listsHandler.CreateList)
 
-	// User management routes
-	api.POST("/signup", usersHandler.Signup)
-	api.POST("/login", usersHandler.Login)
+	// User management routes (rate limited)
+	api.POST("/signup", usersHandler.Signup, customMiddleware.RateLimiterMiddleware(authLimiter))
+	api.POST("/login", usersHandler.Login, customMiddleware.RateLimiterMiddleware(authLimiter))
 	api.GET("/verify-email", usersHandler.VerifyEmail)
 
 	// OAuth routes
@@ -103,7 +120,7 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterSe
 	protected.POST("/characters/:id/suggestions/dismiss", listsHandler.DismissSoulcoreSuggestion)
 
 	protected.POST("/claims", claimsHandler.StartClaim)
-	protected.GET("/claims/:id", claimsHandler.CheckClaim)
+	protected.GET("/claims/:id", claimsHandler.CheckClaim, customMiddleware.RateLimiterMiddleware(authLimiter))
 }
 
 func main() {

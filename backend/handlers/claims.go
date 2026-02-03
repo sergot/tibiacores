@@ -306,6 +306,7 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 }
 
 // ProcessPendingClaims processes all pending claims that are due for check
+// Note: Uses context.Background() as this runs in a background goroutine independent of HTTP requests
 func (h *ClaimsHandler) ProcessPendingClaims() error {
 	ctx := context.Background()
 

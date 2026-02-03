@@ -5,9 +5,21 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/sergot/tibiacores/backend/pkg/apperror"
 )
+
+// httpClient is a shared HTTP client with proper timeout and transport configuration
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+	Transport: &http.Transport{
+		MaxIdleConns:        100,
+		MaxIdleConnsPerHost: 10,
+		IdleConnTimeout:     90 * time.Second,
+		TLSHandshakeTimeout: 10 * time.Second,
+	},
+}
 
 // TibiaDataServiceInterface defines the methods for interacting with TibiaData API
 type TibiaDataServiceInterface interface {
@@ -20,6 +32,7 @@ var _ TibiaDataServiceInterface = (*TibiaDataService)(nil)
 
 type TibiaDataService struct {
 	baseURL string
+	client  *http.Client
 }
 
 type TibiaCharacter struct {
@@ -37,11 +50,12 @@ type TibiaDataResponse struct {
 func NewTibiaDataService() *TibiaDataService {
 	return &TibiaDataService{
 		baseURL: "https://api.tibiadata.com/v4",
+		client:  httpClient,
 	}
 }
 
 func (s *TibiaDataService) GetCharacter(name string) (*TibiaCharacter, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/character/%s", s.baseURL, name))
+	resp, err := s.client.Get(fmt.Sprintf("%s/character/%s", s.baseURL, name))
 	if err != nil {
 		return nil, apperror.ExternalServiceError("failed to reach tibiadata", err)
 	}

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"time"
@@ -86,7 +85,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 			})
 	}
 
-	ctx := context.Background()
+	ctx := c.Request().Context()
 
 	// Exchange code for token
 	userInfo, err := h.oauthProvider.ExchangeCode(provider, code)

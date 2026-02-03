@@ -9,6 +9,7 @@ import (
 	"net/mail"
 	"os"
 	"strings"
+	"time"
 )
 
 type NewsletterServiceInterface interface {
@@ -76,7 +77,15 @@ func (s *NewsletterService) Subscribe(ctx context.Context, email string) error {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 10,
+			IdleConnTimeout:     90 * time.Second,
+			TLSHandshakeTimeout: 10 * time.Second,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send request: %w", err)

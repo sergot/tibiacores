@@ -3,7 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/mailgun/mailgun-go/v5"
 )
@@ -36,6 +38,17 @@ func NewEmailService() (*EmailService, error) {
 
 	// Create new Mailgun client using only API key (v5 standard)
 	mg := mailgun.NewMailgun(apiKey)
+
+	// Configure HTTP client with proper timeouts
+	mg.SetHTTPClient(&http.Client{
+		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 10,
+			IdleConnTimeout:     90 * time.Second,
+			TLSHandshakeTimeout: 10 * time.Second,
+		},
+	})
 
 	// Set EU endpoint for non-production environments
 	err := mg.SetAPIBase(mailgun.APIBaseEU)
