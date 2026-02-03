@@ -64,6 +64,7 @@ client := &http.Client{
 - **Mailgun**: Hardcoded to EU region (`mailgun.APIBaseEU`) - credentials must match
 - **TibiaData**: Rate limits apply, handle gracefully
 - **EmailOctopus**: Newsletter subscriptions
+- **OAuth (Discord/Google)**: State cookie uses `SameSite=None` for cross-site redirects; `Secure` flag only in production
 
 ### Background Jobs
 - Current implementation: Single-instance claim checker (15-min interval)
