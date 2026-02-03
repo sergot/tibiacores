@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"os"
 	"time"
 
@@ -19,7 +19,7 @@ import (
 	"github.com/sergot/tibiacores/backend/services"
 )
 
-func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterService *services.NewsletterService, store db.Store) {
+func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterService *services.NewsletterService, store db.Store, logger *slog.Logger) {
 	api := e.Group("/api")
 
 	// Public endpoints (no auth required)
@@ -44,12 +44,14 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterSe
 
 	// Start background claim checker
 	go func() {
+		// TODO: Add Distributed Lock (e.g. Postgres Advisory Lock) here for horizontal scaling support
 		ticker := time.NewTicker(15 * time.Minute)
 		defer ticker.Stop()
 
 		for range ticker.C {
+			logger.Info("starting claim check cycle")
 			if err := claimsHandler.ProcessPendingClaims(); err != nil {
-				log.Printf("Error processing pending claims: %v", err)
+				logger.Error("error processing pending claims", "error", err)
 			}
 		}
 	}()
@@ -105,12 +107,16 @@ func setupRoutes(e *echo.Echo, emailService *services.EmailService, newsletterSe
 }
 
 func main() {
+	// Initialize structured logger
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	ctx := context.Background()
 
 	// Load .env file if it exists, ignore error in production
 	if os.Getenv("APP_ENV") != "production" {
 		if err := godotenv.Load(); err != nil {
-			log.Printf("Warning: .env file not found: %v", err)
+			logger.Warn("Warning: .env file not found", "error", err)
 		}
 	}
 
@@ -120,25 +126,29 @@ func main() {
 	// Required environment variables
 	dbUrl := os.Getenv("DB_URL")
 	if dbUrl == "" {
-		log.Fatal("DB_URL environment variable is required")
+		logger.Error("DB_URL environment variable is required")
+		os.Exit(1)
 	}
 
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
 		if os.Getenv("APP_ENV") == "production" {
-			log.Fatal("FRONTEND_URL environment variable is required in production")
+			logger.Error("FRONTEND_URL environment variable is required in production")
+			os.Exit(1)
 		}
 		frontendURL = "http://localhost:5173" // Default for development
 	}
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" && os.Getenv("APP_ENV") == "production" {
-		log.Fatal("JWT_SECRET environment variable is required in production")
+		logger.Error("JWT_SECRET environment variable is required in production")
+		os.Exit(1)
 	}
 
 	connPool, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
-		log.Fatal("Error connecting to the database: ", err)
+		logger.Error("Error connecting to the database", "error", err)
+		os.Exit(1)
 	}
 	defer connPool.Close()
 
@@ -147,24 +157,26 @@ func main() {
 	// Register validator
 	e.Validator = validator.New()
 
-	// CORS middleware
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{frontendURL},
-		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowMethods:  []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
-		ExposeHeaders: []string{"X-Auth-Token"}, // Allow frontend to read X-Auth-Token header
-	}))
-
-	// Request ID middleware
+	// Modern Security & Observability Middleware
+	e.Use(middleware.Recover())
+	e.Use(customMiddleware.SlogLogger(logger)) // Use custom slog logger
 	e.Use(middleware.RequestID())
 
-	// Logger middleware with request ID
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "${time_rfc3339} ${id} ${remote_ip} ${method} ${uri} ${status} ${latency_human}\n",
+	// Security: CORS to allow frontend access
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"http://localhost:5173", "https://tibiacores.com", frontendURL},
+		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Request-ID"},
+		AllowMethods:  []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
+		ExposeHeaders: []string{"X-Auth-Token"},
 	}))
 
+	// Security: Limit body size to prevent DoS (2MB limit)
+	e.Use(middleware.BodyLimit("2M"))
+
+	// Security: Add secure headers
+	e.Use(middleware.Secure())
+
 	// Custom error handling middleware
-	e.Use(customMiddleware.RecoverWithConfig())
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		// Use our custom error response handler
 		httpErr := apperror.ErrorResponse(err)
@@ -173,21 +185,27 @@ func main() {
 
 	emailService, err := services.NewEmailService()
 	if err != nil {
-		log.Fatal("Error initializing email service: ", err)
+		logger.Error("Error initializing email service", "error", err)
+		os.Exit(1)
 	}
 
 	newsletterService, err := services.NewNewsletterService()
 	if err != nil {
-		log.Fatal("Error initializing newsletter service: ", err)
+		logger.Error("Error initializing newsletter service", "error", err)
+		os.Exit(1)
 	}
 
 	store := db.NewStore(connPool)
 
-	setupRoutes(e, emailService, newsletterService, store)
+	setupRoutes(e, emailService, newsletterService, store, logger)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	e.Logger.Fatal(e.Start(":" + port))
+	// Start server with error logging
+	if err := e.Start(":" + port); err != nil {
+		logger.Error("Server shutdown", "error", err)
+		os.Exit(1)
+	}
 }

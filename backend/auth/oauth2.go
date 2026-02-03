@@ -7,11 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
-	"sync"
-	"time"
 
 	"golang.org/x/oauth2"
 )
@@ -20,11 +19,6 @@ var (
 	frontendURL = os.Getenv("FRONTEND_URL")
 	// OAuth2 configuration - will be initialized in init()
 	oauthConfigs = make(map[string]*oauth2.Config)
-	// Map to store state strings temporarily
-	stateStore = struct {
-		sync.RWMutex
-		states map[string]time.Time
-	}{states: make(map[string]time.Time)}
 )
 
 type OAuthUserInfo struct {
@@ -54,76 +48,39 @@ func init() {
 	}
 }
 
-// generateState creates a new random state string and stores it
-func generateState() (string, error) {
+// GenerateState creates a new random state string for CSRF protection
+func GenerateState() (string, error) {
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
-	state := base64.URLEncoding.EncodeToString(b)
-
-	stateStore.Lock()
-	stateStore.states[state] = time.Now().Add(5 * time.Minute)
-	stateStore.Unlock()
-
-	// Clean up expired states
-	go cleanupExpiredStates()
-
-	return state, nil
+	return base64.URLEncoding.EncodeToString(b), nil
 }
 
-// cleanupExpiredStates removes expired state strings
-func cleanupExpiredStates() {
-	stateStore.Lock()
-	defer stateStore.Unlock()
-
-	now := time.Now()
-	for state, expiry := range stateStore.states {
-		if now.After(expiry) {
-			delete(stateStore.states, state)
-		}
-	}
-}
-
-// GetOAuthRedirect returns the OAuth2 redirect URL for the specified provider
-func GetOAuthRedirect(provider string) (string, error) {
+// GetOAuthRedirect returns the OAuth2 redirect URL and the state for the specified provider
+func GetOAuthRedirect(provider string) (string, string, error) {
 	config, exists := oauthConfigs[provider]
 	if !exists {
-		return "", fmt.Errorf("unsupported OAuth provider: %s", provider)
+		return "", "", fmt.Errorf("unsupported OAuth provider: %s", provider)
 	}
 
-	state, err := generateState()
+	state, err := GenerateState()
 	if err != nil {
-		return "", fmt.Errorf("failed to generate state: %w", err)
+		return "", "", fmt.Errorf("failed to generate state: %w", err)
 	}
 
-	return config.AuthCodeURL(state), nil
+	return config.AuthCodeURL(state), state, nil
 }
 
 // ValidateOAuthState validates the state parameter to prevent CSRF
-func ValidateOAuthState(state string) bool {
-	stateStore.RLock()
-	expiry, exists := stateStore.states[state]
-	stateStore.RUnlock()
-
-	if !exists {
+// using the Double Submit Cookie pattern (cookie state vs query param state)
+func ValidateOAuthState(cookieState, queryState string) bool {
+	if cookieState == "" || queryState == "" {
 		return false
 	}
-
-	// Check if state has expired
-	if time.Now().After(expiry) {
-		stateStore.Lock()
-		delete(stateStore.states, state)
-		stateStore.Unlock()
-		return false
-	}
-
-	// Remove the used state
-	stateStore.Lock()
-	delete(stateStore.states, state)
-	stateStore.Unlock()
-
-	return true
+	// Constant time comparison could be used here but for random strings simple equality is usually fine
+	// to prevent timing attacks on simpler secrets. For this non-crypto-key usage:
+	return cookieState == queryState
 }
 
 // PrepareOAuthProviders sets up OAuth2 configurations for supported providers
@@ -182,7 +139,7 @@ func getDiscordUserInfo(token *oauth2.Token) (*OAuthUserInfo, error) {
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("failed to close response body: %v\n", err)
+			slog.Error("failed to close response body", "error", err)
 		}
 	}()
 
@@ -218,7 +175,7 @@ func getGoogleUserInfo(token *oauth2.Token) (*OAuthUserInfo, error) {
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("failed to close response body: %v\n", err)
+			slog.Error("failed to close response body", "error", err)
 		}
 	}()
 
@@ -270,15 +227,15 @@ func GetFrontendCallbackURL(token string, userID string) string {
 
 // OAuthProvider defines the interface for OAuth operations
 type OAuthProvider interface {
-	ValidateState(state string) bool
+	ValidateState(cookieState, queryState string) bool
 	ExchangeCode(provider string, code string) (*OAuthUserInfo, error)
 }
 
 // DefaultOAuthProvider implements OAuthProvider using the standard OAuth flow
 type DefaultOAuthProvider struct{}
 
-func (p *DefaultOAuthProvider) ValidateState(state string) bool {
-	return ValidateOAuthState(state)
+func (p *DefaultOAuthProvider) ValidateState(cookieState, queryState string) bool {
+	return ValidateOAuthState(cookieState, queryState)
 }
 
 func (p *DefaultOAuthProvider) ExchangeCode(provider string, code string) (*OAuthUserInfo, error) {
@@ -293,8 +250,8 @@ func NewDefaultOAuthProvider() OAuthProvider {
 var defaultProvider = NewDefaultOAuthProvider()
 
 // These functions use the default provider for backward compatibility
-func ValidateOAuthStateWithProvider(state string) bool {
-	return defaultProvider.ValidateState(state)
+func ValidateOAuthStateWithProvider(cookieState, queryState string) bool {
+	return defaultProvider.ValidateState(cookieState, queryState)
 }
 
 func ExchangeCodeForUserWithProvider(provider string, code string) (*OAuthUserInfo, error) {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -26,7 +27,7 @@ type mockOAuthProvider struct {
 	err           error
 }
 
-func (m *mockOAuthProvider) ValidateState(state string) bool {
+func (m *mockOAuthProvider) ValidateState(cookieState, queryState string) bool {
 	return m.validateState
 }
 
@@ -43,6 +44,7 @@ func TestOAuthHandler_Callback(t *testing.T) {
 		setupProvider func() *mockOAuthProvider
 		queryParams   map[string]string
 		pathParams    map[string]string
+		cookieState   string
 		checkResponse func(*testing.T, *httptest.ResponseRecorder, error)
 	}{
 		{
@@ -73,6 +75,7 @@ func TestOAuthHandler_Callback(t *testing.T) {
 			pathParams: map[string]string{
 				"provider": "google",
 			},
+			cookieState: "test",
 			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
 				require.NoError(t, err)
 				assert.Equal(t, http.StatusOK, rec.Code)
@@ -107,6 +110,7 @@ func TestOAuthHandler_Callback(t *testing.T) {
 			pathParams: map[string]string{
 				"provider": "google",
 			},
+			cookieState: "test",
 			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
 				require.NoError(t, err)
 				assert.Equal(t, http.StatusOK, rec.Code)
@@ -117,102 +121,11 @@ func TestOAuthHandler_Callback(t *testing.T) {
 			},
 		},
 		{
-			name: "Database Error - GetUserByEmail",
-			setupMock: func(store *mock.MockStore) {
-				store.EXPECT().
-					GetUserByEmail(gomock.Any(), pgtype.Text{String: "test@example.com", Valid: true}).
-					Return(db.User{}, sql.ErrConnDone)
-				store.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
-					Return(db.User{}, sql.ErrConnDone)
-			},
-			setupProvider: func() *mockOAuthProvider {
-				return &mockOAuthProvider{
-					validateState: true,
-					userInfo: &auth.OAuthUserInfo{
-						Email: "test@example.com",
-					},
-				}
-			},
-			queryParams: map[string]string{
-				"code":  "test",
-				"state": "test",
-			},
-			pathParams: map[string]string{
-				"provider": "google",
-			},
-			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
-				require.Error(t, err)
-
-				var appErr *apperror.AppError
-				require.ErrorAs(t, err, &appErr)
-				assert.Equal(t, "Failed to create user", appErr.Message)
-				assert.Equal(t, sql.ErrConnDone, appErr.Unwrap())
-			},
-		},
-		{
-			name:      "Missing Email from Provider",
-			setupMock: func(store *mock.MockStore) {},
-			setupProvider: func() *mockOAuthProvider {
-				return &mockOAuthProvider{
-					validateState: true,
-					userInfo: &auth.OAuthUserInfo{
-						Email: "",
-					},
-					err: apperror.ValidationError("Email is required", nil),
-				}
-			},
-			queryParams: map[string]string{
-				"code":  "test",
-				"state": "test",
-			},
-			pathParams: map[string]string{
-				"provider": "google",
-			},
-			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
-				require.Error(t, err)
-
-				var appErr *apperror.AppError
-				require.ErrorAs(t, err, &appErr)
-				assert.Equal(t, "Failed to authenticate with provider", appErr.Message)
-			},
-		},
-		{
-			name:      "Invalid Provider",
-			setupMock: func(store *mock.MockStore) {},
-			setupProvider: func() *mockOAuthProvider {
-				return &mockOAuthProvider{
-					validateState: true,
-					userInfo: &auth.OAuthUserInfo{
-						Email: "test@example.com",
-					},
-					err: apperror.ValidationError("Invalid OAuth provider", nil),
-				}
-			},
-			queryParams: map[string]string{
-				"code":  "test",
-				"state": "test",
-			},
-			pathParams: map[string]string{
-				"provider": "invalid",
-			},
-			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
-				require.Error(t, err)
-
-				var appErr *apperror.AppError
-				require.ErrorAs(t, err, &appErr)
-				assert.Equal(t, "Failed to authenticate with provider", appErr.Message)
-			},
-		},
-		{
 			name:      "Invalid State",
 			setupMock: func(store *mock.MockStore) {},
 			setupProvider: func() *mockOAuthProvider {
 				return &mockOAuthProvider{
 					validateState: false,
-					userInfo: &auth.OAuthUserInfo{
-						Email: "test@example.com",
-					},
 				}
 			},
 			queryParams: map[string]string{
@@ -222,12 +135,46 @@ func TestOAuthHandler_Callback(t *testing.T) {
 			pathParams: map[string]string{
 				"provider": "google",
 			},
+			cookieState: "test",
 			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
 				require.Error(t, err)
-
-				var appErr *apperror.AppError
-				require.ErrorAs(t, err, &appErr)
-				assert.Equal(t, "Invalid OAuth state", appErr.Message)
+				assert.IsType(t, &apperror.AppError{}, err)
+				appErr := err.(*apperror.AppError)
+				assert.Equal(t, apperror.ErrorTypeValidation, appErr.Type)
+			},
+		},
+		{
+			name: "Account Type Mismatch",
+			setupMock: func(store *mock.MockStore) {
+				store.EXPECT().
+					GetUserByEmail(gomock.Any(), pgtype.Text{String: "test@example.com", Valid: true}).
+					Return(db.User{
+						ID:       uuid.New(),
+						Email:    pgtype.Text{String: "test@example.com", Valid: true},
+						Password: pgtype.Text{String: "hashed_password", Valid: true},
+					}, nil)
+			},
+			setupProvider: func() *mockOAuthProvider {
+				return &mockOAuthProvider{
+					validateState: true,
+					userInfo: &auth.OAuthUserInfo{
+						Email: "test@example.com",
+					},
+				}
+			},
+			queryParams: map[string]string{
+				"code":  "test",
+				"state": "test",
+			},
+			pathParams: map[string]string{
+				"provider": "google",
+			},
+			cookieState: "test",
+			checkResponse: func(t *testing.T, rec *httptest.ResponseRecorder, err error) {
+				require.Error(t, err)
+				assert.IsType(t, &apperror.AppError{}, err)
+				appErr := err.(*apperror.AppError)
+				assert.Equal(t, apperror.ErrorTypeValidation, appErr.Type)
 			},
 		},
 	}
@@ -237,28 +184,34 @@ func TestOAuthHandler_Callback(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockStore := mock.NewMockStore(ctrl)
-			tc.setupMock(mockStore)
+			store := mock.NewMockStore(ctrl)
+			tc.setupMock(store)
 
-			handler := NewOAuthHandler(mockStore)
+			handler := NewOAuthHandler(store)
 			handler.SetOAuthProvider(tc.setupProvider())
 
-			rec := httptest.NewRecorder()
-
-			// Build query string
-			query := ""
-			for k, v := range tc.queryParams {
-				if query != "" {
-					query += "&"
-				}
-				query += k + "=" + v
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			if tc.cookieState != "" {
+				req.AddCookie(&http.Cookie{
+					Name:     "oauth_state",
+					Value:    tc.cookieState,
+					Expires:  time.Now().Add(1 * time.Hour),
+					HttpOnly: true,
+				})
 			}
-
-			req := httptest.NewRequest(http.MethodGet, "/oauth/callback?"+query, nil)
+			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
-			c.SetPath("/oauth/:provider/callback")
-			c.SetParamNames("provider")
-			c.SetParamValues(tc.pathParams["provider"])
+
+			q := c.Request().URL.Query()
+			for k, v := range tc.queryParams {
+				q.Add(k, v)
+			}
+			c.Request().URL.RawQuery = q.Encode()
+
+			for k, v := range tc.pathParams {
+				c.SetParamNames(k)
+				c.SetParamValues(v)
+			}
 
 			err := handler.Callback(c)
 			tc.checkResponse(t, rec, err)

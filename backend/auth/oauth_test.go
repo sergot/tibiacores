@@ -2,18 +2,17 @@ package auth
 
 import (
 	"testing"
-	"time"
 )
 
 // MockOAuthProvider implements OAuth functionality for testing
 type MockOAuthProvider struct {
-	ValidateStateFn       func(state string) bool
+	ValidateStateFn       func(cookieState, queryState string) bool
 	ExchangeCodeForUserFn func(provider string, code string) (*OAuthUserInfo, error)
 }
 
-func (m *MockOAuthProvider) ValidateState(state string) bool {
+func (m *MockOAuthProvider) ValidateState(cookieState, queryState string) bool {
 	if m.ValidateStateFn != nil {
-		return m.ValidateStateFn(state)
+		return m.ValidateStateFn(cookieState, queryState)
 	}
 	return false
 }
@@ -26,33 +25,49 @@ func (m *MockOAuthProvider) ExchangeCode(provider string, code string) (*OAuthUs
 }
 
 func TestValidateOAuthState(t *testing.T) {
-	// Reset state store
-	stateStore.Lock()
-	stateStore.states = make(map[string]time.Time)
-	stateStore.Unlock()
-
-	// Add test state
-	testState := "test-state"
-	stateStore.Lock()
-	stateStore.states[testState] = time.Now().Add(5 * time.Minute)
-	stateStore.Unlock()
-
-	// Test valid state
-	if !ValidateOAuthState(testState) {
-		t.Error("Expected state to be valid")
+	tests := []struct {
+		name        string
+		cookieState string
+		queryState  string
+		want        bool
+	}{
+		{
+			name:        "Valid matching states",
+			cookieState: "test-state-123",
+			queryState:  "test-state-123",
+			want:        true,
+		},
+		{
+			name:        "Mismatched states",
+			cookieState: "test-state-123",
+			queryState:  "different-state",
+			want:        false,
+		},
+		{
+			name:        "Empty cookie state",
+			cookieState: "",
+			queryState:  "test-state-123",
+			want:        false,
+		},
+		{
+			name:        "Empty query state",
+			cookieState: "test-state-123",
+			queryState:  "",
+			want:        false,
+		},
+		{
+			name:        "Both empty",
+			cookieState: "",
+			queryState:  "",
+			want:        false,
+		},
 	}
 
-	// Test invalid state
-	if ValidateOAuthState("invalid-state") {
-		t.Error("Expected state to be invalid")
-	}
-
-	// Test expired state
-	stateStore.Lock()
-	stateStore.states["expired-state"] = time.Now().Add(-6 * time.Minute)
-	stateStore.Unlock()
-
-	if ValidateOAuthState("expired-state") {
-		t.Error("Expected expired state to be invalid")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ValidateOAuthState(tt.cookieState, tt.queryState); got != tt.want {
+				t.Errorf("ValidateOAuthState() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

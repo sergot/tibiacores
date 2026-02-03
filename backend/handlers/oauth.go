@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -33,10 +34,21 @@ func (h *OAuthHandler) SetOAuthProvider(provider auth.OAuthProvider) {
 // Login initiates OAuth2 flow for the specified provider
 func (h *OAuthHandler) Login(c echo.Context) error {
 	provider := c.Param("provider")
-	redirectURL, err := auth.GetOAuthRedirect(provider)
+	redirectURL, state, err := auth.GetOAuthRedirect(provider)
 	if err != nil {
 		return apperror.ValidationError("Unable to get OAuth redirect URL", err)
 	}
+
+	// Set state cookie for CSRF protection
+	cookie := new(http.Cookie)
+	cookie.Name = "oauth_state"
+	cookie.Value = state
+	cookie.Path = "/"
+	cookie.Expires = time.Now().Add(5 * time.Minute)
+	cookie.HttpOnly = true
+	cookie.Secure = true // Always secure for modern browsers (requires HTTPS or localhost)
+	cookie.SameSite = http.SameSiteLaxMode
+	c.SetCookie(cookie)
 
 	return c.String(http.StatusOK, redirectURL)
 }
@@ -47,12 +59,30 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	state := c.QueryParam("state")
 	code := c.QueryParam("code")
 
-	if !h.oauthProvider.ValidateState(state) {
+	// Get state from cookie
+	cookie, err := c.Cookie("oauth_state")
+	var cookieState string
+	if err == nil {
+		cookieState = cookie.Value
+	}
+
+	// Clear the state cookie
+	clearCookie := new(http.Cookie)
+	clearCookie.Name = "oauth_state"
+	clearCookie.Value = ""
+	clearCookie.Path = "/"
+	clearCookie.Expires = time.Now().Add(-1 * time.Hour)
+	clearCookie.HttpOnly = true
+	clearCookie.Secure = true
+	clearCookie.SameSite = http.SameSiteLaxMode
+	c.SetCookie(clearCookie)
+
+	if !h.oauthProvider.ValidateState(cookieState, state) {
 		return apperror.ValidationError("Invalid OAuth state", nil).
 			WithDetails(&apperror.ValidationErrorDetails{
 				Field:  "state",
 				Value:  state,
-				Reason: "State validation failed",
+				Reason: "State validation failed or expired",
 			})
 	}
 
