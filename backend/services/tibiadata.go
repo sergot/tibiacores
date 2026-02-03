@@ -3,7 +3,10 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
+
+	"github.com/sergot/tibiacores/backend/pkg/apperror"
 )
 
 // TibiaDataServiceInterface defines the methods for interacting with TibiaData API
@@ -40,24 +43,33 @@ func NewTibiaDataService() *TibiaDataService {
 func (s *TibiaDataService) GetCharacter(name string) (*TibiaCharacter, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/character/%s", s.baseURL, name))
 	if err != nil {
-		return nil, err
+		return nil, apperror.ExternalServiceError("failed to reach tibiadata", err)
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("failed to close response body: %v\n", err)
+			slog.Error("failed to close response body", "error", err)
 		}
 	}()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return nil, fmt.Errorf("character not found")
+		return nil, apperror.NotFoundError("character not found", nil).WithDetails(&apperror.ExternalServiceErrorDetails{
+			Service:   "TibiaData",
+			Operation: "GetCharacter",
+			Endpoint:  name,
+		})
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch character data: %d", resp.StatusCode)
+		return nil, apperror.ExternalServiceError("failed to fetch character data", fmt.Errorf("status code: %d", resp.StatusCode)).
+			WithDetails(&apperror.ExternalServiceErrorDetails{
+				Service:   "TibiaData",
+				Operation: "GetCharacter",
+				Endpoint:  name,
+			})
 	}
 
 	var response TibiaDataResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, err
+		return nil, apperror.ExternalServiceError("failed to decode response", err)
 	}
 
 	return &response.Character.Character, nil

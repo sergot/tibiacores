@@ -1,9 +1,8 @@
 package apperror
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"runtime"
 	"time"
@@ -173,7 +172,7 @@ func (e *AppError) WithContext(ctx ErrorContext) *AppError {
 // WithDetails adds type-safe details to the error
 func (e *AppError) WithDetails(details ErrorDetails) *AppError {
 	if err := details.Validate(); err != nil {
-		log.Printf("Invalid error details: %v", err)
+		slog.Error("Invalid error details", "error", err)
 		return e
 	}
 	e.Details = details
@@ -208,33 +207,36 @@ func NewError(errType ErrorType, code string, message string, statusCode int, er
 
 // LogError logs the error with structured logging
 func (e *AppError) LogError() {
-	logData := map[string]any{
-		"type":        e.Type,
-		"code":        e.Code,
-		"message":     e.Message,
-		"status_code": e.StatusCode,
-		"context":     e.Context,
+	var details any
+	if e.Details != nil {
+		details = e.Details
 	}
 
-	if e.Details != nil {
-		logData["details"] = e.Details
+	var context any = e.Context
+
+	logger := slog.Default()
+
+	// Prepare attributes
+	attrs := []any{
+		slog.String("type", string(e.Type)),
+		slog.String("code", e.Code),
+		slog.String("message", e.Message),
+		slog.Int("status_code", e.StatusCode),
+		slog.Any("context", context),
+	}
+
+	if details != nil {
+		attrs = append(attrs, slog.Any("details", details))
 	}
 
 	if e.Err != nil {
-		logData["error"] = e.Err.Error()
+		attrs = append(attrs, slog.String("error", e.Err.Error()))
 	}
-
 	if e.Wrapped != nil {
-		logData["wrapped_error"] = e.Wrapped.Error()
+		attrs = append(attrs, slog.String("wrapped_error", e.Wrapped.Error()))
 	}
 
-	jsonData, err := json.Marshal(logData)
-	if err != nil {
-		log.Printf("Failed to marshal error log: %v", err)
-		return
-	}
-
-	log.Printf("Error: %s", string(jsonData))
+	logger.Error("Application Error", attrs...)
 }
 
 // ToHTTPResponse converts the error to a client-friendly HTTP response format

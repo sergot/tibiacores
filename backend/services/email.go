@@ -34,7 +34,7 @@ func NewEmailService() (*EmailService, error) {
 		fromAddress = fmt.Sprintf("noreply@%s", domain)
 	}
 
-	// Create new Mailgun client with API key only (v5)
+	// Create new Mailgun client using only API key (v5 standard)
 	mg := mailgun.NewMailgun(apiKey)
 
 	// Set EU endpoint for non-production environments

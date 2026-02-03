@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -71,7 +71,7 @@ func (h *UsersHandler) Login(c echo.Context) error {
 
 	user, err := h.store.GetUserByEmail(ctx, email)
 	if err != nil {
-		log.Printf("Failed to get user by email: %v", err)
+		slog.Error("Failed to get user by email", "error", err)
 		return apperror.AuthorizationError("Invalid email or password", err).
 			WithDetails(&apperror.DatabaseErrorDetails{
 				Operation: "GetUserByEmail",
@@ -196,7 +196,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			ID:                         userID,
 		})
 		if err != nil {
-			log.Printf("Failed to migrate anonymous user: %v", err)
+			slog.Error("Failed to migrate anonymous user", "error", err)
 			return apperror.DatabaseError("Failed to migrate user", err).
 				WithDetails(&apperror.DatabaseErrorDetails{
 					Operation: "MigrateAnonymousUser",
@@ -214,7 +214,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			ID:                         existingUser.ID,
 		})
 		if err != nil {
-			log.Printf("Failed to migrate existing user: %v", err)
+			slog.Error("Failed to migrate existing user", "error", err)
 			return apperror.DatabaseError("Failed to update user", err).
 				WithDetails(&apperror.DatabaseErrorDetails{
 					Operation: "MigrateAnonymousUser",
@@ -231,7 +231,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 			EmailVerificationExpiresAt: expiresAt,
 		})
 		if err != nil {
-			log.Printf("Failed to create user: %v", err)
+			slog.Error("Failed to create user", "error", err)
 			return apperror.DatabaseError("Failed to create user", err).
 				WithDetails(&apperror.DatabaseErrorDetails{
 					Operation: "CreateUser",
@@ -254,7 +254,7 @@ func (h *UsersHandler) Signup(c echo.Context) error {
 
 	// Send verification email
 	if err := h.emailService.SendVerificationEmail(ctx, email.String, verificationToken.String(), user.ID.String()); err != nil {
-		log.Printf("Failed to send verification email: %v", err)
+		slog.Error("Failed to send verification email", "error", err)
 		// Don't return error to client, as the account was created successfully
 	}
 
@@ -312,7 +312,7 @@ func (h *UsersHandler) GetCharactersByUserId(c echo.Context) error {
 
 	characters, err := h.store.GetCharactersByUserID(ctx, requestedUserID)
 	if err != nil {
-		log.Printf("Error getting characters for user %s: %v", requestedUserID, err)
+		slog.Error("Error getting characters for user", "user_id", requestedUserID, "error", err)
 		return apperror.DatabaseError("Failed to get characters", err).
 			WithDetails(&apperror.DatabaseErrorDetails{
 				Operation: "GetCharactersByUserID",
@@ -767,7 +767,7 @@ func (h *UsersHandler) VerifyEmail(c echo.Context) error {
 		EmailVerificationToken: token,
 	})
 	if err != nil {
-		log.Printf("Failed to verify email: %v", err)
+		slog.Error("Failed to verify email", "error", err)
 		return apperror.ValidationError("Invalid or expired verification token", err).
 			WithDetails(&apperror.ValidationErrorDetails{
 				Field:  "token",
