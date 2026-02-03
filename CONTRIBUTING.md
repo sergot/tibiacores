@@ -34,7 +34,7 @@ There are several ways you can contribute to TibiaCores:
 
 ## Project Structure
 
-\`\`\`
+```
 tibiacores/
 ├── backend/              # Go backend
 │   ├── cmd/server/       # Application entry point
@@ -58,7 +58,7 @@ tibiacores/
 │   │   ├── router/       # Vue Router configuration
 │   │   └── i18n/         # Internationalization
 └── docs/                 # Project documentation
-\`\`\`
+```
 
 ## Coding Standards
 
@@ -67,17 +67,17 @@ tibiacores/
 #### General Guidelines
 
 - Follow [Effective Go](https://go.dev/doc/effective_go) and [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)
-- Use \`gofmt\` for formatting
-- Run \`go vet ./...\` before committing
-- Use \`golangci-lint\` for additional linting
+- Use `gofmt` for formatting
+- Run `go vet ./...` before committing
+- Use `golangci-lint` for additional linting
 
 #### Required Patterns
 
-**1. Logging with \`slog\`**
+**1. Logging with `slog`**
 
-Always use \`log/slog\` for structured logging:
+Always use `log/slog` for structured logging:
 
-\`\`\`go
+```go
 import "log/slog"
 
 // Good
@@ -87,13 +87,13 @@ slog.Error("database error", "error", err, "operation", "CreateUser")
 // Bad - don't use fmt.Println or log package
 fmt.Println("user created:", userID)
 log.Printf("error: %v", err)
-\`\`\`
+```
 
-**2. Error Handling with \`apperror\`**
+**2. Error Handling with `apperror`**
 
-NEVER return raw errors to clients. Always use the \`apperror\` package:
+NEVER return raw errors to clients. Always use the `apperror` package:
 
-\`\`\`go
+```go
 import "github.com/sergot/tibiacores/backend/pkg/apperror"
 
 // Good - database error
@@ -127,42 +127,42 @@ if err != nil {
 if err != nil {
     return err  // ❌ Never do this
 }
-\`\`\`
+```
 
 **Error Types Available:**
-- \`ValidationError\` → 400 Bad Request
-- \`AuthenticationError\` → 401 Unauthorized  
-- \`AuthorizationError\` → 403 Forbidden
-- \`NotFoundError\` → 404 Not Found
-- \`DatabaseError\` → 500 Internal Server Error
-- \`InternalServerError\` → 500 Internal Server Error
-- \`ExternalServiceError\` → 502 Bad Gateway
+- `ValidationError` → 400 Bad Request
+- `AuthenticationError` → 401 Unauthorized  
+- `AuthorizationError` → 403 Forbidden
+- `NotFoundError` → 404 Not Found
+- `DatabaseError` → 500 Internal Server Error
+- `InternalServerError` → 500 Internal Server Error
+- `ExternalServiceError` → 502 Bad Gateway
 
 **3. Context Passing**
 
 ALWAYS pass context to database operations:
 
-\`\`\`go
+```go
 // Good
 user, err := store.GetUser(ctx, userID)
 characters, err := store.ListCharacters(ctx, userID)
 
 // Bad
 user, err := store.GetUser(userID)  // ❌ Missing context
-\`\`\`
+```
 
 **4. Database Changes Workflow**
 
 When modifying database schema or queries:
 
 1. **Create migration**:
-   \`\`\`bash
+   ```bash
    cd backend
    goose -dir db/migrations create add_your_feature sql
-   \`\`\`
+   ```
 
-2. **Write migration** in \`db/migrations/YYYYMMDDHHMMSS_add_your_feature.sql\`:
-   \`\`\`sql
+2. **Write migration** in `db/migrations/YYYYMMDDHHMMSS_add_your_feature.sql`:
+   ```sql
    -- +goose Up
    -- +goose StatementBegin
    ALTER TABLE users ADD COLUMN new_field TEXT;
@@ -172,28 +172,28 @@ When modifying database schema or queries:
    -- +goose StatementBegin
    ALTER TABLE users DROP COLUMN new_field;
    -- +goose StatementEnd
-   \`\`\`
+   ```
 
 3. **Apply migration**:
-   \`\`\`bash
+   ```bash
    goose -dir db/migrations postgres "$DATABASE_URL" up
-   \`\`\`
+   ```
 
-4. **Add/update SQL queries** in \`db/queries/*.sql\`:
-   \`\`\`sql
+4. **Add/update SQL queries** in `db/queries/*.sql`:
+   ```sql
    -- name: GetUserWithNewField :one
    SELECT id, email, new_field FROM users WHERE id = $1;
-   \`\`\`
+   ```
 
 5. **Generate Go code**:
-   \`\`\`bash
+   ```bash
    sqlc generate
-   \`\`\`
+   ```
 
 6. **Use in handler**:
-   \`\`\`go
+   ```go
    user, err := h.store.GetUserWithNewField(ctx, userID)
-   \`\`\`
+   ```
 
 For complete documentation see [docs/database.md](docs/database.md) and [docs/setup.md](docs/setup.md).
 
@@ -202,33 +202,33 @@ For complete documentation see [docs/database.md](docs/database.md) and [docs/se
 ### Before Submitting
 
 1. **Create tests** for new functionality
-2. **Run tests**: \`cd backend && go test ./...\`
-3. **Run linters**: \`cd backend && go vet ./...\`
+2. **Run tests**: `cd backend && go test ./...`
+3. **Run linters**: `cd backend && go vet ./...`
 4. **Update documentation** if needed
-5. **Regenerate sqlc** if you modified queries: \`sqlc generate\`
+5. **Regenerate sqlc** if you modified queries: `sqlc generate`
 
 ### Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-\`\`\`
+```
 <type>(<scope>): <description>
-\`\`\`
+```
 
 **Examples:**
-\`\`\`
+```
 feat(auth): add OAuth2 support for Discord
 fix(lists): prevent duplicate soul core entries
 docs(api): add endpoint documentation for chat
-\`\`\`
+```
 
 ### Code Review Checklist
 
 Reviewers should verify:
 
 - [ ] Code follows project conventions
-- [ ] \`apperror\` used for all error handling
-- [ ] \`slog\` used for all logging
+- [ ] `apperror` used for all error handling
+- [ ] `slog` used for all logging
 - [ ] Context passed to all DB operations
 - [ ] Tests cover new functionality
 - [ ] No raw SQL queries (only via sqlc)
@@ -238,7 +238,7 @@ Reviewers should verify:
 ## Security Guidelines
 
 1. **Never commit secrets**
-2. **Use \`apperror\`** to avoid leaking internal errors
+2. **Use `apperror`** to avoid leaking internal errors
 3. **Validate all inputs**
 4. **Use sqlc** to prevent SQL injection
 5. **Configure timeouts** for external HTTP clients
