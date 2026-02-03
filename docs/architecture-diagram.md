@@ -30,7 +30,7 @@ graph TB
         
         subgraph "Business Logic"
             Auth[Authentication<br/>- JWT<br/>- OAuth2<br/>- Password Hashing]
-            Services[Services<br/>- Email Service<br/>- TibiaData API]
+            Services[Services<br/>- Email Service (Mailgun EU)<br/>- Newsletter (EmailOctopus)<br/>- TibiaData API]
             Validation[Validation<br/>- Request Validation<br/>- Business Rules]
         end
         
@@ -66,7 +66,8 @@ graph TB
     %% External Services
     subgraph "External Services"
         TibiaData[TibiaData API<br/>- Character Verification<br/>- World Information]
-        EmailProvider[Email Service<br/>- Notifications<br/>- User Communications]
+        EmailProvider[Mailgun (EU)<br/>- Transactional Emails<br/>- Verification]
+        NewsletterProvider[EmailOctopus<br/>- Newsletter Subscriptions]
     end
 
     %% Infrastructure
@@ -92,6 +93,7 @@ graph TB
     
     Services --> TibiaData
     Services --> EmailProvider
+    Services --> NewsletterProvider
     
     SQLC --> Queries
     SQLC --> PostgreSQL
@@ -121,7 +123,7 @@ graph TB
     class UI,Views,Components,Stores,APIServices,Router,I18n frontend
     class Routes,Handlers,Auth,Services,Validation,AppError backend
     class SQLC,Queries,PostgreSQL,Users,Characters,Lists,ListsUsers,ListsSoulcores,CharactersSoulcores,ChatMessages,Creatures,Migrations database
-    class TibiaData,EmailProvider external
+    class TibiaData,EmailProvider,NewsletterProvider external
     class Docker,FileSystem infrastructure
 ```
 
