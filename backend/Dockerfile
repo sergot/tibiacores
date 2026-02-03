@@ -15,7 +15,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server
 
 # For development with hot reload
-FROM golang:1.24-alpine AS dev
+FROM golang:1.25-alpine AS dev
 
 WORKDIR /app
 
