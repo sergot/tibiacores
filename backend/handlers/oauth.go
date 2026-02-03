@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -40,18 +40,21 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	}
 
 	// Set state cookie for CSRF protection
-	// Note: SameSite=None is required for OAuth redirects from external providers
-	// Secure flag is only set in production (HTTPS required)
-	isProduction := os.Getenv("APP_ENV") == "production"
+	// Note: SameSite=None requires Secure=true (HTTPS only, except localhost)
 	cookie := new(http.Cookie)
 	cookie.Name = "oauth_state"
 	cookie.Value = state
 	cookie.Path = "/"
 	cookie.Expires = time.Now().Add(5 * time.Minute)
 	cookie.HttpOnly = true
-	cookie.Secure = isProduction            // Only require HTTPS in production
+	cookie.Secure = true                    // Required for SameSite=None
 	cookie.SameSite = http.SameSiteNoneMode // Required for cross-site OAuth redirects
 	c.SetCookie(cookie)
+
+	slog.Info("OAuth state cookie set",
+		"provider", provider,
+		"state", state,
+	)
 
 	return c.String(http.StatusOK, redirectURL)
 }
@@ -69,15 +72,21 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		cookieState = cookie.Value
 	}
 
+	slog.Info("OAuth callback received",
+		"provider", provider,
+		"state_from_query", state,
+		"state_from_cookie", cookieState,
+		"cookie_found", err == nil,
+	)
+
 	// Clear the state cookie
-	isProduction := os.Getenv("APP_ENV") == "production"
 	clearCookie := new(http.Cookie)
 	clearCookie.Name = "oauth_state"
 	clearCookie.Value = ""
 	clearCookie.Path = "/"
 	clearCookie.Expires = time.Now().Add(-1 * time.Hour)
 	clearCookie.HttpOnly = true
-	clearCookie.Secure = isProduction
+	clearCookie.Secure = true
 	clearCookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(clearCookie)
 
