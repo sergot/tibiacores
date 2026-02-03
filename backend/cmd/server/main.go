@@ -181,10 +181,11 @@ func main() {
 
 	// Security: CORS to allow frontend access
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{"http://localhost:5173", "https://tibiacores.com", frontendURL},
-		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Request-ID"},
-		AllowMethods:  []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
-		ExposeHeaders: []string{"X-Auth-Token"},
+		AllowOrigins:     []string{"http://localhost:5173", "https://tibiacores.com", frontendURL},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Request-ID"},
+		AllowMethods:     []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
+		AllowCredentials: true,
+		ExposeHeaders:    []string{"X-Auth-Token"},
 	}))
 
 	// Security: Limit body size to prevent DoS (2MB limit)
