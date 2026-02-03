@@ -66,6 +66,8 @@ loadLocale(locale)
 
 // Configure axios base URL
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || '/api'
+// Enable cookies for OAuth state validation (Double Submit Cookie pattern)
+axios.defaults.withCredentials = true
 
 // Configure axios after Pinia is initialized
 import { useUserStore } from './stores/user'
