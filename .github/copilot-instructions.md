@@ -14,7 +14,6 @@ For detailed coding standards, contribution workflows, and architectural pattern
 - **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Complete coding standards, patterns, and workflows
 - **[docs/database.md](../docs/database.md)** - Database schema and migration procedures
 - **[docs/setup.md](../docs/setup.md)** - Development environment setup
-- **[docs/architecture.md](../docs/architecture.md)** - System architecture and design decisions
 
 ## Critical Rules
 

@@ -252,6 +252,3 @@ By contributing, you agree that your contributions will be licensed under the pr
 
 - [docs/setup.md](docs/setup.md) - Detailed development setup
 - [docs/database.md](docs/database.md) - Database schema and migrations
-- [docs/api-reference.md](docs/api-reference.md) - API endpoint documentation
-- [docs/testing.md](docs/testing.md) - Testing guidelines
-- [docs/architecture.md](docs/architecture.md) - System architecture

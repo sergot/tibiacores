@@ -43,9 +43,7 @@ docker compose up -d
 ## Documentation
 
 - [Setup Guide](docs/setup.md) - Development environment setup
-- [API Reference](docs/api-reference.md) - API endpoints documentation
 - [Database Schema](docs/database.md) - Database structure and migrations
-- [Architecture](docs/architecture.md) - System architecture and design
 - [Contributing](CONTRIBUTING.md) - Contribution guidelines
 
 
