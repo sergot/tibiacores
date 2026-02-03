@@ -65,9 +65,8 @@ client := &http.Client{
 - **TibiaData**: Rate limits apply, handle gracefully
 - **EmailOctopus**: Newsletter subscriptions
 - **OAuth (Discord/Google)**: 
-  - State cookie uses `SameSite=None` for cross-site redirects
-  - **Requires HTTPS** (`Secure=true` is mandatory for `SameSite=None`)
-  - Works on `localhost` in dev, but requires SSL certificate otherwise
+  - State cookie uses `SameSite=Lax` with `Secure=true`
+  - Works over HTTPS and localhost
 
 ### Background Jobs
 - Current implementation: Single-instance claim checker (15-min interval)

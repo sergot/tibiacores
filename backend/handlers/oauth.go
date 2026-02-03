@@ -40,24 +40,20 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	}
 
 	// Set state cookie for CSRF protection
-	// Note: SameSite=None requires Secure=true (HTTPS only, except localhost)
 	cookie := new(http.Cookie)
 	cookie.Name = "oauth_state"
 	cookie.Value = state
 	cookie.Path = "/"
 	cookie.Expires = time.Now().Add(5 * time.Minute)
 	cookie.HttpOnly = true
-	cookie.Secure = true                    // Required for SameSite=None
-	cookie.SameSite = http.SameSiteNoneMode // Required for cross-site OAuth redirects
+	cookie.Secure = true // Always secure for modern browsers (requires HTTPS or localhost)
+	cookie.SameSite = http.SameSiteLaxMode
 	c.SetCookie(cookie)
 
 	slog.Info("OAuth state cookie set",
 		"provider", provider,
 		"state", state,
 		"redirect_url", redirectURL,
-		"cookie_path", cookie.Path,
-		"cookie_secure", cookie.Secure,
-		"cookie_samesite", cookie.SameSite,
 	)
 
 	return c.String(http.StatusOK, redirectURL)
@@ -76,23 +72,11 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 		cookieState = cookie.Value
 	}
 
-	// Debug: log all cookies and headers
-	allCookies := c.Cookies()
-	cookieNames := make([]string, len(allCookies))
-	for i, ck := range allCookies {
-		cookieNames[i] = ck.Name
-	}
-
 	slog.Info("OAuth callback received",
 		"provider", provider,
 		"state_from_query", state,
 		"state_from_cookie", cookieState,
 		"cookie_found", err == nil,
-		"cookie_error", err,
-		"all_cookies", cookieNames,
-		"request_host", c.Request().Host,
-		"request_scheme", c.Scheme(),
-		"referer", c.Request().Header.Get("Referer"),
 	)
 
 	// Clear the state cookie
@@ -103,7 +87,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	clearCookie.Expires = time.Now().Add(-1 * time.Hour)
 	clearCookie.HttpOnly = true
 	clearCookie.Secure = true
-	clearCookie.SameSite = http.SameSiteNoneMode
+	clearCookie.SameSite = http.SameSiteLaxMode
 	c.SetCookie(clearCookie)
 
 	if !h.oauthProvider.ValidateState(cookieState, state) {
