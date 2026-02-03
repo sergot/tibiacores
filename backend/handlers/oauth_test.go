@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"net/http"
@@ -31,7 +32,7 @@ func (m *mockOAuthProvider) ValidateState(cookieState, queryState string) bool {
 	return m.validateState
 }
 
-func (m *mockOAuthProvider) ExchangeCode(provider, code string) (*auth.OAuthUserInfo, error) {
+func (m *mockOAuthProvider) ExchangeCode(ctx context.Context, provider, code string) (*auth.OAuthUserInfo, error) {
 	return m.userInfo, m.err
 }
 

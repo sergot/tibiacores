@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -39,14 +40,17 @@ func (h *OAuthHandler) Login(c echo.Context) error {
 	}
 
 	// Set state cookie for CSRF protection
+	// Note: SameSite=None is required for OAuth redirects from external providers
+	// Secure flag is only set in production (HTTPS required)
+	isProduction := os.Getenv("APP_ENV") == "production"
 	cookie := new(http.Cookie)
 	cookie.Name = "oauth_state"
 	cookie.Value = state
 	cookie.Path = "/"
 	cookie.Expires = time.Now().Add(5 * time.Minute)
 	cookie.HttpOnly = true
-	cookie.Secure = true // Always secure for modern browsers (requires HTTPS or localhost)
-	cookie.SameSite = http.SameSiteLaxMode
+	cookie.Secure = isProduction            // Only require HTTPS in production
+	cookie.SameSite = http.SameSiteNoneMode // Required for cross-site OAuth redirects
 	c.SetCookie(cookie)
 
 	return c.String(http.StatusOK, redirectURL)
@@ -66,14 +70,15 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	}
 
 	// Clear the state cookie
+	isProduction := os.Getenv("APP_ENV") == "production"
 	clearCookie := new(http.Cookie)
 	clearCookie.Name = "oauth_state"
 	clearCookie.Value = ""
 	clearCookie.Path = "/"
 	clearCookie.Expires = time.Now().Add(-1 * time.Hour)
 	clearCookie.HttpOnly = true
-	clearCookie.Secure = true
-	clearCookie.SameSite = http.SameSiteLaxMode
+	clearCookie.Secure = isProduction
+	clearCookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(clearCookie)
 
 	if !h.oauthProvider.ValidateState(cookieState, state) {
@@ -88,7 +93,7 @@ func (h *OAuthHandler) Callback(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	// Exchange code for token
-	userInfo, err := h.oauthProvider.ExchangeCode(provider, code)
+	userInfo, err := h.oauthProvider.ExchangeCode(ctx, provider, code)
 	if err != nil {
 		return apperror.ExternalServiceError("Failed to authenticate with provider", err).
 			WithDetails(&apperror.ExternalServiceErrorDetails{

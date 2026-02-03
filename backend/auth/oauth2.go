@@ -215,13 +215,13 @@ func getGoogleUserInfo(token *oauth2.Token) (*OAuthUserInfo, error) {
 }
 
 // ExchangeCodeForUser exchanges OAuth2 code for user information
-func ExchangeCodeForUser(provider string, code string) (*OAuthUserInfo, error) {
+func ExchangeCodeForUser(ctx context.Context, provider string, code string) (*OAuthUserInfo, error) {
 	config, exists := oauthConfigs[provider]
 	if !exists {
 		return nil, fmt.Errorf("unsupported OAuth provider: %s", provider)
 	}
 
-	token, err := config.Exchange(context.Background(), code)
+	token, err := config.Exchange(ctx, code)
 	if err != nil {
 		return nil, fmt.Errorf("failed to exchange token: %w", err)
 	}
@@ -245,7 +245,7 @@ func GetFrontendCallbackURL(token string, userID string) string {
 // OAuthProvider defines the interface for OAuth operations
 type OAuthProvider interface {
 	ValidateState(cookieState, queryState string) bool
-	ExchangeCode(provider string, code string) (*OAuthUserInfo, error)
+	ExchangeCode(ctx context.Context, provider string, code string) (*OAuthUserInfo, error)
 }
 
 // DefaultOAuthProvider implements OAuthProvider using the standard OAuth flow
@@ -255,8 +255,8 @@ func (p *DefaultOAuthProvider) ValidateState(cookieState, queryState string) boo
 	return ValidateOAuthState(cookieState, queryState)
 }
 
-func (p *DefaultOAuthProvider) ExchangeCode(provider string, code string) (*OAuthUserInfo, error) {
-	return ExchangeCodeForUser(provider, code)
+func (p *DefaultOAuthProvider) ExchangeCode(ctx context.Context, provider string, code string) (*OAuthUserInfo, error) {
+	return ExchangeCodeForUser(ctx, provider, code)
 }
 
 // NewDefaultOAuthProvider creates a new default OAuth provider
@@ -271,6 +271,6 @@ func ValidateOAuthStateWithProvider(cookieState, queryState string) bool {
 	return defaultProvider.ValidateState(cookieState, queryState)
 }
 
-func ExchangeCodeForUserWithProvider(provider string, code string) (*OAuthUserInfo, error) {
-	return defaultProvider.ExchangeCode(provider, code)
+func ExchangeCodeForUserWithProvider(ctx context.Context, provider string, code string) (*OAuthUserInfo, error) {
+	return defaultProvider.ExchangeCode(ctx, provider, code)
 }
