@@ -1,5 +1,14 @@
 [
   {
+    "id": "soul-core-icons",
+    "title": "Soul Core Icons Are Here!",
+    "excerpt": "Every creature now has its soul core icon displayed next to its name — making your lists easier to browse at a glance.",
+    "date": "2026-03-24",
+    "author": "TibiaCores Team",
+    "icon": "🖼️",
+    "tags": ["feature", "ui"]
+  },
+  {
     "id": "chat-feature-announcement",
     "title": "Real-Time Chat Now Available!",
     "excerpt": "Collaborate better with your team! We've added a powerful chat feature that lets you communicate with other list members in real-time.",
