@@ -1,766 +1,813 @@
-Askarak Lord
-Damaged Crystal Golem
-Floating Savant
-Minotaur Archer
-Priestess
-Minotaur Invader
-Ghoul
-Wiggler
-Witch
-Golden Servant Replica
-Falcon Knight
-Deepling Warrior
-Green Djinn
-Orc Warrior
-Green Frog
-Waspoid
-Dragolisk
-Gorger Inferniarch
-Cyclops Drone
-Killer Rabbit
-Poisonous Carnisylvan
-Cursed Book
-Nightslayer
-Execowtioner
-Streaked Devourer
-Agrestic Chicken
-Rootthing Amber Shaper
-Spidris
-Spectre
-Slug
+Abyssal Calamary
+Acid Blob
+Acolyte of Darkness
+Acolyte of the Cult
+Adept of the Cult
 Adult Goanna
-Raging Fire
-Orewalker
-Ice Golem
-Pirat Scoundrel
-Golden Servant
-Skeleton Elite Warrior
-White Weretiger
-Lizard Snakecharmer
-Deepling Tyrant
-Winter Wolf
-Gloom Wolf
-Terramite
-Draken Spellweaver
-Wyvern
-Sparkion
-Menacing Carnivor
-Rabbit
-Hibernal Moth
-Worm Priestess
-Stonerefiner
-Stalker
-Phantasm
-Boar
-Rotworm
-Broodrider Inferniarch
-Crystal Wolf
-Ogre Sage
-Hellspawn
-Haunted Treeling
-Quara Predator
-Werefox
-Shock Head
-Barkless Devotee
-Ice Witch
-Clay Guardian
-Branchy Crawler
-Truffle Cook
-Goblin Assassin
-Vexclaw
-Grim Reaper
-Mooh'Tah Warrior
-Bog Raider
-Renegade Quara Constrictor
-Candy Floss Elemental
-Elf Arcanist
-Rotten Golem
-Renegade Quara Mantassin
-Assassin
-Falcon Paladin
-Capricious Phantom
-Dragonling
-Bellicose Orger
-Ghastly Dragon
-Bulltaur Brute
-Yeti
-Crocodile
-Crypt Warrior
-Furious Fire Elemental
-Lost Berserker
-Werelioness
-Lizard Dragon Priest
 Adventurer
-Nomad (Female)
-Quara Raider
-Deepling Brawler
-Azure Frog
-Chicken
-War Golem
-Feral Sphinx
-Evil Prospector
-Barkless Fanatic
-Liodile
-Deepling Master Librarian
-Vicious Squire
-Panda
-Lacewing Moth
-Iron Servant
+Afflicted Strider
+Agrestic Chicken
 Albino Dragon
-Lamassu
-Tomb Servant
-Pirat Bombardier
-Cunning Werepanther
-Swan Maiden
-Dark Faun
-Enraged Crystal Golem
-Minotaur Cult Zealot
-Bane of Light
-Lost Basher
-Damaged Worker Golem
-Energetic Book
-Bat
-Cursed Prospector
-Elf
-Iks Chuka
-Shaburak Lord
-Frost Giant
-Troll Champion
-Juvenile Bashmu
-Spellreaper Inferniarch
-Tarantula
-Orc Spearman
-Hellfire Fighter
-Troll Guard
-Enfeebled Silencer
-Hero
-Silver Rabbit
-Wild Warrior
-Yielothax
-Cobra Scout
-Eyeless Devourer
-Little Corym Charlatan
-Son of Verminor
-Leaf Golem
-Shrieking Cry-Stal
-Sacred Spider
-Quara Hydromancer Scout
-Tiger
-Parrot
-Energy Elemental
-Stone Rhino
+Amazon
+Ancient Scarab
 Angry Sugar Fairy
-Walker
-Crazed Beggar
-Dwarf Soldier
-Ripper Spectre
-Spitter
-Orc Cult Priest
-Boogy
-Candy Horror
-Sugar Cube Worker
-Vampire
-Blood Priest
-Fruit Drop
-Chocolate Blob
-Poacher
-Deathling Scout
-Schiach
-Quara Plunderer
-Infernal Frog
-Vulcongra
-Instable Breach Brood
-Thanatursus
-Quara Pincher Scout
-Meandering Mushroom
-Pirat Cutthroat
-Silencer
-Soul-Broken Harbinger
-Tremendous Tyrant
-Manta Ray
-Orclops Doomhauler
-Terrified Elephant
-Glooth Blob
-Flamingo
-Skeleton Warrior
-Crustacea Gigantica
-Deepling Spellsinger
-Marsh Stalker
-Ink Blob
-Pirate Corsair
-Dromedary
-Spit Nettle
-Pirate Buccaneer
-Cult Enforcer
-Bog Frog
-Nomad (Blue)
-Rootthing Nutshell
-Nightstalker
-Ironblight
-Roaring Lion
-Nymph
-Loricate Orger
-Darklight Source
-Ogre Shaman
-Headpecker
-Warlock
-Barbarian Bloodwalker
-Cave Chimera
-Orc Leader
-Gargoyle
-Pirate Skeleton
-Behemoth
-Crypt Defiler
-Dragon Lord
-Ladybug
-Many Faces
-Lizard Chosen
-Weeper
-Coral Frog
-Gozzler
-Baleful Bunny
-Retching Horror
-Hand of Cursed Fate
-Undead Mine Worker
-Draken Elite
-Plaguesmith
-Deepling Elite
-Evil Sheep Lord
-Demon Outcast
-Minotaur Hunter
-Humongous Fungus
-Eternal Guardian
-Cloak of Terror
-Water Buffalo
-Feversleep
-Bane Bringer
-Boar Man
-Deepling Worker
-Sopping Corpus
-Filth Toad
-Starving Wolf
-Shadow Hound
-Usurper Knight
-Grynch Clan Goblin
-Renegade Quara Hydromancer
-Quara Hydromancer
-Sulphur Spouter
-Crazed Summer Vanguard
-Instable Sparkion
-Makara
-Lizard Sentinel
-Stabilizing Reality Reaver
-Sandstone Scorpion
-Bride of Night
-Distorted Phantom
-Dire Penguin
-Gingerbread Man
-Sheep
-Stalking Stalk
-Ghost Wolf
-Goldhanded Cultist
-Insectoid Scout
-Seacrest Serpent
-Varnished Diremaw
-Truffle
-Insectoid Worker
-Sugar Cube
-Crape Man
-Twisted Shaper
-Smuggler
 Animated Feather
-Vibrant Phantom
-Juggernaut
-Dread Intruder
-Terrorsleep
-Corym Skirmisher
-Carniphila
-Feverish Citizen
-Draken Abomination
-Werewolf
-Devourer
-Squidgy Slime
-Werelion
-Iks Ahpututu
-Girtablilu Warrior
-Salamander
-Weakened Frazzlemaw
+Animated Snowman
+Arachnophobica
+Arctic Faun
+Armadile
+Askarak Demon
+Askarak Lord
+Askarak Prince
+Assassin
+Azure Frog
+Badger
+Baleful Bunny
+Bandit
+Bane Bringer
+Bane of Light
+Banshee
+Barbarian Bloodwalker
+Barbarian Brutetamer
+Barbarian Headsplitter
+Barbarian Skullhunter
+Barkless Devotee
+Barkless Fanatic
+Bashmu
+Bat
+Bear
+Behemoth
+Bellicose Orger
+Berrypest
+Berserker Chicken
+Betrayed Wraith
 Biting Book
+Black Sheep
+Black Sphinx Acolyte
+Blemished Spawn
+Blightwalker
+Bloated Man-Maggot
+Blood Beast
+Blood Crab
+Blood Hand
+Blood Priest
+Blue Djinn
+Bluebeak
+Boar
+Boar Man
+Bog Frog
+Bog Raider
+Bonebeast
+Bonelord
+Bony Sea Devil
+Boogy
+Brachiodemon
+Brain Squid
+Braindeath
+Bramble Wyrmling
+Branchy Crawler
+Breach Brood
+Bride of Night
+Brimstone Bug
+Brinebrute Inferniarch
+Broken Shaper
+Broodrider Inferniarch
+Bug
+Bulltaur Alchemist
+Bulltaur Brute
+Bulltaur Forgepriest
+Burning Book
+Burning Gladiator
+Burster Spectre
+Butterfly (Blue)
+Butterfly (Purple)
+Butterfly (Red)
+Cake Golem
+Calamary
+Candy Floss Elemental
+Candy Horror
+Capricious Phantom
+Carniphila
+Carnivostrich
+Carrion Worm
+Cat
+Cave Chimera
+Cave Devourer
+Cave Parrot
+Cave Rat
+Centipede
+Chakoya Toolshaper
+Chakoya Tribewarden
+Chakoya Windcaller
+Chasm Spawn
+Chicken
+Chocolate Blob
+Choking Fear
+Cinder Wyrmling
+Clay Guardian
+Cliff Strider
+Cloak of Terror
+Clomp
+Cobra
+Cobra Assassin
+Cobra Scout
+Cobra Vizier
+Converter
+Coral Frog
+Corrupted Ghost
+Corrupted Skeleton
+Corym Charlatan
+Corym Skirmisher
+Corym Vanguard
+Courage Leech
+Cow
+Crab
+Crape Man
+Crawler
+Crazed Beggar
+Crazed Summer Rearguard
+Crazed Summer Vanguard
+Crazed Winter Rearguard
+Crazed Winter Vanguard
+Cream Blob
+Creepy Crawler
+Crimson Frog
+Crocodile
+Crusader
+Crustacea Gigantica
+Crypt Construct
+Crypt Defiler
+Crypt Fiend
+Crypt Mage
+Crypt Shambler
+Crypt Warden
+Crypt Warrior
+Crystal Spider
+Crystal Wolf
+Crystalcrusher
+Cult Believer
+Cult Enforcer
+Cult Scholar
+Cunning Werepanther
+Cursed Ape
+Cursed Book
+Cursed Prospector
+Cyclops
+Cyclops Drone
+Cyclops Smith
+Cyclursus
+Damaged Crystal Golem
+Damaged Worker Golem
+Dark Apprentice
+Dark Carnisylvan
+Dark Faun
+Dark Magician
+Dark Monk
+Dark Torturer
+Darklight Construct
+Darklight Emitter
+Darklight Matter
+Darklight Source
+Darklight Striker
+Dawnfire Asura
+Death Blob
+Death Priest
+Deathling Scout
+Deathling Spellsinger
+Deepling Brawler
+Deepling Elite
+Deepling Guard
+Deepling Master Librarian
+Deepling Scout
+Deepling Spellsinger
+Deepling Tyrant
+Deepling Warrior
+Deepling Worker
+Deepsea Blood Crab
+Deepworm
+Deer
 Defiler
-Sea Serpent
+Demon
+Demon Outcast
+Demon Parrot
+Demon Skeleton
+Destroyer
+Devourer
+Diabolic Imp
+Diamond Servant
+Diamond Servant Replica
+Dire Penguin
+Diremaw
+Distorted Phantom
+Dog
+Doom Deer
+Doomsday Cultist
+Dragolisk
+Dragon
+Dragon Hatchling
+Dragon Lord
+Dragon Lord Hatchling
+Dragonling
+Draken Abomination
+Draken Elite
+Draken Spellweaver
+Draken Warmaster
+Draptor
+Dread Intruder
+Drillworm
+Dromedary
+Druid's Apparition
+Dryad
 Duskbringer
+Dwarf
+Dwarf Geomancer
+Dwarf Guard
+Dwarf Henchman
+Dwarf Soldier
+Dworc Fleshhunter
+Dworc Shadowstalker
+Dworc Venomsniper
+Dworc Voodoomaster
+Earth Elemental
+Efreet
+Elder Bonelord
+Elder Forest Fury
+Elder Mummy
+Elder Wyrm
+Elephant
+Elf
+Elf Arcanist
+Elf Overseer
+Elf Scout
+Emerald Damselfly
+Emerald Tortoise
+Energetic Book
+Energuardian of Tales
+Energy Elemental
+Enfeebled Silencer
+Enlightened of the Cult
+Enraged Crystal Golem
+Enslaved Dwarf
+Eternal Guardian
+Evil Prospector
+Evil Sheep
+Evil Sheep Lord
+Execowtioner
+Exotic Bat
+Exotic Cave Spider
+Eyeless Devourer
+Falcon Knight
+Falcon Paladin
+Faun
+Feral Sphinx
+Feral Werecrocodile
+Feverish Citizen
+Feversleep
+Filth Toad
+Fire Devil
+Fire Elemental
+Firestarter
+Fish
+Flamingo
+Flimsy Lost Soul
+Floating Savant
+Flying Book
+Foam Stalker
+Forest Fury
+Fox
+Frazzlemaw
+Freakish Lost Soul
+Frost Dragon
+Frost Dragon Hatchling
+Frost Flower Asura
+Frost Giant
+Frost Giantess
+Frost Troll
+Fruit Drop
+Furious Fire Elemental
+Furious Troll
+Fury
+Gang Member
+Gargoyle
+Gazer
+Gazer Spectre
+Ghastly Dragon
+Ghost
+Ghost Wolf
+Ghoul
+Ghoulish Hyaena
+Giant Spider
+Gingerbread Man
+Girtablilu Warrior
+Gladiator
+Gloom Maw
+Gloom Wolf
+Glooth Anemone
+Glooth Bandit
+Glooth Blob
+Glooth Brigand
+Glooth Golem
+Gnarlhound
+Goblin
+Goblin Assassin
+Goblin Leader
+Goblin Scavenger
+Goggle Cake
+Golden Servant
+Golden Servant Replica
+Goldhanded Cultist
+Goldhanded Cultist Bride
+Gore Horn
+Gorerilla
+Gorger Inferniarch
+Gozzler
+Grave Guard
+Grave Robber
+Gravedigger
+Green Djinn
+Green Frog
+Grim Reaper
+Grimeleech
+Grynch Clan Goblin
+Gryphon
+Guardian of Tales
+Guzzlemaw
+Hand of Cursed Fate
+Harpy
+Haunted Dragon
+Haunted Hunter
+Haunted Treeling
+Hawk Hopper
+Headpecker
+Headwalker
+Hellfire Fighter
+Hellflayer
+Hellhound
+Hellhunter Inferniarch
+Hellspawn
+Herald of Gloom
+Hero
+Hibernal Moth
+Hideous Fungus
+High Voltage Elemental
+Hive Overseer
+Honey Elemental
+Honour Guard
+Horse (Brown)
+Horse (Gray)
+Horse (Taupe)
+Hot Dog
+Hulking Carnisylvan
+Hulking Prehemoth
+Humongous Fungus
+Hunter
+Husky
+Hyaena
+Hydra
+Ice Dragon
+Ice Golem
+Ice Witch
+Icecold Book
+Iks Ahpututu
+Iks Aucar
+Iks Chuka
+Iks Churrascan
+Iks Pututu
+Iks Yapunac
+Imperial
+Infected Weeper
+Infernal Demon
+Infernal Frog
+Infernal Phantom
+Infernalist
+Infernoid Blob
+Infernoid Hound
+Infernoid Soul
+Infernoid Spiritual
+Ink Blob
+Ink Splash
+Insane Siren
+Insect Swarm
+Insectoid Scout
+Insectoid Worker
+Instable Breach Brood
+Instable Sparkion
+Iron Servant
+Iron Servant Replica
+Ironblight
+Island Troll
+Jellyfish
+Juggernaut
+Jungle Moa
+Juvenile Bashmu
+Killer Caiman
+Killer Rabbit
+Knight's Apparition
+Knowledge Elemental
+Kollos
+Kongra
+Lacewing Moth
+Ladybug
+Lamassu
+Lancer Beetle
+Larva
+Lava Golem
+Lava Lurker
+Lavafungus
+Lavaworm
+Leaf Golem
+Lich
+Liodile
+Lion
+Lion Hydra
+Little Corym Charlatan
+Lizard Chosen
+Lizard Commander
+Lizard Dragon Priest
+Lizard Executioner
+Lizard Henchman
+Lizard High Guard
+Lizard Legionnaire
+Lizard Magician
+Lizard Magistratus
+Lizard Noble
+Lizard Sentinel
+Lizard Snakecharmer
+Lizard Swordmaster
+Lizard Templar
+Lizard Zaogun
+Loricate Orger
+Lost Basher
+Lost Berserker
+Lost Exile
+Lost Husher
+Lost Soul
+Lost Thrower
+Lumbering Carnivor
+Mad Scientist
+Magma Crawler
+Makara
+Mammoth
+Manta Ray
+Manticore
+Mantosaurus
+Many Faces
+Marid
+Marsh Stalker
+Massive Earth Elemental
+Massive Energy Elemental
+Massive Fire Elemental
+Massive Water Elemental
+Mean Lost Soul
+Meandering Mushroom
+Medusa
+Mega Dragon
+Menacing Carnivor
+Mercurial Menace
+Mercury Blob
+Merlkin
+Metal Gargoyle
+Midnight Asura
+Midnight Panther
+Midnight Spawn
+Midnight Warrior
+Minotaur
+Minotaur Amazon
+Minotaur Archer
+Minotaur Cult Follower
+Minotaur Cult Prophet
+Minotaur Cult Zealot
+Minotaur Guard
+Minotaur Hunter
+Minotaur Invader
+Minotaur Mage
+Misguided Bully
+Misguided Thief
+Mitmah Scout
+Mitmah Seer
+Modified Gnarlhound
+Mole
+Monk (Creature)
+Monk's Apparition
+Mooh'Tah Warrior
+Moohtant
+Mould Phantom
+Muglex Clan Assassin
+Muglex Clan Footman
+Mummy
+Mushroom Sniffer
+Mutated Bat
+Mutated Human
+Mutated Rat
+Mutated Tiger
+Mycobiontic Beetle
+Naga Archer
+Naga Warrior
+Necromancer
+Nibblemaw
+Night Harpy
+Nightfiend
+Nighthunter
+Nightmare
+Nightmare Scion
+Nightslayer
+Nightstalker
+Noble Lion
+Nomad
+Nomad (Blue)
+Nomad (Female)
+Norcferatu Heartless
+Norcferatu Nightweaver
+Northern Pike
+Novice of the Cult
+Noxious Ripptor
+Nymph
+Ogre Brute
+Ogre Rowdy
+Ogre Ruffian
+Ogre Sage
+Ogre Savage
+Ogre Shaman
+Ominous
+Omnivora
+Oozing Carcass
+Oozing Corpus
+Orc
+Orc Berserker
+Orc Cult Fanatic
+Orc Cult Inquisitor
+Orc Cult Minion
+Orc Cult Priest
+Orc Cultist
+Orc Leader
+Orc Marauder
+Orc Rider
+Orc Shaman
+Orc Spearman
+Orc Warlord
+Orc Warrior
+Orchid Frog
+Orclops Bloodbreaker
+Orclops Doomhauler
+Orclops Ravager
+Orewalker
+Orger
+Paladin's Apparition
+Panda
+Parder
+Parrot
+Penguin
+Percht
+Phantasm
+Pig
+Pigeon
+Pirat Bombardier
+Pirat Cutthroat
+Pirat Mate
+Pirat Scoundrel
+Pirate Buccaneer
+Pirate Cook
+Pirate Corsair
+Pirate Cutthroat
+Pirate Ghost
+Pirate Gunner
+Pirate Marauder
+Pirate Navigator
+Pirate Quartermaster
+Pirate Skeleton
+Pixie
+Plaguesmith
+Poacher
+Poison Spider
+Poisonous Carnisylvan
+Polar Bear
+Pooka
+Priestess
+Priestess of the Wild Sun
+Putrid Mummy
+Quara Constrictor
+Quara Constrictor Scout
+Quara Hydromancer
+Quara Hydromancer Scout
+Quara Looter
+Quara Mantassin
+Quara Mantassin Scout
+Quara Pincher
+Quara Pincher Scout
+Quara Plunderer
+Quara Predator
+Quara Predator Scout
+Quara Raider
+Rabbit
+Rabid Wolf
+Rage Squid
+Ragged Rabid Wolf
+Raging Fire
+Rat
+Raubritter Chastener
+Raubritter Marksman
+Raubritter Skirmisher
+Ravenous Lava Lurker
+Reality Reaver
+Redeemed Soul
+Renegade Knight
+Renegade Quara Constrictor
+Renegade Quara Hydromancer
+Renegade Quara Mantassin
+Renegade Quara Pincher
+Renegade Quara Predator
+Retching Horror
+Rhindeer
+Ripper Spectre
+Roaming Dread
+Roaring Lion
+Roast Pork
+Rootthing Amber Shaper
+Rootthing Bug Tracker
+Rootthing Nutshell
+Rorc
+Rot Elemental
+Rotten Golem
+Rotten Man-Maggot
+Rotworm
+Rustheap Golem
+Sabretooth
+Sacred Spider
+Salamander
+Sandcrawler
+Sandstone Scorpion
+Scarab
+Schiach
+Scorpion
+Sea Captain
+Sea Serpent
+Seacrest Serpent
+Seagull
+Serpent Spawn
+Shaburak Demon
+Shaburak Lord
+Shaburak Prince
+Shadow Hound
+Shadow Pupil
+Shaper Matriarch
+Shark
+Sheep
+Shell Drake
+Shock Head
+Shrieking Cry-Stal
+Sibang
 Sight of Surrender
+Silencer
+Silver Rabbit
+Sineater Inferniarch
+Skeleton
+Skeleton Elite Warrior
+Skeleton Warrior
+Skunk
+Slime
+Slug
+Smuggler
+Snake
+Son of Verminor
+Sopping Carcass
+Sopping Corpus
+Sorcerer's Apparition
+Soul-Broken Harbinger
+Souleater
+Sparkion
+Spectre
+Spellreaper Inferniarch
+Sphinx
+Spider
+Spidris
+Spidris Elite
+Spiky Carnivor
+Spit Nettle
+Spitter
+Squid Warden
+Squidgy Slime
+Squirrel
+Stabilizing Dread Intruder
+Stabilizing Reality Reaver
+Stag
+Stalker
+Stalking Stalk
+Stampor
+Starving Wolf
+Stone Devourer
+Stone Golem
+Stone Rhino
+Stonerefiner
+Streaked Devourer
+Sugar Cube
+Sugar Cube Worker
+Sulphider
+Sulphur Spouter
+Swamp Troll
+Swampling
+Swan Maiden
+Swarmer
+Tainted Soul
+Tarantula
+Tarnished Spirit
+Terramite
+Terrified Elephant
+Terror Bird
+Terrorsleep
+Thanatursus
+Thornback Tortoise
+Thornfire Wolf
+Tiger
+Toad
+Tomb Servant
+Tortoise
+Tremendous Tyrant
+Troll
+Troll Champion
+Troll Guard
+Troll Legionnaire
+True Dawnfire Asura
+True Frost Flower Asura
+True Midnight Asura
+Truffle
+Truffle Cook
+Tunnel Tyrant
+Turbulent Elemental
+Twisted Pooka
+Twisted Shaper
+Two-Headed Turtle
+Undead Cavebear
+Undead Dragon
+Undead Elite Gladiator
+Undead Gladiator
+Undead Jester
+Undead Mine Worker
+Undead Prospector
+Undertaker
+Usurper Archer
+Usurper Knight
+Usurper Warlock
+Valkyrie
+Vampire
+Vampire Bride
+Vampire Pig
+Vampire Viscount
+Varg
+Varnished Diremaw
+Venerable Girtablilu
+Vexclaw
+Vibrant Phantom
+Vicious Manbat
+Vicious Squire
+Vile Grandmaster
+Vulcongra
+Wafer Paper Butterfly
+Wailing Widow
+Walker
+Walking Dread
 Walking Pillar
 Wandering Pillar
-Poison Spider
-Massive Energy Elemental
-Draken Warmaster
-Butterfly (Red)
-Frost Dragon Hatchling
-Darklight Emitter
-Minotaur Amazon
-Hot Dog
-Mitmah Scout
-Mad Scientist
-Minotaur Cult Follower
-Vampire Bride
-Amazon
-Stampor
-Iron Servant Replica
-Corym Charlatan
-Nightmare
-Wisp
-Haunted Dragon
-Massive Water Elemental
-Diamond Servant Replica
-Undead Gladiator
-Noble Lion
-Dragon Hatchling
-Killer Caiman
-Frost Flower Asura
-Blemished Spawn
-Askarak Demon
-Mitmah Seer
-Clomp
-Orc Cult Inquisitor
-Sabretooth
-Rotten Man-Maggot
-Deepworm
-Emerald Damselfly
-Pirate Marauder
-Forest Fury
-Dark Carnisylvan
-True Midnight Asura
-Demon Parrot
-Vicious Manbat
-Monk's Apparition
-Kongra
-Mantosaurus
-Firestarter
-Sandcrawler
-Dworc Fleshhunter
-Butterfly (Purple)
-Lavaworm
-Dragon Lord Hatchling
-Bonelord
-Gang Member
-Lion
-Iks Aucar
-Orc Warlord
-Ravenous Lava Lurker
-Cult Believer
-Lich
-Sibang
-Young Sea Serpent
-Mushroom Sniffer
-Bulltaur Forgepriest
-Twisted Pooka
-Mutated Tiger
-Shark
-Toad
-Rustheap Golem
-Valkyrie
-Sorcerer's Apparition
-Pigeon
-Dragon
-Dwarf Geomancer
-Gore Horn
-Troll
-Crystalcrusher
-Blood Beast
-Druid's Apparition
-Barbarian Skullhunter
-Glooth Anemone
-Lizard Magistratus
-Cow
-Wafer Paper Butterfly
-Horse (Gray)
-Ancient Scarab
-Goblin Leader
-Orc Berserker
-Water Elemental
-Chakoya Tribewarden
-Pixie
-Insect Swarm
-Flying Book
-Acolyte of Darkness
-Banshee
-Midnight Spawn
-Lost Thrower
-Werepanther
-Shaburak Demon
-Burning Gladiator
-Squirrel
-Elf Overseer
-Mould Phantom
-Exotic Cave Spider
-Roast Pork
-White Deer
-Slime
-Furious Troll
-Grave Robber
-Elder Wyrm
-Dryad
-Glooth Bandit
-Ragged Rabid Wolf
-Deathling Spellsinger
-Renegade Quara Predator
-Frazzlemaw
-Fire Devil
-Husky
-Death Blob
-Harpy
-Quara Predator Scout
-Blood Hand
-Kollos
-Werecrocodile
-Elephant
-Bony Sea Devil
-Moohtant
-Undead Prospector
-Quara Mantassin Scout
-Mutated Human
-Infected Weeper
-Berrypest
-Emerald Tortoise
-Ghoulish Hyaena
-Rabid Wolf
-Frost Giantess
-Worker Golem
-Faun
-Usurper Warlock
-Lizard Templar
-Deepling Scout
-Cave Rat
-Nomad
-Skunk
-Omnivora
-Scorpion
-Brachiodemon
-Spidris Elite
-Shaper Matriarch
-Lava Lurker
-Sulphider
-Dark Monk
-Mammoth
-Blood Crab
-Nightfiend
-Butterfly (Blue)
-Renegade Quara Pincher
-Glooth Brigand
-Breach Brood
-Insane Siren
-Pooka
-Tortoise
-Vile Grandmaster
-Brinebrute Inferniarch
-Orchid Frog
-Enlightened of the Cult
-Afflicted Strider
-Lizard High Guard
-Ice Dragon
-Goblin
-Calamary
-Mercury Blob
-Ogre Brute
-Bashmu
-Wolf
-Nighthunter
-Hulking Prehemoth
-Grave Guard
-Darklight Construct
-Iks Pututu
-Crypt Warden
-Chakoya Toolshaper
-Dwarf Guard
-Dark Torturer
-Undertaker
-Death Priest
-Zombie
-Earth Elemental
-Orc Rider
-Courage Leech
-Guardian of Tales
-Skeleton
-Gorerilla
-Deepling Guard
-Pig
-Quara Pincher
-Hydra
-Chakoya Windcaller
-Gnarlhound
-Werebear
-Carnivostrich
-Cursed Ape
-Doom Deer
-Midnight Asura
-Cyclops Smith
-Weretiger
-Destroyer
-Doomsday Cultist
-Hellhunter Inferniarch
-Swampling
-Cave Parrot
-Deer
-Snake
-Merlkin
-Iks Yapunac
-Black Sheep
-Werebadger
-Bulltaur Alchemist
-Dark Apprentice
-Hyaena
-Fire Elemental
-Mega Dragon
-Berserker Chicken
-Wardragon
-Two-Headed Turtle
-Vampire Viscount
-Jellyfish
-Exotic Bat
-Armadile
-Dog
-Elder Forest Fury
-Young Goanna
-Adept of the Cult
-Vampire Pig
-Horse (Brown)
-Nibblemaw
-Hellflayer
-Parder
-Cream Blob
-Burning Book
-Bloated Man-Maggot
-Crystal Spider
-Massive Fire Elemental
-Goggle Cake
-Cake Golem
-Wasp
-Hunter
-Naga Warrior
-Novice of the Cult
-Usurper Archer
-Fish
-Blightwalker
-Ogre Rowdy
-Mutated Rat
-Choking Fear
-White Shade
-Foam Stalker
-Rootthing Bug Tracker
-Cult Scholar
-Converter
-Northern Pike
-Goldhanded Cultist Bride
-Demon
-Mercurial Menace
-Darklight Matter
-Hellhound
-Renegade Knight
-Lavafungus
-Knowledge Elemental
-Flimsy Lost Soul
-Oozing Corpus
-Terror Bird
-Wyrm
-Putrid Mummy
-Honour Guard
-Swamp Troll
-Rorc
-Animated Snowman
-Midnight Warrior
-Orc Shaman
-Dworc Venomsniper
-Scarab
-Werehyaena Shaman
-Venerable Girtablilu
-Stabilizing Dread Intruder
-Ominous
-Wild Horse
-Shadow Pupil
-Midnight Panther
-Swarmer
-Quara Mantassin
-Mole
-Sineater Inferniarch
-Spider
-Carrion Worm
-Medusa
-Turbulent Elemental
-Efreet
-Polar Bear
-Black Sphinx Acolyte
-Gryphon
-Quara Looter
-Diabolic Imp
-Tarnished Spirit
-Lava Golem
-Orc Cultist
-Enslaved Dwarf
-Broken Shaper
-Gravedigger
-Badger
-Centipede
-Barbarian Brutetamer
-Lizard Zaogun
-Brain Squid
-Goblin Scavenger
-Lizard Noble
-White Lion
-Orc Cult Fanatic
-Arachnophobica
-Stone Golem
-Sopping Carcass
-Cobra Assassin
-Knight's Apparition
-Minotaur
-Island Troll
-Iks Churrascan
-Undead Elite Gladiator
-Infernalist
-Infernal Phantom
-Undead Jester
-Penguin
-Cliff Strider
-Orger
-Fox
-Lost Soul
-Darklight Striker
-Hideous Fungus
-Lost Husher
-Guzzlemaw
-True Dawnfire Asura
-Noxious Ripptor
-Ghost
-Redeemed Soul
-Demon Skeleton
-Rhindeer
-Lumbering Carnivor
-Cobra
-Mutated Bat
-Draptor
-Orclops Ravager
-Manticore
-Mummy
-Undead Dragon
-Grimeleech
-Hive Overseer
-Misguided Bully
-Feral Werecrocodile
-Oozing Carcass
-Modified Gnarlhound
-Gazer
-Cat
-Elder Mummy
-White Tiger
-Thornfire Wolf
-Sphinx
-Barbarian Headsplitter
-Squid Warden
-Icecold Book
-Jungle Moa
-Ogre Ruffian
-Dark Magician
-Chasm Spawn
-True Frost Flower Asura
-Wereboar
-Bug
-Nightmare Scion
-Betrayed Wraith
-Undead Cavebear
-Orc Cult Minion
-Minotaur Cult Prophet
-Elder Bonelord
-Pirate Ghost
-Abyssal Calamary
-Misguided Thief
-Spiky Carnivor
-Glooth Golem
-Minotaur Guard
-Arctic Faun
-Thornback Tortoise
-Diremaw
-Frost Dragon
-Acid Blob
+War Golem
 War Wolf
-Tainted Soul
-Stone Devourer
-Braindeath
-Seagull
-Rage Squid
-Serpent Spawn
-Honey Elemental
-Diamond Servant
-Monk
-Rot Elemental
-Magma Crawler
-Deepsea Blood Crab
-Tunnel Tyrant
-Gazer Spectre
-Crab
-Bonebeast
-Giant Spider
-Necromancer
-Lost Exile
-Marid
-Pirat Mate
-Crazed Winter Rearguard
-Elf Scout
-Wailing Widow
-Naga Archer
-Orc Marauder
-Troll Legionnaire
-Mean Lost Soul
-Drillworm
-Crimson Frog
-Massive Earth Elemental
-Cobra Vizier
-Dwarf Henchman
-Lizard Legionnaire
-Corym Vanguard
-Ogre Savage
-Infernal Demon
-Brimstone Bug
-High Voltage Elemental
+Wardragon
+Warlock
+Wasp
+Waspoid
+Water Buffalo
+Water Elemental
+Weakened Frazzlemaw
+Weeper
+Werebadger
+Werebear
+Wereboar
+Werecrocodile
+Werefox
 Werehyaena
-Dawnfire Asura
-Bear
-Freakish Lost Soul
+Werehyaena Shaman
+Werelion
+Werelioness
+Werepanther
+Weretiger
+Werewolf
+White Deer
+White Lion
+White Shade
+White Tiger
+White Weretiger
+Wiggler
+Wild Horse
+Wild Warrior
 Wilting Leaf Golem
-Fury
-Larva
-Crazed Winter Vanguard
-Crypt Shambler
-Quara Constrictor
-Crawler
-Blue Djinn
-Energuardian of Tales
-Mycobiontic Beetle
-Cyclops
-Horse (Dark Brown)
-Rat
-Lancer Beetle
-Dwarf
-Herald of Gloom
-Minotaur Mage
-Reality Reaver
-Souleater
-Orc
-Askarak Prince
-Dworc Voodoomaster
-Quara Constrictor Scout
-Gladiator
-Hulking Carnisylvan
-Cave Devourer
-Acolyte of the Cult
-Shaburak Prince
-Burster Spectre
-Frost Troll
-Priestess of the Wild Sun
-Bandit
-Paladin's Apparition
-Metal Gargoyle
-Percht
-Evil Sheep
-Crazed Summer Rearguard
-Pirate Cutthroat
+Winter Wolf
+Wisp
+Witch
+Wolf
+Worker Golem
+Worm Priestess
+Wyrm
+Wyvern
+Yeti
+Yielothax
+Young Goanna
+Young Sea Serpent
+Zombie
