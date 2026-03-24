@@ -41,7 +41,7 @@ WORKDIR /app
 
 # Copy the application binary, goose, and migrations from the builder stage
 COPY --from=builder /app/main .
-COPY --from=builder /root/go/bin/goose /usr/local/bin/goose
+COPY --from=builder /go/bin/goose /usr/local/bin/goose
 COPY --from=builder /app/db/migrations ./migrations
 
 # Expose the port the app runs on
