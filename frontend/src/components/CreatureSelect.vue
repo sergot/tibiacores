@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { getSoulCoreImageUrl } from '@/utils/soulcore'
 
 interface Creature {
   id: string
@@ -178,7 +179,15 @@ onBeforeUnmount(() => {
             }"
           >
             <div class="flex items-center justify-between gap-2">
-              <span>{{ creature.name }}</span>
+              <div class="flex items-center gap-2">
+                <img
+                  :src="getSoulCoreImageUrl(creature.name)"
+                  :alt="creature.name"
+                  class="w-6 h-6 shrink-0"
+                  @error="($event.target as HTMLImageElement).style.display = 'none'"
+                />
+                <span>{{ creature.name }}</span>
+              </div>
               <div class="flex items-center gap-2">
                 <div v-if="creature.unlockStats?.unlocked_count" class="group/tooltip relative">
                   <span

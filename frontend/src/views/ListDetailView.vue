@@ -7,6 +7,7 @@ import CreatureSelect from '@/components/CreatureSelect.vue'
 import { useUserStore } from '@/stores/user'
 import { useChatNotificationsStore } from '@/stores/chatNotifications'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { getSoulCoreImageUrl } from '@/utils/soulcore'
 
 interface ListDetails {
   id: string
@@ -741,7 +742,17 @@ onUnmounted(() => {
                   :key="core.creature_id"
                   class="border-b border-gray-200 last:border-0"
                 >
-                  <td class="px-2 sm:px-4 py-2">{{ core.creature_name }}</td>
+                  <td class="px-2 sm:px-4 py-2">
+                    <div class="flex items-center gap-2">
+                      <img
+                        :src="getSoulCoreImageUrl(core.creature_name)"
+                        :alt="core.creature_name"
+                        class="w-6 h-6 shrink-0"
+                        @error="($event.target as HTMLImageElement).style.display = 'none'"
+                      />
+                      {{ core.creature_name }}
+                    </div>
+                  </td>
                   <td class="hidden sm:table-cell px-4 py-2">
                     <span
                       :class="{
