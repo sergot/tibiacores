@@ -14,6 +14,9 @@ COPY . .
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server
 
+# Build goose binary
+RUN CGO_ENABLED=0 GOOS=linux go install github.com/pressly/goose/v3/cmd/goose@latest
+
 # For development with hot reload
 FROM golang:1.25-alpine AS dev
 
@@ -36,13 +39,10 @@ FROM alpine:latest AS prod
 
 WORKDIR /app
 
-# Copy the binary from the builder stage
+# Copy the application binary, goose, and migrations from the builder stage
 COPY --from=builder /app/main .
-
-# copy migrations and install goose
+COPY --from=builder /root/go/bin/goose /usr/local/bin/goose
 COPY --from=builder /app/db/migrations ./migrations
-RUN apk add --no-cache go
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 
 # Expose the port the app runs on
 EXPOSE 8080
