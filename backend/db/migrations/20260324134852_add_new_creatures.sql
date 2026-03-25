@@ -51,20 +51,6 @@ INSERT INTO creatures (name) VALUES ('Stag') ON CONFLICT (name) DO NOTHING;
 INSERT INTO creatures (name) VALUES ('Varg') ON CONFLICT (name) DO NOTHING;
 INSERT INTO creatures (name) VALUES ('Walking Dread') ON CONFLICT (name) DO NOTHING;
 
--- NOTE: 10 creature(s) removed from TibiaWiki.
--- Uncomment the lines below if you want to remove them from the DB.
--- WARNING: This will also delete associated soul core data.
--- DELETE FROM creatures WHERE name = 'Butterfly (Blue)';
--- DELETE FROM creatures WHERE name = 'Butterfly (Purple)';
--- DELETE FROM creatures WHERE name = 'Butterfly (Red)';
--- DELETE FROM creatures WHERE name = 'Horse (Brown)';
--- DELETE FROM creatures WHERE name = 'Horse (Dark Brown)';
--- DELETE FROM creatures WHERE name = 'Horse (Gray)';
--- DELETE FROM creatures WHERE name = 'Monk';
--- DELETE FROM creatures WHERE name = 'Nomad';
--- DELETE FROM creatures WHERE name = 'Nomad (Blue)';
--- DELETE FROM creatures WHERE name = 'Nomad (Female)';
-
 -- +goose StatementEnd
 
 -- +goose Down
