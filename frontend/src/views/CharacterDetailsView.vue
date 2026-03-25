@@ -152,7 +152,14 @@
             >
               <div class="flex justify-between items-start">
                 <div class="space-y-2">
-                  <h3 class="font-medium text-gray-900">{{ core.creature_name }}</h3>
+                  <div class="flex items-center gap-2">
+                    <img
+                      :src="getSoulCoreImageUrl(core.creature_name)"
+                      class="w-6 h-6 shrink-0"
+                      @error="($event.target as HTMLImageElement).style.display='none'"
+                    />
+                    <h3 class="font-medium text-gray-900">{{ core.creature_name }}</h3>
+                  </div>
                 </div>
                 <button
                   @click="removeSoulcore(core.creature_id)"
@@ -223,6 +230,7 @@ import axios from 'axios'
 import SoulcoreSuggestions from '@/components/SoulcoreSuggestions.vue'
 import CreatureSelect from '@/components/CreatureSelect.vue'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { getSoulCoreImageUrl } from '@/utils/soulcore'
 
 const route = useRoute()
 const { t } = useI18n()

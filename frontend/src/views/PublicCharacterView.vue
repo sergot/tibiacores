@@ -237,7 +237,14 @@
                   class="hover:bg-gray-50 transition-colors duration-200"
                 >
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">{{ core.creature_name }}</div>
+                    <div class="flex items-center gap-2">
+                      <img
+                        :src="getSoulCoreImageUrl(core.creature_name)"
+                        class="w-6 h-6 shrink-0"
+                        @error="($event.target as HTMLImageElement).style.display='none'"
+                      />
+                      <div class="text-sm font-medium text-gray-900">{{ core.creature_name }}</div>
+                    </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <span
@@ -281,6 +288,7 @@ import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import { useSEO } from '@/composables/useSEO'
 import BreadcrumbNavigation from '@/components/BreadcrumbNavigation.vue'
+import { getSoulCoreImageUrl } from '@/utils/soulcore'
 
 const route = useRoute()
 const { t } = useI18n()
