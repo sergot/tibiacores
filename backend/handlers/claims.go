@@ -55,7 +55,11 @@ func (h *ClaimsHandler) StartClaim(c echo.Context) error {
 	// First check if character exists in TibiaData API
 	tibiaChar, err := h.TibiaData.GetCharacter(req.CharacterName)
 	if err != nil {
-		return apperror.NotFoundError("Character not found in Tibia", err).
+		var serviceErr *apperror.AppError
+		if errors.As(err, &serviceErr) {
+			return serviceErr
+		}
+		return apperror.ExternalServiceError("Failed to fetch character from TibiaData", err).
 			WithDetails(&apperror.ExternalServiceErrorDetails{
 				Service:   "TibiaData",
 				Operation: "GetCharacter",
@@ -240,6 +244,10 @@ func (h *ClaimsHandler) CheckClaim(c echo.Context) error {
 		// Check TibiaData API for verification code
 		verified, err := h.TibiaData.VerifyCharacterClaim(claim.CharacterName, claim.VerificationCode)
 		if err != nil {
+			var serviceErr *apperror.AppError
+			if errors.As(err, &serviceErr) {
+				return serviceErr
+			}
 			return apperror.ExternalServiceError("Failed to verify claim with Tibia Data service", err).
 				WithDetails(&apperror.ExternalServiceErrorDetails{
 					Service:   "TibiaData",

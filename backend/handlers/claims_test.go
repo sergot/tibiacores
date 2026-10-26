@@ -187,11 +187,28 @@ func TestStartClaim(t *testing.T) {
 			},
 			setupMocks: func(store *mockdb.MockStore, tibiaData *mockTibiaDataService, userID uuid.UUID) {
 				tibiaData.getCharacterFn = func(name string) (*services.TibiaCharacter, error) {
-					return nil, errors.New("character not found")
+					return nil, apperror.NotFoundError("character not found", nil)
 				}
 			},
 			expectedCode:  http.StatusNotFound,
-			expectedError: "Character not found in Tibia",
+			expectedError: "character not found",
+		},
+		{
+			name: "TibiaData upstream failure",
+			setupRequest: func(c echo.Context, body *bytes.Buffer) {
+				body.Reset()
+				err := json.NewEncoder(body).Encode(map[string]any{
+					"character_name": "TestChar",
+				})
+				require.NoError(t, err)
+			},
+			setupMocks: func(store *mockdb.MockStore, tibiaData *mockTibiaDataService, userID uuid.UUID) {
+				tibiaData.getCharacterFn = func(name string) (*services.TibiaCharacter, error) {
+					return nil, apperror.ExternalServiceError("upstream unavailable", errors.New("status code: 502"))
+				}
+			},
+			expectedCode:  http.StatusBadGateway,
+			expectedError: "upstream unavailable",
 		},
 	}
 
@@ -350,6 +367,26 @@ func TestCheckClaim(t *testing.T) {
 			},
 			expectedCode:  http.StatusNotFound,
 			expectedError: "Claim not found",
+		},
+		{
+			name: "Character Not Found in TibiaData",
+			setupMocks: func(store *mockdb.MockStore, tibiaData *mockTibiaDataService, claimID uuid.UUID, userID uuid.UUID) {
+				store.EXPECT().
+					GetClaimByID(gomock.Any(), claimID).
+					Return(db.GetClaimByIDRow{
+						ID:               claimID,
+						ClaimerID:        userID,
+						Status:           "pending",
+						CharacterName:    "MissingCharacter",
+						VerificationCode: "TIBIACORES-code",
+					}, nil)
+
+				tibiaData.verifyCharacterClaimFn = func(name, code string) (bool, error) {
+					return false, apperror.NotFoundError("character not found", nil)
+				}
+			},
+			expectedCode:  http.StatusNotFound,
+			expectedError: "character not found",
 		},
 	}
 

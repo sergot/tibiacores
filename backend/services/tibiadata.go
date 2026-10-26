@@ -49,7 +49,7 @@ type TibiaDataResponse struct {
 
 func NewTibiaDataService() *TibiaDataService {
 	return &TibiaDataService{
-		baseURL: "https://api.tibiadata.com/v4",
+		baseURL: "https://api.tibiadata.com/v5",
 		client:  httpClient,
 	}
 }
